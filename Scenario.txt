@@ -1,129 +1,80 @@
-Cahier des charges
+Introduction (pas interactive sauf le jeu de carte)
 
-3D
-Utilisé une ia
-Mode solo 
-Mode multi joueur 
+A revoir, on avait dit si je me souviens bien que c'était dans une salle de poker clandestin au fond d'une boîte de nuit pour avoir moins de choses à modéliser justement.
 
-Du coup non ce sera en co op
+Fonctionnalités à introduire + global :
+- Jeu de poker avec IA pour les adersaires
+- Système de point de vies, stamina & santé mentale
+- Inventaire
+- Utilisation items (lampe de poche, clef, radio...)
+- Système de journal/notes
+- Système de sauvegarde/restauration
+- Système de cartographie in-level
+- Système de karma (menant vers les fins multiples)
 
-Choses à déterminer 
+---------------------------------------------------------------------------------------
 
-La colorimétrie 
-Le style des graphismes
-Quel genre d’horreur 
+Pièces (atteignables depuis le hub) :
 
+---------------------------------------------------------------------------------------
 
-Musique 
-Bruit 
+Maison d'enfance -> (entrée, salon, cuisine, chambres, salle de bain, garage, grenier)
 
+Enchainement de pseudos épreuves et d'énigmes dans la maison pour débloquer les pièces au fur et à mesure avant de sortir du niveau.
 
+Fonctionnalités à introduire :
+- 1 2 3 soleil (système de perte de points de vie & mort de l'ennemi)
+- Système de perte de points de vie
+- Cadenas à code
 
+---------------------------------------------------------------------------------------
 
+Labyrinthe -> (plein air, hautes haies)
 
+Objectif s'enfuir du labyrinthe dans lequel des ennemis nous chassent. Au départ aucun ennemi, le joueur doit simplement avancer et trouver des objets cachés pour accéder à une seconde partie du labyrinthe dans laquelle y aura des ennemis.
 
+Fonctionnalités à introduire :
+- IA pathfinding pour chasser le/les joueurs
+- Terrain évolutif (formations de nouvelles haies et suppression d'anciennes)
 
+---------------------------------------------------------------------------------------
 
+Gymnase du lycée -> (gradins, vertiaires, terrain)
+ 
+Objectif chosir la bonne corde pour s'enfuir du niveau, des indices sont dissimulés dans la zone pour faire le bon choix.
+ 
+Fonctionnalités à introduire :
+- Cordes à choix mennant vers l'échec ou la réussite du joueur
+- Systèmes mécaniques activables
 
+---------------------------------------------------------------------------------------
 
-Introduction (pas interactive)
-Mode solo 
-Un groupe de jeune gens (adolescents) parti faire un urbex, le vieux casino délabré depuis plus de 20 ans de la petite ville de … 
-On les retrouve devant l’immense porte de ce vieux casino, puis l’un d’entre eux se décide à pousser la double porte.
-Après avoir fait un seul pas à l’intérieur le personnage qui a ouvert la porte se retrouve propulsé seule devant une table de poker avec d’autres personnes qu’il ne connait pas 
-Une voix commence à parler
-« Bienvenue à vous mes très chers joueurs.
-Vous vous trouvez ici dans mon tout dernier terrain de jeu. (Rire diabolique)
-Jouez ou mourrez !! »
-Et une partie de poker commence les cartes bouges seules même si on sent ou voit vaguement une entité inconnue.
-La partie commence et le joueur perd automatiquement aucune issue pour lui…
-Il perd le sol se dérobe sous ces pieds on ne voit rien mais on entend que le casino change le temps qu’il atteigne le sol du dernier sous-sol.
-C’est ici que le jeu commence réellement 
-Ici que les multiples choix les divers indices et créatures venue d’un autre monde vont apparaître.
+Lycée -> (quelques classes, self, couloirs, toilettes)
 
-Mode multi joueur 
-Même principe sauf que tous les joueurs entrent et il n’y aura qu’un inconnu autour de cette table de poker 
-Aucun moyen de communiquer 
-L’un des joueurs se verra attribué un joker dans son jeu
-Cette spécificité aura plusieurs impacts majeurs sur le jeu des autres 
-Il ne faudra pas se faire repérer tout en amenant les autres à la mort et c’est pour lui le seul moyen de survivre. Enfin presque…
+Niveau basé autour de mini-jeux avec le défunt et des NPC.
 
+Fonctionnalités à introduire :
+- Just Dance like
+- Partie de poker réellement gagnable contre un NPC rencontrable en fouillant les pièces.
 
-Scenario :
-Idée de pièce :
-Chambre d’enfant 
-On rentre dans la salle les murs sont jaunies le papier peint est en lambeau et tombe sur lui-même.
-Il y a un lit d’enfant avec des barreaux cassés, le matelas déchirer et des plumes d’oreiller un peu partout dans la pièce.
-En face de la porte quand on rentre il y a une fenêtre presque de pleins pieds qui donne sur un extérieur noir
-On y voit rien hormis un léger rayon de lumière.
-(Sans voir la source)
-Il y a plusieurs jouets différents comme un cheval à bascule, une peluche, des petites voitures etc.
-Peut-être que les voitures peuvent traverser la pièce à intervalle régulier et le cheval à bascule peut basculer avec des grincements.
-Et le niveau se baserait sur la peluche une sorte de 1 2 3 soleil.
-Les règles de ce niveau :
-5 minutes pour explorer une partie de la pièce (mais une partie est bloqué car il y a la carte affichée au mur en face de nous).
-Après c’est 5 min pour récupérer des informations (à voir lesquelles et comment).
-Puis l’ours en peluche change, ces yeux ce ferment il y a un décompte (avec des rires crispants et des cris)
-Puis ces yeux se réouvrent si on bouge on perd des points de vie 5 sur 100 par seconde.
-Et il faut réussir à l’atteindre et lui donner un coup de couteau dans les yeux pour finir le niveau (et ne pas oublier de récupérer la carte, au risque de devoir refaire le niveau).
+---------------------------------------------------------------------------------------
 
-(Avec quelqu’un qui te suit du regard assis sur une chaise.
-Ou faire ça avec des tableaux) idée de décor, voir si on le met pas dans une autre piéce et faire le niveau autour de ça.
+Bureaux -> (escaliers, open spaces, couloirs, quelques bureaux de cadres, toilettes)
 
+En pleine nuit, le/les joueur(s) doivent trouver un moyen de s'enfuir des bureaux dans lesquels les accées sont verrouillés par des codes/clefs et actions spécifiques, tout en fuyant un ennemi (style Outlast Trials).
 
-Deuxième idée de niveau :
-Le labyrinthe 
-Quand on passe la porte on arrive en extérieur avec à notre droite et à notre gauche de grands murs de feuillages ou maïs (au choix du groupe), environ 1,5 fois plus grand.
-La un timer se lance 10min pour sortir de ce labyrinthe, si le timer arrive à la fin sans avoir déclencher l’événement de ce niveau, alors le timer repars à zéro.
-Mais en arrivant à côté de la sortie un nouveau timer se lance de deux minutes, avec une musique stressant avec des cries qui ne fait qu’accélérer.
-Si le joueur n’a pas réussi à sortir du labyrinthe à la fin du timer un minotaure va apparaître et commencer à poursuivre le joueur. S’il se fait rattraper il recommence, sauf qu’il n’a que trois chances, trois vies pour y arriver.
-Mais s’il arrive à atteindre la fin du labyrinthe le joueur se retrouve face à un mur avec une nouvelle carte et pour pouvoir sortir de ce niveau il suffit de la prendre et le joueur serait comme téléporter au hub.
-Pour les détails du décor on voit des yeux brillants dans les murs végétaux, tant que le deuxième timer n’est pas lancé on entend des bruissements de feuilles, des bruits d’animaux, des craquements de branches, et quelques bruits de pas.
-Au sol on trouve des racines qui dépassent de la terre de la boue avec des traces de pas devant lui (donc pas les siennes), et qui s’arrêtent à l’endroit où le deuxième timer commence. Ce serait donc une sorte de chemin pour que le niveau soit pas trop complexe non plus.
-Il y aurait aussi une pancarte cachée dans le labyrinthe pour connaitre le chemin à faire après que les tracent de pas ce soit arrêté.
-Exemple :
-Gauche 
-Droite 
-Droite 
-Ect.
+Fonctionnalités à introduire :
+- Hide & Seek (système pathfinding IA & mort)
+- Enigmes d'accès
+
+---------------------------------------------------------------------------------------
+
+Appartement -> (petit studio en immeuble)
+
+Explorer les souvenirs d'un défunt en fouillant un espace personnel qui contient des indices subtils.
+
+Fonctionnalités à introduire :
+- Objets interactifs avec souvenirs (flashback, interactions physiques...)
+- Puzzle de verrouillage électronique (empreintes, fils électriques...)
 
 
-
-
-Troisième idée de niveau :
-Salle de bain (qui représente les traumas d’enfance de la victime)
-Traumas qui pourraient être abus sexuels par le père alcoolique (d’où les multiples bouteilles d’alcool dans la chambre d’enfant, la scarification, troubles alimentaires et la folie/ dépression.
-Tout ça pour niveau seront juste sous-entendu (on pourra développer ça dans les infos à aller chercher dans d’autres niveaux plus tard.
-Du coup pour la déco des traces de sang, peut-être une lame rouillée, à côté de la poubelle une plaquette de pilule vide (on ne sait pas quel type de pilule).
-Donc pour ce niveau, quand on rentre dans la pièce, on verrait un immense miroir où il n’y aurait pas notre vrai reflet mais on se verrai avec des cicatrices partout sur le corps.
-Le but est de fouiller la pièce pour trouver la carte de ce niveau.
-Donc le décor devra être un peu plus travailler que les autres pièces, exemple la baignoire remplie de plein de petites billes avec des objets appartenant à la victime.
-Dans le lavabo il serait rempli d’eau avec un sèche-cheveux ou un lisseur ou autres dedans et brancher (donc faire attention à ne pas le toucher).
- Dans le placard sous le lavabo, un bac avec des produites d’hygiènes et le reste de l’espace est occupée des livres et la carte serait cacher dans un des livres. Ayant pour titre …
-Quatrième idée de niveau :
-Gymnase de sport (qui va montrer le harcèlement de la victime quand elle était plus jeune)
-Quand on rentre dans ce nouveau niveau une grande pièce apparaît avec sur la droite des gradins avec des squelettes humains.
-Au milieu une estrade avec trois cordes de pendues ensanglantées.
-Et sur la gauche, sur le mur écrit avec du sang, 
-« Choisis, une chance de vivre, si tu ne choisis pas la mort viendra. »
-Une musique ce lance, stressante qui laisse planner le doute sur le choix à faire.
-Une possibilité de vivre trouver la bonne corde, soit la choisir au hasard ou de chercher la carte derrière les gradins. Il faut activer un levier au fond de la salle pour ouvrir une porte pour se rendre sous les gradins, où se trouve un indice pour les cordes.
-« A droite de vous se trouve lucifère, à votre gauche une lumière lointaine et au milieu un cœur. »
-Le moyen de survivre et d’avoir la carte de ce niveau, il faut prendre la corde du milieu.
-Cinquième idée de niveau :
-Le bal de promo 
-Quand on rentre dans la pièce une salle avec un genre de slime vert sur le mur (qui représente le bizutage que la victime a vécu)
-Ici dans ce niveau on aura la première interaction avec la victime.
-On le voit danser au milieu de la salle de bal avec un cadavre décapité.  A la fin de la première danse la musique s’arrête un projecteur de lumière se braque sur le joueur.
-Et une mini cinématique se lance, pour expliquer au joueur comment réussir ce niveau, le joueur commence à danser, une voix se lance 
-« Danse avec moi, danse !! »
-Le but de ce niveau est de réussir à danser avec la victime sur une des trois chansons. Si on y arrive une nouvelle cinématique se lance une conversation pour en découvrir un peu plus sur lui et surtout de commencer à créer un lien avec lui.
-Sinon on y arrive, une carte nous est donnée.
-Mais si on arrête de danser la carte est drop dans l’inventaire et la victime nous poursuit on a 10 secondes (à voir si c’est assez) pour sortir de la pièce sinon c’est une vie en moins et on recommence le niveau. (en tout sur ce niveau on a trois vie).
-Sixième idée de niveau :
-Premier travail (genre office)
-On arrive dans une pièce avec des lignes de bureau en enfilade.
-Les couleurs sont toutes monotones, le décor est insipide. Quand le joueur commence à bouger du sang commence à couler sur les murs, et des cris retentisses dans toute la pièce. 
-Le but de ce niveau est de ne pas se faire repéré pendant 10 minutes, le joueur à 3 minutes pour découvrir les lieux et pouvoir se déplacer en se cachant.
-Le monstre qui va chercher pendant ces 10 minutes à le même schéma de recherche il fait le même chemin.
-Si le joueur est repéré il est poursuivie et tué. Comme pour les autres niveaux le joueur a trois vies pour réussir ce niveau.
