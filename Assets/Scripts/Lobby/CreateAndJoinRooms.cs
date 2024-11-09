@@ -1,13 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
+using TMPro;  // Importer TextMeshPro
 using Photon.Pun;
 
 public class CreateAndJoinRooms : MonoBehaviourPunCallbacks
 {
-    public InputField createInput;
-    public InputField joinInput;
+    public TMP_InputField createInput;
+    public TMP_InputField joinInput; 
 
     public void CreateRoom()
     {

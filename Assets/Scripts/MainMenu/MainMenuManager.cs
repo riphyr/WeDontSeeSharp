@@ -52,15 +52,6 @@ namespace MainMenu{
         [Tooltip("Highlight Image for when GENERAL Sub-Tab is selected in KEY BINDINGS")]
         public GameObject lineGeneral;
 
-        [Header("LOADING SCREEN")]
-		[Tooltip("If this is true, the loaded scene won't load until receiving user input")]
-		public bool waitForInput = true;
-        public GameObject loadingMenu;
-		[Tooltip("The loading bar Slider UI element in the Loading Screen")]
-        public Slider loadingBar;
-        public TMP_Text loadPromptText;
-		public KeyCode userPromptKey;
-
 		[Header("SFX")]
         [Tooltip("The GameObject holding the Audio Source component for the HOVER SOUND")]
         public AudioSource hoverSound;
@@ -91,8 +82,9 @@ namespace MainMenu{
 		}
 
 		public void LoadScene(string scene){
-			if(scene != ""){
-				StartCoroutine(LoadAsynchronously(scene));
+			if(scene != "")
+			{
+				SceneManager.LoadSceneAsync(scene);
 			}
 		}
 
@@ -159,7 +151,7 @@ namespace MainMenu{
 			lineMovement.SetActive(true);
 		}
 
-		public void CombatPanel(){
+		public void CombatPanel(){//now it's the interaction panel
 			DisablePanels();
 			PanelKeyBindings.SetActive(true);
 			PanelCombat.SetActive(true);
@@ -190,47 +182,12 @@ namespace MainMenu{
 			DisablePlay();
 		}
 
-		public void ExtrasMenu(){
-			playMenu.SetActive(false);
-			exitMenu.SetActive(false);
-		}
-
 		public void QuitGame(){
 			#if UNITY_EDITOR
 				UnityEditor.EditorApplication.isPlaying = false;
 			#else
 				Application.Quit();
 			#endif
-		}
-
-		IEnumerator LoadAsynchronously(string sceneName){
-			AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
-			operation.allowSceneActivation = false;
-			mainCanvas.SetActive(false);
-			loadingMenu.SetActive(true);
-
-			while (!operation.isDone)
-			{
-				float progress = Mathf.Clamp01(operation.progress / .95f);
-				loadingBar.value = progress;
-
-				if (operation.progress >= 0.9f && waitForInput)
-				{
-					loadPromptText.text = "Press " + userPromptKey.ToString().ToUpper() + " to continue";
-					loadingBar.value = 1;
-
-					if (Input.GetKeyDown(userPromptKey))
-					{
-						operation.allowSceneActivation = true;
-					}
-				}
-				else if (operation.progress >= 0.9f && !waitForInput)
-				{
-					operation.allowSceneActivation = true;
-				}
-
-				yield return null;
-			}
 		}
 	}
 }

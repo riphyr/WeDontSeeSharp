@@ -15,6 +15,7 @@ namespace MainMenu{
 		public GameObject texturelowtextLINE;
 		public GameObject texturemedtextLINE;
 		public GameObject texturehightextLINE;
+		public TMP_Dropdown ResolutionDropdown;
 
 		[Header("GAME SETTINGS")]
 		public GameObject tooltipstext;
@@ -52,7 +53,7 @@ namespace MainMenu{
 			sensitivityYSlider.GetComponent<Slider>().value = PlayerPrefs.GetFloat("YSensitivity");
 
 			// check full screen
-			fullscreentext.GetComponent<TMP_Text>().text = Screen.fullScreen ? "on" : "off";
+			fullscreentext.GetComponent<TMP_Text>().text = Screen.fullScreen ? "off" : "on";
 			
 			// check tool tips value
 			tooltipstext.GetComponent<TMP_Text>().text = PlayerPrefs.GetInt("ToolTips") == 0 ? "off" : "on";
@@ -65,6 +66,11 @@ namespace MainMenu{
 
 			// check texture quality
 			UpdateTextureSettings();
+			
+			//check resolution
+			int savedResolution = PlayerPrefs.GetInt("Resolution", 0);
+			ResolutionDropdown.value = savedResolution;
+			ApplyResolution(savedResolution);
 		}
 
 		public void Update (){
@@ -74,17 +80,43 @@ namespace MainMenu{
 			
 			ApplyMouseSensitivity();
 		}
-		
+
+		public void SetResolution()
+		{
+			int selectedResolution = ResolutionDropdown.value;
+			ApplyResolution(selectedResolution);
+			PlayerPrefs.SetInt("Resolution", selectedResolution);
+		}
+
+		private void ApplyResolution(int resolutionIndex)
+		{
+			switch (resolutionIndex)
+			{
+				case 0:
+					Screen.SetResolution(1920, 1080, Screen.fullScreen);
+					break;
+				case 1:
+					Screen.SetResolution(1280, 720, Screen.fullScreen);
+					break;
+				case 2:
+					Screen.SetResolution(854, 480, Screen.fullScreen);
+					break;
+				case 3:
+					Screen.SetResolution(640, 360, Screen.fullScreen);
+					break;
+			}
+		}
+			
 		public void ApplyMouseSensitivity() {
 			float mouseSensitivityX = sliderValueXSensitivity * 2.0f;
 			float mouseSensitivityY = sliderValueYSensitivity * 2.0f;
 
-			Vector3 mouseMovement = new Vector3(Input.GetAxis("Mouse X") * mouseSensitivityX, Input.GetAxis("Mouse Y") * mouseSensitivityY);
+			Vector2 mouseMovement = new Vector2(Input.GetAxis("Mouse X") * mouseSensitivityX, Input.GetAxis("Mouse Y") * mouseSensitivityY);
 		}
 
 		public void FullScreen (){
 			Screen.fullScreen = !Screen.fullScreen;
-			fullscreentext.GetComponent<TMP_Text>().text = Screen.fullScreen ? "on" : "off";
+			fullscreentext.GetComponent<TMP_Text>().text = Screen.fullScreen ? "off" : "on";
 		}
 
 		public void MusicSlider (){

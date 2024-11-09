@@ -4,66 +4,88 @@ using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 
+[RequireComponent(typeof(CharacterController))]
 public class PlayerScript : MonoBehaviour
 {
-    public float moveSpeed = 5f;    // Vitesse de déplacement
-    public float jumpForce = 5f;    // Force de saut
+    public float walkSpeed = 5f;    // Vitesse de déplacement
+	public float runSpeed = 12f;
+    public float jumpPower = 5f;    // Force de saut
+	public float gravity = 10f;
+    public float lookSpeed = 2f;
+    public float lookXLimit = 45f;
+    public float defaultHeight = 2f;
+    public float crouchHeight = 1f;
+    public float crouchSpeed = 3f;
     public float groundCheckRadius = 0.5f;  // Rayon pour vérifier le sol
-
-    private Rigidbody rb;
-    private bool isGrounded;
 
     private PhotonView view;
 
+	public Camera playerCamera;
+
+    private bool canMove = true;
+
+	private Vector3 moveDirection = Vector3.zero;
+	private float rotationX = 0;
+    private CharacterController characterController;
+
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
-        view = GetComponent<PhotonView>();
+		characterController = GetComponent<CharacterController>();
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+		if (view.IsMine){
+            playerCamera.gameObject.SetActive(true);
+        }
+        else{
+            playerCamera.gameObject.SetActive(false);
+        }
     }
 
     void Update()
     {
-        if (view.IsMine)
+        Vector3 forward = transform.TransformDirection(Vector3.forward);
+        Vector3 right = transform.TransformDirection(Vector3.right);
+
+        bool isRunning = Input.GetKey(KeyCode.LeftShift);
+        float curSpeedX = canMove ? (isRunning ? runSpeed : walkSpeed) * Input.GetAxis("Vertical") : 0;
+        float curSpeedY = canMove ? (isRunning ? runSpeed : walkSpeed) * Input.GetAxis("Horizontal") : 0;
+        float movementDirectionY = moveDirection.y;
+        moveDirection = (forward * curSpeedX) + (right * curSpeedY);
+
+        if (Input.GetKeyDown(KeyCode.Space) && canMove && characterController.isGrounded)
         {
-            MovePlayer();
-            if (isGrounded) Jump();
+            moveDirection.y = jumpPower;
+        }
+        else
+        {
+            moveDirection.y = movementDirectionY;
+        }
+
+        if (Input.GetKey(KeyCode.LeftControl) && canMove)
+        {
+            characterController.height = crouchHeight;
+            walkSpeed = crouchSpeed;
+            runSpeed = crouchSpeed;
+
+        }
+        else
+        {
+            characterController.height = defaultHeight;
+            walkSpeed = 6f;
+            runSpeed = 12f;
+        }
+
+        characterController.Move(moveDirection * Time.deltaTime);
+
+        if (canMove)
+        {
+            rotationX += -Input.GetAxis("Mouse Y") * lookSpeed;
+            rotationX = Mathf.Clamp(rotationX, -lookXLimit, lookXLimit);
+            playerCamera.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
+            transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * lookSpeed, 0);
         }
     }
 
-    private void MovePlayer()
-    {
-        // Déplacement horizontal (gauche et droite) et vertical (avant et arrière)
-        Vector3 moveDirection = Vector3.zero;
-
-        if (Input.GetKey(KeyCode.W))
-            moveDirection += Vector3.forward;  // Avance
-
-        if (Input.GetKey(KeyCode.S))
-            moveDirection += Vector3.back;     // Recule
-
-        if (Input.GetKey(KeyCode.A))
-            moveDirection += Vector3.left;     // Gauche
-
-        if (Input.GetKey(KeyCode.D))
-            moveDirection += Vector3.right;    // Droite
-
-        // Appliquer le mouvement avec Time.deltaTime pour un déplacement fluide
-        transform.Translate(moveDirection * moveSpeed * Time.deltaTime, Space.World);
-    }
-
-    private void Jump()
-    {
-        // Vérifie si la touche Space est appuyée
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-            isGrounded = false;  // Désactiver le saut jusqu'à ce que le joueur touche à nouveau le sol
-        }
-    }
-
-    private void FixedUpdate()
-    {
-        // Utilise un SphereCast pour détecter le sol
-        isGrounded = Physics.SphereCast(transform.position, groundCheckRadius, Vector3.down, out _, 1f);
-    }
+    
 }
