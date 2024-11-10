@@ -1,0 +1,1 @@
+Mettre la caméra en haut du cylindre et créer un Empty  pour le ground check et le mettre en dessous du cylindre.
