@@ -8,12 +8,17 @@ public class SpawnPlayers : MonoBehaviour
 {
     public GameObject playerPrefab;
     
-    public float minX, maxX, minY, maxY, minZ, maxZ;
-
     private void Start()
     {
-        Vector3 randomPosition = new Vector3(Random.Range(minX, maxX), Random.Range(minY, maxY), Random.Range(minZ, maxZ));
-        PhotonNetwork.Instantiate(playerPrefab.name, randomPosition, Quaternion.identity);
+        // Définition du spawnpoint
+        Vector3 Position = new Vector3(0, 1, 0);
+        // Instanciation du prefab du joueur
+        GameObject myPlayer = (GameObject) PhotonNetwork.Instantiate(playerPrefab.name, Position, Quaternion.identity);
+        
+        // Activation de la camera et des mouvements locaux
+        ((MonoBehaviour)myPlayer.GetComponent("PlayerScript")).enabled = true;
+        myPlayer.transform.Find("Main Camera").gameObject.SetActive(true);
+        
     }
     
 }

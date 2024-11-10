@@ -36,7 +36,7 @@ namespace MainMenu{
 		
 
 		public void  Start (){
-			// check difficulty
+			// Verification de la difficulté
 			if(PlayerPrefs.GetInt("NormalDifficulty") == 1){
 				difficultynormaltextLINE.gameObject.SetActive(true);
 				difficultyhardcoretextLINE.gameObject.SetActive(false);
@@ -47,27 +47,27 @@ namespace MainMenu{
 				difficultynormaltextLINE.gameObject.SetActive(false);
 			}
 
-			// check slider values
+			// Vérification des sliders
 			musicSlider.GetComponent<Slider>().value = PlayerPrefs.GetFloat("MusicVolume");
 			sensitivityXSlider.GetComponent<Slider>().value = PlayerPrefs.GetFloat("XSensitivity");
 			sensitivityYSlider.GetComponent<Slider>().value = PlayerPrefs.GetFloat("YSensitivity");
 
-			// check full screen
+			// Vérification du fullscreen
 			fullscreentext.GetComponent<TMP_Text>().text = Screen.fullScreen ? "off" : "on";
 			
-			// check tool tips value
+			// Vérification des tooltips
 			tooltipstext.GetComponent<TMP_Text>().text = PlayerPrefs.GetInt("ToolTips") == 0 ? "off" : "on";
 
-			// check shadow settings
+			// Vérification des ombres
 			UpdateShadowSettings();
 
-			// check vsync
+			// Vérification de la Vsync
 			vsynctext.GetComponent<TMP_Text>().text = QualitySettings.vSyncCount == 0 ? "off" : "on";
 
-			// check texture quality
+			// Vérification des qualités textures
 			UpdateTextureSettings();
 			
-			//check resolution
+			// Vérification de la résolution
 			int savedResolution = PlayerPrefs.GetInt("Resolution", 0);
 			ResolutionDropdown.value = savedResolution;
 			ApplyResolution(savedResolution);
@@ -110,8 +110,9 @@ namespace MainMenu{
 		public void ApplyMouseSensitivity() {
 			float mouseSensitivityX = sliderValueXSensitivity * 2.0f;
 			float mouseSensitivityY = sliderValueYSensitivity * 2.0f;
-
-			Vector2 mouseMovement = new Vector2(Input.GetAxis("Mouse X") * mouseSensitivityX, Input.GetAxis("Mouse Y") * mouseSensitivityY);
+			
+			PlayerPrefs.SetFloat("sensitivityX", mouseSensitivityX);
+			PlayerPrefs.SetFloat("sensitivityY", mouseSensitivityY);
 		}
 
 		public void FullScreen (){
@@ -135,7 +136,7 @@ namespace MainMenu{
 		public void ToolTips (){
 			int currentState = PlayerPrefs.GetInt("ToolTips");
 			PlayerPrefs.SetInt("ToolTips", 1 - currentState);
-			tooltipstext.GetComponent<TMP_Text>().text = currentState == 0 ? "on" : "off";
+			tooltipstext.GetComponent<TMP_Text>().text = currentState == 0 ? "off" : "on";
 		}
 		
 		// Update Shadow Quality
@@ -195,14 +196,12 @@ namespace MainMenu{
 			difficultyhardcoretextLINE.gameObject.SetActive(false);
 			difficultynormaltextLINE.gameObject.SetActive(true);
 			PlayerPrefs.SetInt("NormalDifficulty",1);
-			PlayerPrefs.SetInt("HardCoreDifficulty",0);
 		}
 
 		public void HardcoreDifficulty (){
 			difficultyhardcoretextLINE.gameObject.SetActive(true);
 			difficultynormaltextLINE.gameObject.SetActive(false);
 			PlayerPrefs.SetInt("NormalDifficulty",0);
-			PlayerPrefs.SetInt("HardCoreDifficulty",1);
 		}
 
 		public void ShadowsOff (){

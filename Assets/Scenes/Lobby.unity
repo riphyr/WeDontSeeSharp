@@ -2335,7 +2335,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -709.0001, y: 306.00003}
+  m_AnchoredPosition: {x: -694.9998, y: 306.00003}
   m_SizeDelta: {x: 461, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &596227018
@@ -2516,7 +2516,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 3.9999843, y: -696.60004}
+  m_AnchoredPosition: {x: -0.00003127207, y: -728}
   m_SizeDelta: {x: 466.6, y: 93}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &655641585
@@ -4090,7 +4090,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 293.00012, y: -101.49999}
+  m_AnchoredPosition: {x: 293.00012, y: -62}
   m_SizeDelta: {x: 586, y: 203}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1111949516
@@ -4893,7 +4893,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -920.7, y: 46.2}
+  m_AnchoredPosition: {x: -906.6997, y: 46.2}
   m_SizeDelta: {x: 76.69, y: 76.69}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1322557183
@@ -5430,7 +5430,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -915.7, y: -412.7}
+  m_AnchoredPosition: {x: -906.6997, y: -446.4}
   m_SizeDelta: {x: 84.4, y: 84.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1539323994
@@ -5623,7 +5623,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -709.0003, y: 198.00002}
+  m_AnchoredPosition: {x: -695, y: 198.00002}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1605843260
@@ -5688,8 +5688,8 @@ Camera:
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 58.63259
-  orthographic: 0
-  orthographic size: 5
+  orthographic: 1
+  orthographic size: 11
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -5714,7 +5714,7 @@ Transform:
   m_GameObject: {fileID: 1605843260}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -21.948483, y: 15.2491255, z: -40.630867}
+  m_LocalPosition: {x: -21.948483, y: 15.2491255, z: -37.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
