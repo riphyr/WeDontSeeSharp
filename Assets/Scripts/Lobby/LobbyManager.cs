@@ -12,6 +12,9 @@ namespace Lobby{
         public GameObject createMenu; 
         public GameObject joinMenu;
         
+        [Header("WARNING")] 
+        public GameObject errorMessage;
+        
         [Header("HIGHLIGHT")] 
         public GameObject lineCreate;
         public GameObject lineJoin;
@@ -30,6 +33,7 @@ namespace Lobby{
 			createMenu.SetActive(false);
 			joinMenu.SetActive(false);
 			evolvingDetails.SetActive(false);
+			errorMessage.SetActive(false);
 			
 			if(PlayerPrefs.GetInt("NormalDifficultyMulti") == 1){
 				difficultynormaltextLINE.gameObject.SetActive(true);
@@ -62,6 +66,7 @@ namespace Lobby{
 			joinMenu.SetActive(false);
 			lineJoin.SetActive(false);
 			evolvingDetails.SetActive(true);
+			errorMessage.SetActive(false);
 		}
 		
 		public void JoinMenuSelected()
@@ -71,6 +76,9 @@ namespace Lobby{
 			joinMenu.SetActive(true);
 			lineJoin.SetActive(true);
 			evolvingDetails.SetActive(true);
+			
+			if (!joinMenu.activeSelf)
+				errorMessage.SetActive(false);
 		}
 
 		public void LoadScene(string scene){
