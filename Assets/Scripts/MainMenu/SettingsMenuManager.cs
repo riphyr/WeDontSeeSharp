@@ -15,6 +15,7 @@ namespace MainMenu{
 		public GameObject texturelowtextLINE;
 		public GameObject texturemedtextLINE;
 		public GameObject texturehightextLINE;
+		public TMP_Dropdown ResolutionDropdown;
 
 		[Header("GAME SETTINGS")]
 		public GameObject tooltipstext;
@@ -35,7 +36,7 @@ namespace MainMenu{
 		
 
 		public void  Start (){
-			// check difficulty
+			// Verification de la difficulté
 			if(PlayerPrefs.GetInt("NormalDifficulty") == 1){
 				difficultynormaltextLINE.gameObject.SetActive(true);
 				difficultyhardcoretextLINE.gameObject.SetActive(false);
@@ -46,25 +47,30 @@ namespace MainMenu{
 				difficultynormaltextLINE.gameObject.SetActive(false);
 			}
 
-			// check slider values
+			// Vérification des sliders
 			musicSlider.GetComponent<Slider>().value = PlayerPrefs.GetFloat("MusicVolume");
 			sensitivityXSlider.GetComponent<Slider>().value = PlayerPrefs.GetFloat("XSensitivity");
 			sensitivityYSlider.GetComponent<Slider>().value = PlayerPrefs.GetFloat("YSensitivity");
 
-			// check full screen
-			fullscreentext.GetComponent<TMP_Text>().text = Screen.fullScreen ? "on" : "off";
+			// Vérification du fullscreen
+			fullscreentext.GetComponent<TMP_Text>().text = Screen.fullScreen ? "off" : "on";
 			
-			// check tool tips value
+			// Vérification des tooltips
 			tooltipstext.GetComponent<TMP_Text>().text = PlayerPrefs.GetInt("ToolTips") == 0 ? "off" : "on";
 
-			// check shadow settings
+			// Vérification des ombres
 			UpdateShadowSettings();
 
-			// check vsync
+			// Vérification de la Vsync
 			vsynctext.GetComponent<TMP_Text>().text = QualitySettings.vSyncCount == 0 ? "off" : "on";
 
-			// check texture quality
+			// Vérification des qualités textures
 			UpdateTextureSettings();
+			
+			// Vérification de la résolution
+			int savedResolution = PlayerPrefs.GetInt("Resolution", 0);
+			ResolutionDropdown.value = savedResolution;
+			ApplyResolution(savedResolution);
 		}
 
 		public void Update (){
@@ -74,17 +80,44 @@ namespace MainMenu{
 			
 			ApplyMouseSensitivity();
 		}
-		
+
+		public void SetResolution()
+		{
+			int selectedResolution = ResolutionDropdown.value;
+			ApplyResolution(selectedResolution);
+			PlayerPrefs.SetInt("Resolution", selectedResolution);
+		}
+
+		private void ApplyResolution(int resolutionIndex)
+		{
+			switch (resolutionIndex)
+			{
+				case 0:
+					Screen.SetResolution(1920, 1080, Screen.fullScreen);
+					break;
+				case 1:
+					Screen.SetResolution(1280, 720, Screen.fullScreen);
+					break;
+				case 2:
+					Screen.SetResolution(854, 480, Screen.fullScreen);
+					break;
+				case 3:
+					Screen.SetResolution(640, 360, Screen.fullScreen);
+					break;
+			}
+		}
+			
 		public void ApplyMouseSensitivity() {
 			float mouseSensitivityX = sliderValueXSensitivity * 2.0f;
 			float mouseSensitivityY = sliderValueYSensitivity * 2.0f;
-
-			Vector3 mouseMovement = new Vector3(Input.GetAxis("Mouse X") * mouseSensitivityX, Input.GetAxis("Mouse Y") * mouseSensitivityY);
+			
+			PlayerPrefs.SetFloat("sensitivityX", mouseSensitivityX);
+			PlayerPrefs.SetFloat("sensitivityY", mouseSensitivityY);
 		}
 
 		public void FullScreen (){
 			Screen.fullScreen = !Screen.fullScreen;
-			fullscreentext.GetComponent<TMP_Text>().text = Screen.fullScreen ? "on" : "off";
+			fullscreentext.GetComponent<TMP_Text>().text = Screen.fullScreen ? "off" : "on";
 		}
 
 		public void MusicSlider (){
@@ -103,7 +136,7 @@ namespace MainMenu{
 		public void ToolTips (){
 			int currentState = PlayerPrefs.GetInt("ToolTips");
 			PlayerPrefs.SetInt("ToolTips", 1 - currentState);
-			tooltipstext.GetComponent<TMP_Text>().text = currentState == 0 ? "on" : "off";
+			tooltipstext.GetComponent<TMP_Text>().text = currentState == 0 ? "off" : "on";
 		}
 		
 		// Update Shadow Quality
@@ -163,14 +196,12 @@ namespace MainMenu{
 			difficultyhardcoretextLINE.gameObject.SetActive(false);
 			difficultynormaltextLINE.gameObject.SetActive(true);
 			PlayerPrefs.SetInt("NormalDifficulty",1);
-			PlayerPrefs.SetInt("HardCoreDifficulty",0);
 		}
 
 		public void HardcoreDifficulty (){
 			difficultyhardcoretextLINE.gameObject.SetActive(true);
 			difficultynormaltextLINE.gameObject.SetActive(false);
 			PlayerPrefs.SetInt("NormalDifficulty",0);
-			PlayerPrefs.SetInt("HardCoreDifficulty",1);
 		}
 
 		public void ShadowsOff (){
