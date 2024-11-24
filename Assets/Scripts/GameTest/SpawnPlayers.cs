@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
+using PauseMenu;
 
 public class SpawnPlayers : MonoBehaviour
 {
@@ -16,9 +17,16 @@ public class SpawnPlayers : MonoBehaviour
         GameObject myPlayer = (GameObject) PhotonNetwork.Instantiate(playerPrefab.name, Position, Quaternion.identity);
         
         // Activation de la camera et des mouvements locaux
-        ((MonoBehaviour)myPlayer.GetComponent("PlayerScript")).enabled = true;
-        myPlayer.transform.Find("Main Camera").gameObject.SetActive(true);
+        GameObject player = myPlayer.transform.Find("Player").gameObject;
+        PlayerScript playerScript = player.GetComponent<PlayerScript>();
+        playerScript.enabled = true;
         
+        GameObject pauseMenu = myPlayer.transform.Find("Pause_Menu").gameObject;
+        PauseMenuManager pauseMenuScript = pauseMenu.GetComponent<PauseMenuManager>();
+        pauseMenuScript.enabled = true;
+        
+        GameObject mainCamera = player.transform.Find("Main Camera").gameObject;
+        mainCamera.SetActive(true);
     }
     
 }
