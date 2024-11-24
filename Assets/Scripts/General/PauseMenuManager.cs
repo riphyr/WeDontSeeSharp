@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 using TMPro;
+using Photon.Pun;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 
@@ -176,12 +177,30 @@ namespace PauseMenu{
         	Cursor.visible = false;
 		}
 
-		public void LoadScene(string scene){
-			if(scene != "")
-			{
-				SceneManager.LoadSceneAsync(scene);
-			}
-		}
+		public void LoadScene(string scene)
+    	{
+        	if (scene != "")
+        	{
+            	if (PhotonNetwork.IsConnected)
+            	{
+                	PhotonNetwork.Disconnect();
+                	StartCoroutine(WaitForDisconnectAndLoadScene(scene));
+            	}
+            	else
+            	{
+                	SceneManager.LoadSceneAsync(scene);
+            	}
+        	}
+    	}
+
+    	private IEnumerator WaitForDisconnectAndLoadScene(string scene)
+    	{
+        	while (PhotonNetwork.IsConnected)
+        	{
+            	yield return null;
+        	}
+        	SceneManager.LoadSceneAsync(scene);
+    	}
 
 		public void SettingButton(){
 			settingsCanva.SetActive(true);

@@ -21,6 +21,7 @@ public class PlayerScript : MonoBehaviour
 	[Header("ELEMENTS")]
 	public Camera playerCamera;					// GameObject relié à la caméra
 	public GameObject character;				// GameObject relié au prefab du joueur
+	public Animator animator;					// Controller pour les animations
 
 	[Header("MENUS")]
 	public GameObject pauseObject;				// Menu de pause
@@ -52,7 +53,7 @@ public class PlayerScript : MonoBehaviour
     {
 		// Test s'appliquant uniquement pour le joueur local
         if (view.IsMine)
-        {
+        {		
             // Vérification si le joueur est autorisé à bouger
         	if (canMove && Cursor.lockState == CursorLockMode.Locked)
         	{
@@ -62,7 +63,7 @@ public class PlayerScript : MonoBehaviour
             	rotationX += -Input.GetAxis("Mouse Y") * lookSensitivityX;												// Detection du mouvement Y de souris
             	rotationX = Mathf.Clamp(rotationX, -lookXLimit, lookXLimit);											// Blocage du mouvement Y selon les paramètres prédéfinis
             	playerCamera.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);								// Déplacement de la camera selon les mouvements de la souris
-            	character.transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * lookSensitivityY, 0);		// Rotation du joueur pour suivre les mouvements camera
+            	character.transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * lookSensitivityY, 0);	// Rotation du joueur pour suivre les mouvements camera
         	}
 	        else
 	        {
@@ -125,6 +126,9 @@ public class PlayerScript : MonoBehaviour
 
         // Déplacement du joueur selon les entrées
         transform.Translate(moveDirection * currentSpeed * Time.deltaTime, Space.World);
+
+		//Update des animations
+		UpdateAnimatorParameters(moveDirection, isRunning);
     }
 
 	// Fonction de saut
@@ -137,6 +141,7 @@ public class PlayerScript : MonoBehaviour
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);			// Force appliquée vers le haut
             isGrounded = false;  											// Désactivation temporaire de la capacité de saut
         }
+
     }
 
 	// Fonction d'extraction de touche
@@ -150,4 +155,44 @@ public class PlayerScript : MonoBehaviour
         // Check constant si le joueur est au sol
         isGrounded = Physics.SphereCast(transform.position, groundCheckRadius, Vector3.down, out _, 1f);
     }
+
+	private void UpdateAnimatorParameters(Vector3 moveDirection, bool isRunning)
+	{
+    	// Initialisation
+    	int moveX = 0;
+    	int moveY = 0;
+
+    	// Vérification des touches directionnelles
+    	bool isMovingForward = Input.GetKey(GetKeyCodeFromString(PlayerPrefs.GetString("Forward", "None")));
+    	bool isMovingBackward = Input.GetKey(GetKeyCodeFromString(PlayerPrefs.GetString("Backward", "None")));
+    	bool isMovingLeft = Input.GetKey(GetKeyCodeFromString(PlayerPrefs.GetString("Left", "None")));
+    	bool isMovingRight = Input.GetKey(GetKeyCodeFromString(PlayerPrefs.GetString("Right", "None")));
+
+    	// Détection du sprint
+    	bool isCurrentlyRunning = Input.GetKey(GetKeyCodeFromString(PlayerPrefs.GetString("Sprint", "None")));
+
+    	// Calcul de la valeur directionnelle
+    	if (isMovingForward)
+    	{
+        moveY = isCurrentlyRunning ? 2 : 1; // Course = 2, marche = 1
+    	}
+    	else if (isMovingBackward)
+    	{
+        	moveY = isCurrentlyRunning ? -2 : -1; // Course = -2, marche = -1
+    	}
+
+    	if (isMovingLeft)
+    	{
+        	moveX = isCurrentlyRunning ? -2 : -1; // Course = -2, marche = -1
+    	}
+    	else if (isMovingRight)
+    	{
+        	moveX = isCurrentlyRunning ? 2 : 1; // Course = 2, marche = 1
+    	}
+
+    	// Envoie les valeurs à l'animation animator pour gérer les transitions
+    	animator.SetFloat("Sides", moveX); // Déplacement latéral
+    	animator.SetFloat("Front/Back", moveY); // Déplacement avant/arrière
+    	animator.SetBool("isRunning", isCurrentlyRunning); // Détection du sprint
+	}
 }
