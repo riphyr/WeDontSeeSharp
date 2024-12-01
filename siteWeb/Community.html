@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About us</title>
+    <link rel="stylesheet" href="styleCommunity.css"/>
+    <link rel="icon" href = "Logo_cartes.webp">
+</head>
+<body>
+    <header>
+        <nav class = "navbar">
+            <img class="logo" src="Logo_cartes.webp" alt="logo">
+            <div class ="wrapper">
+                <ul>
+                    <li><a class="a" href="index.html">HOME</a></li>
+                    <li><a class="a" href="Aboutus.html">ABOUT US</a></li>
+                    <li><a class="community" href="Community.html">COMMUNITY</a></li>
+                    <li><a class="a" href="Thegame.html">THE GAME</a></li>
+                
+                </ul>   
+            </div>  
+            <img src="white-menu-icon-png-18.jpg" alt="menu" class="menu-hamburger">
+        </nav>
+    <section class="intro">
+        <h2>Welcome to our community, or good luck...</h2>
+        <div class = "image">
+            <img src="Main_menu.webp" alt="design" style="width:30%">
+            <img src="Main_menu.webp" alt="design" style="width:30%">
+            <img src="Main_menu.webp" alt="design" style="width:30%">
+        </div>
+        <p>
+            Join us to discuss, share and learn together. Our community is open to anyone who wants to participate (or die).</p>
+    </section>
+    
+
+
+</body>
+<script>
+    const hamburger = document.querySelector('.menu-hamburger');
+    const wrapper = document.querySelector('.wrapper');
+  
+    // Toggle le menu mobile
+    hamburger.addEventListener('click', () => {
+    wrapper.classList.toggle('mobile-menu');
+  });
+  </script>
+</html>

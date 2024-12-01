@@ -1,0 +1,337 @@
+°{
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    list-style: none;
+}
+body{
+    background-image: url('Sketches\ \(1\).jpeg'); /* Lien vers l'image */
+    background-size: 100%;
+    background-size: center;/*Centre l'image */
+    height: 1000px;
+    background-attachment: fixed;
+    /* Fixe l'image lorsqu'on défile la page */
+      /*Assure que le body prend toute la hauteur de la fenêtre 
+    margin: 0;*/
+}
+
+
+header{
+    height: 100vh;
+    width: 10vw;
+}
+.navbar{
+    position: absolute;/* Fixe la barre en haut */
+    top: 0; /* Positionne-la en haut de la page */
+    left: 0; /* Alignée à gauche */
+    width: 100%; /* Largeur à 100% de l'écran */
+    background-color: rgba(0, 0, 0, 0.229);  /*Couleur de fond */
+    z-index: 1000; /* Assure que la barre reste au-dessus du contenu */
+    padding: 30px 0;
+    font-family: 'Roboto';
+}
+
+.navbar a {
+    text-decoration: none; /* Supprime le souligné */
+            color: white; /* Couleur du texte */
+            font-size: 18px;
+            font-family: 'Roboto';
+            padding: 10px 40px;
+            transition: background-color 0.3s;
+
+}
+.navbar .logo {
+    position: absolute;
+    top: 10px;
+    font-weight: bold;
+    left: 20px;
+    width: 4%;
+}
+.navbar .menu-hamburger{
+    display: none;
+    position: absolute;
+    top: 5px;
+    font-weight: bold;
+    width: 60px;
+    margin-right: 20px;
+  }
+
+
+.navbar .wrapper ul {
+    list-style-type: none; /* Supprime les puces */
+            margin: 0;
+            padding: 0;
+            text-align: center;
+  }
+  
+
+.navbar .wrapper ul li {
+    display: inline; /* Affiche les éléments en ligne */
+    margin-right: 60px;
+}
+.navbar ul li a:hover {
+    background-color: #555;}
+
+
+
+h1 {
+    position: absolute;
+    font-size: 50px;
+    text-transform: uppercase;
+    top: 20%;
+    left: 50%; 
+    text-align: center;
+    transform: translate(-50%, -50%);
+    letter-spacing: 2px;
+    color: rgb(255, 255, 255);
+    text-shadow: 3px 3px 5px rgba(100, 100, 100, 0.764); 
+    font-family: 'Who asks Satan';/* Ombre de texte rouge */
+}
+.p1 {
+    position: absolute;
+    font-size: 25px;
+    padding: 30px;
+    top: 35%;
+    left: 50%;
+    padding: 30px 40px;
+    transform: translate(-50%, -50%);
+    text-align: center; 
+    color: #f4f4f4;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    font-family: 'Who asks Satan'; /* Ombre de texte noire */
+}
+
+button {
+    position: absolute;
+    top: 50%; /* Positionner à 50% du haut de la fenêtre */
+    left: 50%; /* Positionner à 50% du côté gauche de la fenêtre */
+    transform: translate(-50%, -50%);
+    display: flex;  /* Centrer verticalement */
+    background-color: #4e0303; /* Rouge */
+    color: white;
+    border: none;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 20px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 8px;/* Coins arrondis */
+}
+
+button:hover {
+    background-color: darkred;
+}
+html {
+    box-sizing: border-box;
+  }
+  
+  *, *:before, *:after {
+    box-sizing: inherit;
+  }
+
+  
+  .column {
+    float: left;
+    width: 33.3%;
+    margin-bottom: 16px;
+    padding: 0 8px;
+    font-family: 'Roboto';
+  
+  }
+  
+  .card {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.625);
+    margin: 8px;
+    background-color: #000;
+    height: 700px;
+    overflow: hidden;
+    border-radius: 8px;
+  }
+  
+  .about-section {
+    padding: 50px;
+    text-align: center;
+    color: white;
+    font-family: 'Roboto' ;
+    font-size: 30px;
+  }
+  
+  .container {
+    padding: 0 16px;
+  }
+  
+  .container::after, .row::after {
+    content: "";
+    clear: both;
+    display: table;
+  }
+
+  img{
+    display: block;
+  margin-left: auto;
+  margin-right: auto;
+  }
+  
+  .title {
+    color: grey;
+    text-align: center;
+
+  }
+
+  .h22{
+    color: rgb(255, 254, 254);
+    text-align: center;
+  }
+
+
+  .info{
+    color : white;
+    font-family: 'Roboto';
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .button {
+    border: none;
+    outline: 0;
+    display: inline-block;
+    padding: 8px;
+    color: white;
+    background-color: #000;
+    text-align: center;
+    cursor: pointer;
+    width: 100%;
+    margin-top: auto;
+  }
+  
+  .button:hover {
+    background-color: #555;
+  }
+  .navbar .menu-hamburger{
+    right: 0%;
+  }
+
+
+
+@media (max-width: 768px) {
+    body {
+        background-image: url('IMG_2555.jpg'); /* Image pour les tablettes */
+    } 
+}
+
+/* Media query pour les écrans petits (smartphones) */
+@media (max-width: 480px) {
+    body {
+        background-image: url('IMG_2555.jpg'); /* Image pour les smartphones */
+    }
+    .navbar .wrapper{
+        display : none;
+    }
+    .navbar .menu-hamburger{
+        display:block;
+    }
+
+}
+
+@media (max-width: 1200px) {
+        .navbar .logo {
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            width: 4%;
+        }
+        .navbar .menu-hamburger {
+            display: block;
+            cursor: pointer;
+            z-index: 1000;
+        }
+        .wrapper {
+            position: absolute; /* L'élément sort du flux */
+            left: 0;
+            margin-left: -100%;
+            transition: margin-left 0.5s ease-in-out;
+        }
+        .wrapper.mobile-menu {
+            width: 100%;
+            margin-left: 0;
+            background-color: rgba(0, 0, 0, 0.56);
+            backdrop-filter: blur(7px);
+            height: 100vh;
+            flex-direction: column;
+            align-items: center;
+        }
+        .wrapper ul li a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            font-size: 2rem;
+            margin: 20px 0;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }
+    
+        .wrapper a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        h1{
+            font-size: 30px;
+        }
+        .p1{
+            font-size: 25px;
+        }
+        .button{
+            width: 80%;
+        }
+        
+        body {
+            background-image: url('IMG_2555.jpg'); /* Image pour les smartphones */
+            background-size: cover; /* Ajuste l'image pour qu'elle couvre tout l'écran */
+            background-position: center;
+        }
+}
+
+
+/*@media screen and (max-width: 900px){
+    .navbar{
+        padding: 0;
+    }
+    .navbar .logo {
+        position: absolute;
+        top: 0;
+        left: 1px;
+        width: 5%;
+    }
+    .navbar .menu{
+        display: block;
+    }
+    .wrapper{
+        position: absolute;
+        background-color: rgba(255, 255, 255, 0.203);
+        backdrop-filter: blur(7px);
+        width: 100%;
+        height: 100vh;
+        top: 0;
+        left: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: -100%;
+        transition: all 0.5s ease;
+    }
+
+    .wrapper .mobile-menu{
+        margin-left: 0;
+    }
+
+    .wrapper ul {
+        display: flex;
+        flex-direction: column;
+        align-items: center ;
+    } 
+    .navbar .wrapper ul li {
+        margin: 25px 0;
+        font-size: 1.2em;
+    }
+}*/
+

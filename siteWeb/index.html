@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="icon" href = "Logo_cartes.webp">
+    <link rel="stylesheet" href="style.css"/>
+    <style type="text/css">a:link{text-decoration:none}</style>
+</head>
+<body>
+    <header>
+        <nav class = "navbar">
+            <img class="logo" src="Logo_cartes.webp" alt="logo">
+            <div class ="wrapper">
+                <ul>
+                    <li><a class="home" href="index.html">HOME</a></li>
+                    <li><a class="a" href="Aboutus.html">ABOUT US</a></li>
+                    <li><a class="a" href="Community.html">COMMUNITY</a></li>
+                    <li><a class="a" href="Thegame.html">THE GAME</a></li>
+                
+                </ul>   
+            </div>  
+            <img src="white-menu-icon-png-18.jpg" alt="menu" class="menu-hamburger">
+        </nav>
+
+    </header>
+    <div clas="homecontainer">
+        <h1>Welcome to horror...WE DON'T SEE SHARP</h1>
+        <p class="p1">Dare to click on this button ?</p>
+        <button id="soundButton">DOWNLOAD</button>
+    </div>
+    <audio id="buttonSound">
+        <source src="evil-laugh-multi-34044.mp3" type="audio/mpeg">
+        Votre navigateur ne supporte pas l'audio HTML5.
+    </audio>
+
+    <script src="script.js"></script>
+<!--
+    <h2 ></h2>
+      <div class="row">
+        <div class="column">
+          <div class="card">
+            <img src="Logo_Lune.webp" alt="img" style="width:50%">
+            <div class="container">
+              <h2 class="h22">Are you brave?</h2>
+              <p class="title"> Join us for the thrill!!!</p>
+              <p class="info"> </p>
+            </div>
+            
+          </div>
+        </div>
+      
+        <div class="column">
+          <div class="card">
+            <img src="Logo_Lune.webp" alt="img" style="width:50%">
+            <div class="container">
+              <h2 class="h22">Play alone or with friends!</h2>
+              <p class="title">Face th horror together</p>
+              <p class="info">Only teamwork will uncover the darkest secrets and help you survive the nightmares lurking within. Meet your for a terrifed night.</p>
+            
+            </div>
+          </div>
+        </div>
+      
+        <div class="column">
+          <div class="card">
+            <img src="Logo_Lune.webp" alt="img" style="width:50%">
+            <div class="container">
+              <h2 class="h22">Do you like poker ?</h2>
+              <p class="title"></p>
+              <p class="info"></p>
+              
+            </div>
+          </div>
+        </div>
+      </div> -->
+    <footer>
+        <a class="footer">
+            Contact us :)
+            Sound Effect by <a href="https://pixabay.com/fr/users/freesound_community-46691455/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=34044">freesound_community</a> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=34044">Pixabay</a>
+        </a>
+    </footer>
+</body>
+<script>
+    const hamburger = document.querySelector('.menu-hamburger');
+    const wrapper = document.querySelector('.wrapper');
+
+    // Toggle le menu mobile
+    hamburger.addEventListener('click', () => {
+    wrapper.classList.toggle('mobile-menu');
+});
+</script>
+</html>

@@ -1,0 +1,151 @@
+body{
+    background-image: url('IMG_25551.jpg'); /* Lien vers l'image */
+    background-size: 100%;
+    background-size: center;/*Centre l'image */
+    /*height: 1000px;*/
+    background-attachment: fixed;
+    height: 100vh;
+}
+header{
+    height: 10vh;
+    width: 10vw;
+}
+.navbar{
+     position: absolute;/* Fixe la barre en haut */
+            top: 0; /* Positionne-la en haut de la page */
+            left: 0; /* Alignée à gauche */
+            width: 100%; /* Largeur à 100% de l'écran */
+            background-color: rgba(0, 0, 0, 0.229);  /*Couleur de fond */
+            z-index: 1000; /* Assure que la barre reste au-dessus du contenu */
+            padding: 30px 0;
+}
+
+.navbar .a {
+    text-decoration: none; /* Supprime le souligné */
+            color: white; /* Couleur du texte */
+            font-size: 18px;
+            font-family: 'Roboto';
+            padding: 10px 40px;
+            transition: background-color 0.3s;
+
+}
+.navbar .logo {
+    position: absolute;
+    top: 10px;
+    font-weight: bold;
+    left: 20px;
+    width: 4%;
+}
+.navbar .menu-hamburger{
+    display: none;
+    position: absolute;
+    top: 5px;
+    font-weight: bold;
+    width: 60px;
+    margin-right: 20px;
+  }
+.community{
+    text-decoration: none;
+    color : rgb(98, 0, 0) ;
+    font-size: 18px;
+    font-family: 'Roboto';
+    padding: 10px 40px;
+    transition: background-color 0.3s;
+}
+
+.navbar .wrapper ul {
+    list-style-type: none; /* Supprime les puces */
+            margin: 0;
+            padding: 0;
+            text-align: center;
+  }
+  
+
+.navbar .wrapper ul li {
+    display: inline; /* Affiche les éléments en ligne */
+    margin-right: 60px;
+}
+.navbar ul li .a:hover {
+    background-color: #555;}
+
+.navbar .menu{
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    width: 35px;
+}
+.intro{
+    position: absolute;
+    font-size: 25px;
+    padding: 30px;
+    padding: 80px 40px;
+    color: #f4f4f4;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    font-family: 'Roboto';
+}
+
+.image{
+    /*text-align: center;
+    margin : auto;*/
+    display : flex;
+    justify-content: center;
+}
+
+.image img{
+    padding-right: 20px;
+}
+.navbar .menu-hamburger{
+    right: 0%;
+  } 
+
+@media (max-width: 1200px) {
+
+    body {
+        background-image: url('IMG_25551.jpg'); /* Image pour les smartphones */
+    }
+    
+    .navbar .logo {
+      position: absolute;
+      top: 10px;
+      left: 20px;
+      width: 4%;
+    }
+    .navbar .menu-hamburger {
+      display: block;
+      cursor: pointer;
+      z-index: 1000;
+    }
+    .wrapper {
+          position: absolute; /* L'élément sort du flux */
+          left: 0;
+          margin-left: -100%;
+          transition: margin-left 0.5s ease-in-out;
+      }
+      .wrapper.mobile-menu {
+          width: 100%;
+          margin-left: 0;
+          background-color: rgba(0, 0, 0, 0.56);
+          backdrop-filter: blur(7px);
+          height: 100vh;
+          flex-direction: column;
+          align-items: center;
+      }
+      .wrapper ul li .a{
+        font-size: 2rem;
+        color: white;
+      }
+      .wrapper ul li a {
+          display: block;
+          color: rgb(98, 0, 0);
+          text-decoration: none;
+          font-size: 2rem;
+          margin: 20px 0;
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+      }
+  
+      .wrapper a:hover {
+          background-color: rgba(255, 255, 255, 0.2);
+      }
+
+}

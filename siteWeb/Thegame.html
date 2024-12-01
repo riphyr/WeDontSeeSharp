@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="icon" href = "Logo_cartes.webp">
+    <link rel="stylesheet" href="Thegamestyle.css"/>
+    <style type="text/css">a:link{text-decoration:none}</style>
+</head>
+<body>
+    <header>
+        <nav class = "navbar">
+            <img class="logo" src="Logo_cartes.webp" alt="logo">
+            <div class ="wrapper">
+                <ul>
+                    <li><a class="a" href="index.html">HOME</a></li>
+                    <li><a class="a" href="Aboutus.html">ABOUT US</a></li>
+                    <li><a class="a" href="Community.html">COMMUNITY</a></li>
+                    <li><a class="game" href="Thegame.html">THE GAME</a></li>
+                
+                </ul>   
+            </div>  
+            <img src="white-menu-icon-png-18.jpg" alt="menu" class="menu-hamburger">
+        </nav>
+
+    </header>
+    <section class="intro">
+        <img class ="jeu" src="Main_menu.webp" alt="jeu" style="width:30%">
+            <div class="container">
+                <h2>What's We Don't See Sharp?</h2>
+                <p class="title"> 
+                On Halloween night, under a pale moon that seemed to watch their every move, a group of daring friends decided to celebrate the night of frights in the most forbidden way: urban exploration. Their laughter echoed in the darkness as they ventured deeper into an abandoned, forgotten district.
+                That’s when they stumbled upon something unexpected: the eerie entrance to a derelict underground club. The air around it felt icy, heavy with an undefinable stench—a silent warning, perhaps. Yet curiosity, or some unseen force, drove them to cross the threshold.
+                Inside, the atmosphere was thick, suffocating. The walls seemed to ooze forgotten memories, and shadows danced where no light should exist. As they ventured further, their laughter fell silent. And then they saw it—something indescribable. Something that should not be.
+                That night, they would learn that some places do not forgive trespassers. What they saw would scar them forever. Or perhaps not for long... because tonight, the line between their life and their death might just vanish.
+                </p>
+            </div>
+
+    </section>
+</body>
+<script>
+    const hamburger = document.querySelector('.menu-hamburger');
+    const wrapper = document.querySelector('.wrapper');
+  
+    // Toggle le menu mobile
+    hamburger.addEventListener('click', () => {
+    wrapper.classList.toggle('mobile-menu');
+  });
+  </script>
+</html>
