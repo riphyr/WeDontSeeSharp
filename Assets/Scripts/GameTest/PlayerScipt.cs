@@ -159,6 +159,9 @@ public class PlayerScript : MonoBehaviour, IPunObservable
         if (Input.GetKey(GetKeyCodeFromString(rightKey)))
             moveDirection += transform.right;
 
+		// Neutraliser la composante Y pour empecher de fly sur les murs
+    	moveDirection.y = 0;
+
 		// Detection du changement d'état pour la variable de course
 		string sprintKey = PlayerPrefs.GetString("Sprint", "None");
 		bool isRunning = Input.GetKey(GetKeyCodeFromString(sprintKey));
@@ -167,7 +170,8 @@ public class PlayerScript : MonoBehaviour, IPunObservable
 		float currentSpeed = isRunning ? runSpeed : walkSpeed;
 
         // Déplacement du joueur selon les entrées
-        transform.Translate(moveDirection * currentSpeed * Time.deltaTime, Space.World);
+        //transform.Translate(moveDirection * currentSpeed * Time.deltaTime, Space.World);
+		rb.MovePosition(rb.position + moveDirection.normalized * currentSpeed * Time.fixedDeltaTime);
 
 		//Update des animations
 		UpdateAnimatorParameters();

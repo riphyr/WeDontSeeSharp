@@ -19271,7 +19271,7 @@ GameObject:
   - component: {fileID: 1294265570570280085}
   - component: {fileID: 7641234035314208809}
   - component: {fileID: 6984147180268170471}
-  - component: {fileID: 7546114916382821583}
+  - component: {fileID: 4526169168521203565}
   - component: {fileID: 1497922175425523490}
   - component: {fileID: 2202130618178641163}
   - component: {fileID: 7250268742635618444}
@@ -19350,14 +19350,14 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &7546114916382821583
+--- !u!136 &4526169168521203565
 CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8379111954380723744}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: e3294e9909781a040b647f52bbd0ed06, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -19369,10 +19369,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 2
+  m_Radius: 0.6
+  m_Height: 1.9
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: -0.05, z: 0}
 --- !u!114 &1497922175425523490
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19387,8 +19387,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   walkSpeed: 1.5
   runSpeed: 3
-  jumpForce: 4
-  groundCheckRadius: 0.4
   lookSensitivityX: 0
   lookSensitivityY: 0
   lookXLimit: 45
