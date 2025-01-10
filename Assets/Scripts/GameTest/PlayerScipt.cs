@@ -3,14 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
+using TMPro;
 
 public class PlayerScript : MonoBehaviour, IPunObservable
 {
 	[Header("NUMERICAL PARAMETERS")]
 	public float walkSpeed = 1.5f;				// Vitesse de marche
 	public float runSpeed = 3f;					// Vitesse de course
-    //public float jumpForce = 4f;    			// Force de saut
-    //public float groundCheckRadius = 0.4f;  	// Rayon pour vérifier la présence du sol
+
+	[Header("STAMINA VALORS")]
+    public float playerStamina = 100.0f;
+    private float _maxStamina = 100.0f;
+
+    [Header("STAMINA MODIFIERS")]
+	private bool canRun = true;
+    private float _staminaDrain = 15f; 		// vitesse de diminution de la stamina
+    private float _staminaRegen = 12f; 		// vitesse de régénération de la stamina
 
     [Header("LOOKING PARAMETERS")]
 	public float lookSensitivityX;    			// Vitesse de rotation de la caméra sur l'axe X
@@ -30,14 +38,13 @@ public class PlayerScript : MonoBehaviour, IPunObservable
     private float animatorSides;
     private float animatorFrontBack;
 	private bool animatorIsRunning;
-	//private bool animatorIsJumping;
 	
     private Rigidbody rb;						// Composante de collision lié au moteur de jeu
 	private PhotonView view;					// Composante de Photon pour la différence entre local/server
 
-    //private bool isGrounded;					// Booléen de détection si le joueur est au sol
 	private bool canMove = true;				// Booléen de blocage du joueur (à utiliser sous certains cas)
-	//private bool jumpCooldown = false;			// Booléen de gestion du cooldown de saut
+
+	public GameObject speed;
 
     void Start()
     {
@@ -58,14 +65,16 @@ public class PlayerScript : MonoBehaviour, IPunObservable
 
     void Update()
     {
+		string staminaText = playerStamina.ToString();
+		speed.GetComponent<TMP_Text>().text = staminaText;
+
 		// Test s'appliquant uniquement pour le joueur local
         if (view.IsMine)
         {		
             // Vérification si le joueur est autorisé à bouger
         	if (canMove && Cursor.lockState == CursorLockMode.Locked)
         	{
-				MovePlayer();																							// Fonction de déplacements latéraux
-            	//if (isGrounded) Jump();																					// Focntion de saut conditionné au sol
+				MovePlayer();																							// Focntion de saut conditionné au sol
 				
             	rotationX += -Input.GetAxis("Mouse Y") * lookSensitivityX;												// Detection du mouvement Y de souris
             	rotationX = Mathf.Clamp(rotationX, -lookXLimit, lookXLimit);											// Blocage du mouvement Y selon les paramètres prédéfinis
@@ -102,7 +111,6 @@ public class PlayerScript : MonoBehaviour, IPunObservable
             animator.SetFloat("Sides", animatorSides);
             animator.SetFloat("Front/Back", animatorFrontBack);
 			animator.SetBool("isRunning", animatorIsRunning);
-			//animator.SetBool("isJumping", animatorIsJumping);
 		}
 
     }
@@ -115,7 +123,6 @@ public class PlayerScript : MonoBehaviour, IPunObservable
 			stream.SendNext(animatorSides);
             stream.SendNext(animatorFrontBack);
 			stream.SendNext(animatorIsRunning);
-			//stream.SendNext(animatorIsJumping);
         }
         else
         {
@@ -123,13 +130,11 @@ public class PlayerScript : MonoBehaviour, IPunObservable
             animatorSides = (float)stream.ReceiveNext();
             animatorFrontBack = (float)stream.ReceiveNext();
 			animatorIsRunning = (bool)stream.ReceiveNext();
-			//animatorIsJumping = (bool)stream.ReceiveNext();
 			
 			// Appliquer ces paramètres à l'Animator local
         	animator.SetFloat("Sides", animatorSides);
         	animator.SetFloat("Front/Back", animatorFrontBack);
 			animator.SetBool("isRunning", animatorIsRunning);
-			//animator.SetBool("isJumping", animatorIsJumping);
         }
     }
 
@@ -166,8 +171,33 @@ public class PlayerScript : MonoBehaviour, IPunObservable
 		string sprintKey = PlayerPrefs.GetString("Sprint", "None");
 		bool isRunning = Input.GetKey(GetKeyCodeFromString(sprintKey));
 
+		//Regeneration stamina
+		if (!isRunning && playerStamina < _maxStamina)
+        {
+			if (playerStamina > 5f)
+				canRun = true;
+
+			playerStamina += _staminaRegen * Time.deltaTime;
+
+            if (playerStamina >= _maxStamina)
+            {
+				playerStamina = _maxStamina;
+            }
+        }
+
+		//Diminution stamina
+		if(isRunning && canRun)
+        {
+            playerStamina -= _staminaDrain * Time.deltaTime;
+
+            if (playerStamina <= 0)
+            {
+                canRun = false;
+            }
+        }
+
 		// Attribution de la vitesse selon course/marche
-		float currentSpeed = isRunning ? runSpeed : walkSpeed;
+		float currentSpeed = (isRunning && canRun && playerStamina >= 5.0f) ? runSpeed : walkSpeed;
 
         // Déplacement du joueur selon les entrées
         //transform.Translate(moveDirection * currentSpeed * Time.deltaTime, Space.World);
@@ -177,43 +207,11 @@ public class PlayerScript : MonoBehaviour, IPunObservable
 		UpdateAnimatorParameters();
     }
 
-	// Fonction de saut
-    /*private void Jump()
-    {
-        // Vérifie si la touche Space est appuyée
-		string jumpKey = PlayerPrefs.GetString("Jump", "None");
-		bool currentlyJumping = false;
-		currentlyJumping = Input.GetKeyDown(GetKeyCodeFromString(jumpKey));
-        if (currentlyJumping)
-        {
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);			// Force appliquée vers le haut
-            isGrounded = false;  											// Désactivation temporaire de la capacité de saut
-			jumpCooldown = true;											// Declenchement du cooldown
-            StartCoroutine(ResetJumpCooldown());							// Minuteur du cooldown
-        }
-
-		//Update des animations
-		animator.SetBool("isJumping", currentlyJumping);
-		animatorIsJumping = currentlyJumping;
-    }*/
-
 	// Fonction d'extraction de touche
 	private KeyCode GetKeyCodeFromString(string key)
 	{
     	return (KeyCode)System.Enum.Parse(typeof(KeyCode), key);
 	}
-
-    /*private void FixedUpdate()
-    {
-        // Check constant si le joueur est au sol
-        isGrounded = Physics.SphereCast(transform.position, groundCheckRadius, Vector3.down, out _, 1f);
-    }*/
-	
-	/*private IEnumerator ResetJumpCooldown()
-	{
-    	yield return new WaitForSeconds(1f); // Cooldown minimal entre les sauts
-    	jumpCooldown = false;
-	}*/
 
 	private void UpdateAnimatorParameters()
 	{
@@ -228,7 +226,7 @@ public class PlayerScript : MonoBehaviour, IPunObservable
     	bool isMovingRight = Input.GetKey(GetKeyCodeFromString(PlayerPrefs.GetString("Right", "None")));
 
     	// Détection du sprint
-    	bool isCurrentlyRunning = Input.GetKey(GetKeyCodeFromString(PlayerPrefs.GetString("Sprint", "None")));
+    	bool isCurrentlyRunning = Input.GetKey(GetKeyCodeFromString(PlayerPrefs.GetString("Sprint", "None"))) && canRun;
 
     	// Calcul de la valeur directionnelle
     	if (isMovingForward)
