@@ -81,7 +81,7 @@ class HandEvaluator : Card
             return HandType.TwoPairs;
         else if(Onepair())
             return HandType.OnePair;
-        HandValue.PlusGrand = ordreValeurs[Cards[4].rank]; //Probleme sur le cas ou il n'y a pour aucun joueur de cas de main gagnante, evaluer qui a la plus forte carte
+        HandValues.PlusGrand = ordreValeurs[Cards[4].rank]; //Probleme sur le cas ou il n'y a pour aucun joueur de cas de main gagnante, evaluer qui a la plus forte carte
         return HandType.Nothing;
     }
 

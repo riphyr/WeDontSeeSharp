@@ -8,8 +8,8 @@ using TMPro;
 public class PlayerScript : MonoBehaviour, IPunObservable
 {
 	[Header("NUMERICAL PARAMETERS")]
-	public float walkSpeed = 1.5f;				// Vitesse de marche
-	public float runSpeed = 3f;					// Vitesse de course
+	public float walkSpeed = 0.75f;				// Vitesse de marche
+	public float runSpeed = 1.5f;				// Vitesse de course
 
 	[Header("STAMINA VALORS")]
     public float playerStamina = 100.0f;
@@ -17,8 +17,8 @@ public class PlayerScript : MonoBehaviour, IPunObservable
 
     [Header("STAMINA MODIFIERS")]
 	private bool canRun = true;
-    private float _staminaDrain = 15f; 		// vitesse de diminution de la stamina
-    private float _staminaRegen = 12f; 		// vitesse de régénération de la stamina
+    private float _staminaDrain = 15f; 			// vitesse de diminution de la stamina
+    private float _staminaRegen = 12f; 			// vitesse de régénération de la stamina
 
     [Header("LOOKING PARAMETERS")]
 	public float lookSensitivityX;    			// Vitesse de rotation de la caméra sur l'axe X
@@ -226,7 +226,7 @@ public class PlayerScript : MonoBehaviour, IPunObservable
     	bool isMovingRight = Input.GetKey(GetKeyCodeFromString(PlayerPrefs.GetString("Right", "None")));
 
     	// Détection du sprint
-    	bool isCurrentlyRunning = Input.GetKey(GetKeyCodeFromString(PlayerPrefs.GetString("Sprint", "None"))) && canRun;
+    	bool isCurrentlyWalking = !Input.GetKey(GetKeyCodeFromString(PlayerPrefs.GetString("Sprint", "None"))) || !canRun;
 
     	// Calcul de la valeur directionnelle
     	if (isMovingForward)
@@ -250,7 +250,7 @@ public class PlayerScript : MonoBehaviour, IPunObservable
     	// Envoie les valeurs à l'animation animator pour gérer les transitions
     	animator.SetFloat("Sides", moveX); // Déplacement latéral
     	animator.SetFloat("Front/Back", moveY); // Déplacement avant/arrière
-    	animator.SetBool("isRunning", isCurrentlyRunning); // Détection du sprint
+    	animator.SetBool("isRunning", !isCurrentlyWalking); // Détection du sprint
 
 		// MAJ des variables pour synchroniser les mouvements réseaux avec les autres joueurs
         animatorSides = moveX;
