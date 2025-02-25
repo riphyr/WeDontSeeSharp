@@ -6184,9 +6184,9 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1225048544522195017}
   - {fileID: 6197283397258729741}
   - {fileID: 5498624389150893735}
-  - {fileID: 1225048544522195017}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2036416581935422611
@@ -11734,6 +11734,7 @@ GameObject:
   - component: {fileID: 5669699804162640838}
   - component: {fileID: 729526861515941572}
   - component: {fileID: 205742623732003637}
+  - component: {fileID: 6750524689937443853}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -11820,8 +11821,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5df81848c643cd04f9a888119e7e2e35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkSpeed: 1.2
-  runSpeed: 2
+  walkSpeed: 1.5
+  runSpeed: 2.5
   jumpSpeed: 5
   gravity: 20
   playerStamina: 100
@@ -11887,7 +11888,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ce1a9e4a08100f4680ff744a2d36994, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DistanceOpen: 5
+  DistanceOpen: 2
   textOpenDoor: {fileID: 8582033909591363915}
   textOpenDoorFrame: {fileID: 2815394042070625818}
 --- !u!143 &205742623732003637
@@ -11916,6 +11917,19 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6750524689937443853
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4247527032670436945}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6cbc97439b964ce394698094a43cff38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactionDistance: 2
 --- !u!1 &4450012435330219493
 GameObject:
   m_ObjectHideFlags: 0

@@ -4,12 +4,11 @@ using UnityEngine;
 
 public class CameraOpenDoor : MonoBehaviour 
 {
-	public float DistanceOpen = 3;
+	public float DistanceOpen = 2f;
 	public GameObject textOpenDoor, textOpenDoorFrame;
 
 	void Start()
-	{
-	}
+	{ }
 	
 	void Update () 
 	{
