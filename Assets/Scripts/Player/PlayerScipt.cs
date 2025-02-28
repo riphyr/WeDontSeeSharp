@@ -27,7 +27,7 @@ public class PlayerScript : MonoBehaviour, IPunObservable
     [Header("LOOKING PARAMETERS")]
 	public float lookSensitivityX;    			// Vitesse de rotation de la caméra sur l'axe X
 	public float lookSensitivityY;    			// Vitesse de rotation de la caméra sur l'axe Y
-    public float lookXLimit = 45f;  			// Limite de rotation verticale de la caméra
+    public float lookXLimit = 65f;  			// Limite de rotation verticale de la caméra
 	private float rotationX = 0;				// Initialisation de la rotation en X pour la caméra
 
 	[Header("ELEMENTS")]
@@ -91,6 +91,8 @@ public class PlayerScript : MonoBehaviour, IPunObservable
 
 	        CheckPauseActivation(); // Activation ou désactivation du menu pause
 
+	        animator.SetBool("isRunning", false);
+	        animator.SetBool("isJumping", false);
         }
 		else
 		{

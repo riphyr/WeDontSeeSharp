@@ -12,18 +12,20 @@ public class SpawnPlayers : MonoBehaviour
     private void Start()
     {
         // Définition du spawnpoint
-        Vector3 Position = new Vector3(0, 1, -7);
+        Vector3 Position = new Vector3(4, 4, 1);
         // Instanciation du prefab du joueur
         GameObject myPlayer = (GameObject) PhotonNetwork.Instantiate(playerPrefab.name, Position, Quaternion.identity);
         
-        // Activation des scripts de mouvement et d'ouverture de porte
+        // Activation des scripts de mouvement et d'interactions
         GameObject player = myPlayer.transform.Find("Player").gameObject;
         PlayerScript playerScript = player.GetComponent<PlayerScript>();
         CameraOpenDoor cameraOpenDoor = player.GetComponent<CameraOpenDoor>();
         CameraOpenWindow cameraOpenWindow = player.GetComponent<CameraOpenWindow>();
+        CameraLookingAt cameraLookingAt = player.GetComponent<CameraLookingAt>();
         playerScript.enabled = true;
         cameraOpenDoor.enabled = true;
         cameraOpenWindow.enabled = true;
+        cameraLookingAt.enabled = true;
         
         // Activation du menu de pause
         GameObject pauseMenu = myPlayer.transform.Find("Pause_Menu").gameObject;

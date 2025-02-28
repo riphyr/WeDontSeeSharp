@@ -5,7 +5,7 @@ using UnityEngine;
 public class CameraOpenDoor : MonoBehaviour 
 {
 	public float DistanceOpen = 2f;
-	public GameObject textOpenDoor, textOpenDoorFrame;
+	public GameObject textOpenDoor;
 
 	void Start()
 	{ }
@@ -19,7 +19,6 @@ public class CameraOpenDoor : MonoBehaviour
 			if (hit.transform.GetComponent<DoorScript.Door> ()) 
 			{
 				textOpenDoor.SetActive(true);
-				textOpenDoorFrame.SetActive(true);
 				string interactKey = PlayerPrefs.GetString("Interact", "None");
 				if (Input.GetKeyDown(GetKeyCodeFromString(interactKey)))
 					hit.transform.GetComponent<DoorScript.Door> ().OpenDoor();
@@ -27,13 +26,11 @@ public class CameraOpenDoor : MonoBehaviour
 			else
 			{
 				textOpenDoor.SetActive(false);
-				textOpenDoorFrame.SetActive(false);
 			}
 		}
 		else
 		{
 			textOpenDoor.SetActive(false);
-			textOpenDoorFrame.SetActive(false);
 		}
 	}
 	

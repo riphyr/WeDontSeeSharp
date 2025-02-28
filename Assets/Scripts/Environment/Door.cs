@@ -9,10 +9,10 @@ namespace DoorScript
     [RequireComponent(typeof(PhotonView))]
     public class Door : MonoBehaviour, IPunObservable
     {
-        public bool open;
-        public float smooth = 1.0f;
-        float DoorOpenAngle = -90.0f;
-        float DoorCloseAngle = 0.0f;
+        private bool open;
+        private float smooth = 1.0f;
+        private float DoorOpenAngle = -90.0f;
+        private float DoorCloseAngle = 0.0f;
         public AudioSource asource;
         public AudioClip openDoor,closeDoor;
         private PhotonView view;

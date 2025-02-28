@@ -9,7 +9,7 @@ namespace WindowScript
     public class Window : MonoBehaviour, IPunObservable
     {
         public Animator openAndCloseWindow;
-        public bool open = false;
+        private bool open = false;
         public AudioSource asource;
         public AudioClip openWindow,closeWindow;
         private PhotonView view;
