@@ -35,7 +35,6 @@ namespace WindowScript
 
         private IEnumerator Opening()
         {
-            Debug.Log("Fenêtre en cours d'ouverture");
             openAndCloseWindow.Play("Openingwindow");
             open = true;
             asource.clip = openWindow;
@@ -45,7 +44,6 @@ namespace WindowScript
 
         private IEnumerator Closing()
         {
-            Debug.Log("Fenêtre en cours de fermeture");
             openAndCloseWindow.Play("Closingwindow");
             open = false;
             asource.clip = closeWindow;

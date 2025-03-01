@@ -6165,7 +6165,7 @@ GameObject:
   m_Component:
   - component: {fileID: 609118519753376461}
   m_Layer: 0
-  m_Name: Player for Test
+  m_Name: Test V1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11599,6 +11599,7 @@ GameObject:
   - component: {fileID: 205742623732003637}
   - component: {fileID: 6840866420202166043}
   - component: {fileID: 6750524689937443853}
+  - component: {fileID: 1542760420516181966}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -11807,6 +11808,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interactionDistance: 2
+--- !u!114 &1542760420516181966
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4247527032670436945}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 404f5fdf08af473b8047f3ed80065cfe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4450012435330219493
 GameObject:
   m_ObjectHideFlags: 0

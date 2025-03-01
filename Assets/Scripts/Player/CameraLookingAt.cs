@@ -45,19 +45,36 @@ public class CameraLookingAt : MonoBehaviour
             {
                 Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
                 ShowInteractionText(true, "Utiliser l'interrupteur");
-                if (Input.GetKeyDown(interactKey)) lightSwitch.ToggleSwitch();
+                if (Input.GetKeyDown(interactKey)) 
+                    lightSwitch.ToggleSwitch();
             }
             else if (hit.transform.TryGetComponent(out InteractionScripts.Drawer drawer))
             {
                 Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
                 ShowInteractionText(true, "Ouvrir le tiroir");
-                if (Input.GetKeyDown(interactKey)) drawer.ToggleDrawer();
+                if (Input.GetKeyDown(interactKey)) 
+                    drawer.ToggleDrawer();
             }
             else if (hit.transform.TryGetComponent(out InteractionScripts.Wardrobe wardrobe))
             {
                 Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
                 ShowInteractionText(true, "Ouvrir l'armoire");
-                if (Input.GetKeyDown(interactKey)) wardrobe.ToggleWardrobe();
+                if (Input.GetKeyDown(interactKey)) 
+                    wardrobe.ToggleWardrobe();
+            }
+            else if (hit.transform.TryGetComponent(out InteractionScripts.Key key))
+            {
+                Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
+                ShowInteractionText(true, $"Ramasser la clef");
+
+                if (Input.GetKeyDown(interactKey))
+                {
+                    PlayerInventory inventory = GetComponent<PlayerInventory>();
+                    if (inventory != null)
+                    {
+                        key.PickupKey(inventory);
+                    }
+                }
             }
             else
             {

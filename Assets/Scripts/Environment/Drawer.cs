@@ -43,7 +43,10 @@ namespace InteractionScripts
 
         private IEnumerator MoveDrawer(Vector3 targetPosition)
         {
-            audioSource.PlayOneShot(isOpen ? drawerOpen : drawerClose, isOpen ? 0.1f : 0.05f);
+            if (view.IsMine)
+            {
+                audioSource.PlayOneShot(isOpen ? drawerOpen : drawerClose, isOpen ? 0.1f : 0.05f);
+            }
 
             while (Vector3.Distance(transform.localPosition, targetPosition) > 0.01f)
             {

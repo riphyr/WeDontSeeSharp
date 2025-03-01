@@ -29,13 +29,11 @@ namespace DoorScript
             {
                 var target = Quaternion.Euler (0, DoorOpenAngle, 0);
                 transform.localRotation = Quaternion.Slerp(transform.localRotation, target, Time.deltaTime * 5 * smooth);
-		
             }
             else
             {
                 var target1= Quaternion.Euler (0, DoorCloseAngle, 0);
                 transform.localRotation = Quaternion.Slerp(transform.localRotation, target1, Time.deltaTime * 5 * smooth);
-		
             }  
         }
 

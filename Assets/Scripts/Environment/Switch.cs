@@ -53,7 +53,6 @@ namespace InteractionScripts
 
                 if (isOn != previousState)
                 {
-                    audioSource.PlayOneShot(switchSound);
                     UpdateChildrenState();
                 }
             }

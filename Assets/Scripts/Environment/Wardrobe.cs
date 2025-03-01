@@ -45,7 +45,10 @@ namespace InteractionScripts
 
         private IEnumerator RotateDoor(Quaternion targetRotation)
         {
-            audioSource.PlayOneShot(isOpen ? wardrobeOpen : wardrobeClose, 0.1f);
+            if (view.IsMine)
+            {
+                audioSource.PlayOneShot(isOpen ? wardrobeOpen : wardrobeClose, 0.1f);
+            }
 
             while (Quaternion.Angle(transform.localRotation, targetRotation) > 0.1f)
             {
