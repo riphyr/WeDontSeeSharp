@@ -4,7 +4,7 @@ using UnityEngine;
 public class CameraLookingAt : MonoBehaviour
 {
     [Header("Paramètres d'interaction")]
-    public float interactionDistance = 2f;
+    public float interactionDistance = 2.5f;
     public GameObject interactionText;
 
     private Camera playerCamera;
@@ -41,24 +41,53 @@ public class CameraLookingAt : MonoBehaviour
         {
             Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.red);
 
-            if (hit.transform.TryGetComponent(out InteractionScripts.Switch lightSwitch))
+            if (hit.transform.TryGetComponent(out InteractionScripts.Door door))
             {
                 Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
-                ShowInteractionText(true, "Utiliser l'interrupteur");
+                ShowInteractionText(true, door.IsOpen() ? "Fermer la porte" : "Ouvrir la porte");
+
+                if (Input.GetKeyDown(interactKey)) 
+                    door.ToggleDoor();
+            }
+            else if (hit.transform.TryGetComponent(out InteractionScripts.LockKey lockKey))
+            {
+                Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
+                ShowInteractionText(true, $"Dévérouiller la porte");
+                if (Input.GetKeyDown(interactKey)) 
+                    lockKey.AttemptUnlock();
+            }
+            else if (hit.transform.TryGetComponent(out InteractionScripts.PadLock padlock))
+            {
+                Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
+                ShowInteractionText(true, $"Dévérouiller la porte");
+                if (Input.GetKeyDown(interactKey)) 
+                    padlock.EnterPadLockMode();
+            }
+            else if (hit.transform.TryGetComponent(out InteractionScripts.Window window))
+            {
+                Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
+                ShowInteractionText(true, window.IsOpen() ? "Fermer la fenêtre" : "Ouvrir la fenêtre");
+                if (Input.GetKeyDown(interactKey)) 
+                    window.ToggleWindow();
+            }
+            else if (hit.transform.TryGetComponent(out InteractionScripts.Switch lightSwitch))
+            {
+                Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
+                ShowInteractionText(true, lightSwitch.IsOn() ? "Désactiver l'interrupteur" : "Activer l'interrupteur");
                 if (Input.GetKeyDown(interactKey)) 
                     lightSwitch.ToggleSwitch();
             }
             else if (hit.transform.TryGetComponent(out InteractionScripts.Drawer drawer))
             {
                 Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
-                ShowInteractionText(true, "Ouvrir le tiroir");
+                ShowInteractionText(true, drawer.IsOpen() ? "Fermer le tiroir" : "Ouvrir le tiroir");
                 if (Input.GetKeyDown(interactKey)) 
                     drawer.ToggleDrawer();
             }
             else if (hit.transform.TryGetComponent(out InteractionScripts.Wardrobe wardrobe))
             {
                 Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
-                ShowInteractionText(true, "Ouvrir l'armoire");
+                ShowInteractionText(true, wardrobe.IsOpen() ? "Fermer l'armoire" : "Ouvrir l'armoire");
                 if (Input.GetKeyDown(interactKey)) 
                     wardrobe.ToggleWardrobe();
             }

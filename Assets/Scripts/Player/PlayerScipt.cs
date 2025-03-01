@@ -48,8 +48,6 @@ public class PlayerScript : MonoBehaviour, IPunObservable
 
 	private bool canMove = true;				// Booléen de blocage du joueur (à utiliser sous certains cas)
 
-	public GameObject guiDoorMenu;
-
 	CharacterController characterController;
     Vector3 moveDirection = Vector3.zero;
 
@@ -75,10 +73,7 @@ public class PlayerScript : MonoBehaviour, IPunObservable
 		// Test s'appliquant uniquement pour le joueur local
         if (view.IsMine)
         {		
-	        string interactKey = PlayerPrefs.GetString("Interact", "None");
-	        guiDoorMenu.GetComponent<TMP_Text>().text = $"Press \"{interactKey}\" to interact";
-	        
-            // Vérification si le joueur est autorisé à bouger
+	        // Vérification si le joueur est autorisé à bouger
         	if (canMove && Cursor.lockState == CursorLockMode.Locked)
         	{
 				MovePlayer();																							

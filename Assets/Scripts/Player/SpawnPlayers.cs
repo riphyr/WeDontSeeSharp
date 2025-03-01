@@ -68,8 +68,10 @@ public class SpawnPlayers : MonoBehaviourPunCallbacks
         // Définition du spawnpoint
         Vector3 Position = new Vector3(4, 4, 1);
 
-        // Instanciation du prefab du joueur
+        // Instanciation du prefab du joueur et tag
         GameObject myPlayer = PhotonNetwork.Instantiate(playerPrefab.name, Position, Quaternion.identity);
+        
+        PhotonNetwork.LocalPlayer.TagObject = myPlayer;
 
         //Check pour la version de test
         if (!myPlayer.activeSelf)
@@ -81,14 +83,10 @@ public class SpawnPlayers : MonoBehaviourPunCallbacks
         // Activation des scripts de mouvement et d'interactions
         GameObject player = myPlayer.transform.Find("Player").gameObject;
         PlayerScript playerScript = player.GetComponent<PlayerScript>();
-        CameraOpenDoor cameraOpenDoor = player.GetComponent<CameraOpenDoor>();
-        CameraOpenWindow cameraOpenWindow = player.GetComponent<CameraOpenWindow>();
         CameraLookingAt cameraLookingAt = player.GetComponent<CameraLookingAt>();
         PlayerInventory playerInventory = player.GetComponent<PlayerInventory>();
 
         playerScript.enabled = true;
-        cameraOpenDoor.enabled = true;
-        cameraOpenWindow.enabled = true;
         cameraLookingAt.enabled = true;
         playerInventory.enabled = true;
 
@@ -102,7 +100,7 @@ public class SpawnPlayers : MonoBehaviourPunCallbacks
         mainCamera.SetActive(true);
 
         // Activation de l'affichage d'ouverture de porte
-        GameObject openDoorMenu = myPlayer.transform.Find("Gui_OpenDoorTouch").gameObject;
+        GameObject openDoorMenu = myPlayer.transform.Find("GUI").gameObject;
         openDoorMenu.SetActive(true);
     }
 }

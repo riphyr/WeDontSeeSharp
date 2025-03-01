@@ -58,6 +58,11 @@ namespace InteractionScripts
 
             transform.localRotation = targetRotation;
         }
+        
+        public bool IsOpen()
+        {
+            return isOpen;
+        }
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {

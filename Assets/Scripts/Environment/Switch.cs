@@ -39,6 +39,11 @@ namespace InteractionScripts
                 child.gameObject.SetActive(isOn);
             }
         }
+        
+        public bool IsOn()
+        {
+            return isOn;
+        }
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {

@@ -12,7 +12,7 @@ public class PlayerInventory : MonoBehaviourPun
 
     public bool HasItem(string itemName)
     {
-        return inventory.ContainsKey(itemName) && inventory[itemName] > 0;
+        return inventory != null && inventory.ContainsKey(itemName) && inventory[itemName] > 0;
     }
 
     public int GetItemCount(string itemName)
