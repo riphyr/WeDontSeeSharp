@@ -1,48 +1,50 @@
-namespace GameTest
+using System.Collections;
+using UnityEngine;
+using TMPro;
+
+public class DoorTrigger : MonoBehaviour
 {
-    using UnityEngine;
-    using TMPro;
-    using System.Collections;
-    using Photon.Pun; 
+    [Header("UI Elements")]
+    public TextMeshProUGUI messageUI; 
+    public string fullMessage = "Take a seat on the chairs in front of you"; 
+    private bool messageDisplayed = false; 
+    private bool isCoroutineRunning = false; 
 
-    public class Message_Consigne : MonoBehaviourPunCallbacks
+    private void Start()
     {
-        public GameObject messagePanel;
-        public TextMeshProUGUI messageText;
-        public float Duration = 3f;
+        messageUI.text = "";
+        messageUI.gameObject.SetActive(false); 
+    }
 
-        private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!messageDisplayed && !isCoroutineRunning) 
         {
-            if (!other.CompareTag("Player")) return; 
-
-            PhotonView playerPhotonView = other.GetComponent<PhotonView>();
-
-            if (playerPhotonView != null && playerPhotonView.IsMine)
-            {
-                messagePanel.SetActive(true);
-                messageText.color = new Color(messageText.color.r, messageText.color.g, messageText.color.b, 1); // Remet l'alpha à 1
-                StopAllCoroutines();
-                StartCoroutine(FadeOutText(15f)); 
-            }
-        }
-
-        private IEnumerator FadeOutText(float delay)
-        {
-            yield return new WaitForSeconds(delay); 
-
-            float disparition = 0f;
-            Color originalColor = messageText.color;
-
-            while (disparition < Duration)
-            {
-                disparition += Time.deltaTime;
-                float alpha = Mathf.Lerp(1f, 0f, disparition / Duration);
-                messageText.color = new Color(originalColor.r, originalColor.g, originalColor.b, alpha);
-                yield return null;
-            }
-
-            messagePanel.SetActive(false); 
+            StartCoroutine(DisplayMessage()); 
         }
     }
 
+    private void OnTriggerExit(Collider other)
+    {
+    }
+
+    private IEnumerator DisplayMessage()
+    {
+        isCoroutineRunning = true;  
+        messageUI.gameObject.SetActive(true);  
+        messageUI.text = "";  
+
+        for (int i = 0; i < fullMessage.Length; i++)
+        {
+            messageUI.text += fullMessage[i];  
+            yield return new WaitForSeconds(0.1f);  
+        }
+
+        yield return new WaitForSeconds(5f); 
+        messageUI.gameObject.SetActive(false);  
+        messageDisplayed = true;  
+        isCoroutineRunning = false;  
+    }
 }
+
+
