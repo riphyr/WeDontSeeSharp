@@ -19,7 +19,7 @@ namespace InteractionScripts
         private float DoorCloseAngle = 0.0f;
 
         [Header("Audio")]
-        public AudioSource asource;
+        private AudioSource asource;
         public AudioClip openDoor, closeDoor;
         [SerializeField] private AudioClip blockedDoorSound;
 

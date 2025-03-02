@@ -8,10 +8,12 @@ public class CameraLookingAt : MonoBehaviour
     public GameObject interactionText;
 
     private Camera playerCamera;
+    private PlayerInventory inventory;
     private KeyCode interactKey;
 
     void Start()
     {
+        inventory = GetComponent<PlayerInventory>();
         playerCamera = GetComponentInChildren<Camera>();
     }
 
@@ -95,15 +97,24 @@ public class CameraLookingAt : MonoBehaviour
             {
                 Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
                 ShowInteractionText(true, $"Ramasser la clef");
-
                 if (Input.GetKeyDown(interactKey))
-                {
-                    PlayerInventory inventory = GetComponent<PlayerInventory>();
-                    if (inventory != null)
-                    {
-                        key.PickupKey(inventory);
-                    }
-                }
+                    key.PickupKey(inventory);
+            }
+            else if (hit.transform.TryGetComponent(out InteractionScripts.Candle candle))
+            {
+                Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
+                ShowInteractionText(true, $"Ramasser la bougie", "Allumer la bougie");
+                if (Input.GetKeyDown(interactKey)) 
+                    candle.PickupCandle(inventory);
+                else if (Input.GetKeyDown(KeyCode.F))
+                    candle.LightCandle(inventory);
+            }
+            else if (hit.transform.TryGetComponent(out InteractionScripts.Lighter lighter))
+            {
+                Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
+                ShowInteractionText(true, $"Ramasser le briquet");
+                if (Input.GetKeyDown(interactKey)) 
+                    lighter.PickupLighter(inventory);
             }
             else
             {
@@ -118,14 +129,21 @@ public class CameraLookingAt : MonoBehaviour
         }
     }
 
-    private void ShowInteractionText(bool show, string message = "")
+    private void ShowInteractionText(bool show, string message1 = "", string message2 = null)
     {
         if (interactionText)
         {
             interactionText.SetActive(show);
             if (show)
             {
-                interactionText.GetComponent<TMPro.TextMeshProUGUI>().text = $"{message} [{interactKey}]";
+                if (!string.IsNullOrEmpty(message2))
+                {
+                    interactionText.GetComponent<TMPro.TextMeshProUGUI>().text = $"{message1} [{interactKey}]\n{message2} [F]";
+                }
+                else
+                {
+                    interactionText.GetComponent<TMPro.TextMeshProUGUI>().text = $"{message1} [{interactKey}]";
+                }
             }
         }
     }

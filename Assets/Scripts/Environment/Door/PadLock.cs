@@ -18,9 +18,6 @@ namespace InteractionScripts
         private Transform WheelTwo;
         private Transform WheelThree;
         private Transform WheelFour;
-        
-        [Header("Boutons du GUI")]
-        public GameObject buttonWheel;
 
         [Header("Références caméras et joueur (Automatique)")]
         private Camera playerCamera;
@@ -46,8 +43,6 @@ namespace InteractionScripts
             WheelThree = transform.Find("WheelTwo");
             WheelTwo = transform.Find("WheelThree");
             WheelOne = transform.Find("WheelFour");
-
-            buttonWheel.SetActive(false);
             
             StartCoroutine(WaitForPlayer());
         }
@@ -77,9 +72,17 @@ namespace InteractionScripts
         
         void Update()
         {
-            if (padLockCamera.gameObject.activeSelf && Input.GetKeyDown(KeyCode.Escape))
+            if (padLockCamera.gameObject.activeSelf)
             {
-                ExitPadLockMode();
+                if (Input.GetKeyDown(KeyCode.Escape))
+                {
+                    ExitPadLockMode();
+                }
+
+                if (Input.GetMouseButtonDown(0))
+                {
+                    DetectWheelClick();
+                }
             }
         }
 
@@ -99,14 +102,10 @@ namespace InteractionScripts
             
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
-            
-            buttonWheel.SetActive(true);
         }
 
         public void ExitPadLockMode()
         {
-            buttonWheel.SetActive(false);
-            
             padLockCamera.gameObject.SetActive(false);
             playerCamera.gameObject.SetActive(true);
 
@@ -117,6 +116,33 @@ namespace InteractionScripts
             cameraLookingAt.enabled = true;
             gui.SetActive(true);
         }
+        
+        private void DetectWheelClick()
+        {
+            Ray ray = padLockCamera.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("PadLock")))
+            {
+                if (hit.transform == WheelOne) 
+                {
+                    RotateWheel(0);
+                }
+                else if (hit.transform == WheelTwo) 
+                {
+                    RotateWheel(1);
+                }
+                else if (hit.transform == WheelThree) 
+                {
+                    RotateWheel(2);
+                }
+                else if (hit.transform == WheelFour) 
+                {
+                    RotateWheel(3);
+                }
+            }
+        }
+
 
         public void RotateWheel(int wheelIndex)
         {

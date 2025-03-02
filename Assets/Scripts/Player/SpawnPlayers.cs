@@ -84,11 +84,13 @@ public class SpawnPlayers : MonoBehaviourPunCallbacks
         GameObject player = myPlayer.transform.Find("Player").gameObject;
         PlayerScript playerScript = player.GetComponent<PlayerScript>();
         CameraLookingAt cameraLookingAt = player.GetComponent<CameraLookingAt>();
+        PlaceCandle placeCandle = player.GetComponent<PlaceCandle>();
         PlayerInventory playerInventory = player.GetComponent<PlayerInventory>();
 
         playerScript.enabled = true;
         cameraLookingAt.enabled = true;
         playerInventory.enabled = true;
+        placeCandle.enabled = true;
 
         // Activation du menu de pause
         GameObject pauseMenu = myPlayer.transform.Find("Pause_Menu").gameObject;

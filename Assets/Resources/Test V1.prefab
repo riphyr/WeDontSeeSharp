@@ -11597,6 +11597,7 @@ GameObject:
   - component: {fileID: 205742623732003637}
   - component: {fileID: 6840866420202166043}
   - component: {fileID: 1542760420516181966}
+  - component: {fileID: 6067543095233155175}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -11789,6 +11790,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 404f5fdf08af473b8047f3ed80065cfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &6067543095233155175
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4247527032670436945}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a858d0640904685a28767920bc4bb8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  candlePrefab: {fileID: 2989535605162448134, guid: dc0704cc56ed42646a5019b3c7010c9b, type: 3}
+  maxPlaceDistance: 3
 --- !u!1 &4450012435330219493
 GameObject:
   m_ObjectHideFlags: 0
@@ -21682,7 +21697,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2951051522111306188
 RectTransform:
   m_ObjectHideFlags: 0
@@ -21700,7 +21715,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -200}
-  m_SizeDelta: {x: 272.1, y: 29.4}
+  m_SizeDelta: {x: 1000, y: 6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1953948515157221545
 CanvasRenderer:
