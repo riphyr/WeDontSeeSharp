@@ -8,12 +8,13 @@ namespace InteractionScripts
     [RequireComponent(typeof(PhotonView))]
     public class Candle : MonoBehaviourPun
     {
-        public AudioClip pickupSound, lightSound;
+        public AudioClip pickupSound, lightSoundLighter, lightSoundMatch;
         public float timeToBurnOut = 30f;
         
         private AudioSource audioSource;
         private PhotonView view;
         private bool isLit = false;
+		private bool isUsingLighter = true;
         
         private GameObject newCandle;
         private GameObject oldCandle;
@@ -72,6 +73,13 @@ namespace InteractionScripts
 
             if (inventory.HasItem("Lighter"))
             {
+				isUsingLighter = true;
+                photonView.RPC("SetCandleLit", RpcTarget.All);
+            }
+			else if (inventory.HasItem("Match"))
+            {
+				isUsingLighter = false;
+				inventory.RemoveItem("Match", 1);
                 photonView.RPC("SetCandleLit", RpcTarget.All);
             }
         }
@@ -80,7 +88,7 @@ namespace InteractionScripts
         private void SetCandleLit()
         {
             isLit = true;
-            audioSource.PlayOneShot(lightSound);
+            audioSource.PlayOneShot(isUsingLighter ? lightSoundLighter : lightSoundMatch);
             newCandle.SetActive(true);
             oldCandle.SetActive(false);
             candleLightNew.SetActive(true);

@@ -116,6 +116,13 @@ public class CameraLookingAt : MonoBehaviour
                 if (Input.GetKeyDown(interactKey)) 
                     lighter.PickupLighter(inventory);
             }
+			else if (hit.transform.TryGetComponent(out InteractionScripts.MatchBox matchBox))
+            {
+                Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
+                ShowInteractionText(true, $"Ramasser les allumettes");
+                if (Input.GetKeyDown(interactKey)) 
+                    matchBox.PickupMatchBox(inventory);
+            }
             else
             {
                 ShowInteractionText(false);

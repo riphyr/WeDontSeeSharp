@@ -86,11 +86,13 @@ public class SpawnPlayers : MonoBehaviourPunCallbacks
         CameraLookingAt cameraLookingAt = player.GetComponent<CameraLookingAt>();
         PlaceCandle placeCandle = player.GetComponent<PlaceCandle>();
         PlayerInventory playerInventory = player.GetComponent<PlayerInventory>();
+        PlayerUsing playerUsing = player.GetComponent<PlayerUsing>();
 
         playerScript.enabled = true;
         cameraLookingAt.enabled = true;
         playerInventory.enabled = true;
         placeCandle.enabled = true;
+        playerUsing.enabled = true;
 
         // Activation du menu de pause
         GameObject pauseMenu = myPlayer.transform.Find("Pause_Menu").gameObject;
@@ -102,7 +104,7 @@ public class SpawnPlayers : MonoBehaviourPunCallbacks
         mainCamera.SetActive(true);
 
         // Activation de l'affichage d'ouverture de porte
-        GameObject openDoorMenu = myPlayer.transform.Find("GUI").gameObject;
-        openDoorMenu.SetActive(true);
+        GameObject interactionMenu = myPlayer.transform.Find("GUI").gameObject;
+        interactionMenu.SetActive(true);
     }
 }
