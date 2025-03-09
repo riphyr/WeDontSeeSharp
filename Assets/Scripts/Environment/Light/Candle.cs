@@ -6,7 +6,7 @@ namespace InteractionScripts
 {
     [RequireComponent(typeof(AudioSource))]
     [RequireComponent(typeof(PhotonView))]
-    public class Candle : MonoBehaviourPun
+    public class Candle : MonoBehaviourPun, IPunObservable
     {
         public AudioClip pickupSound, lightSoundLighter, lightSoundMatch;
         public float timeToBurnOut = 30f;
@@ -40,7 +40,7 @@ namespace InteractionScripts
         {
             if (!view.IsMine)
             {
-                view.RequestOwnership();
+                view.TransferOwnership(PhotonNetwork.LocalPlayer);
             }
 
             inventory.AddItem("Candle", 1);
@@ -50,18 +50,18 @@ namespace InteractionScripts
         [PunRPC]
         private void PlayPickupSound()
         {
-            StartCoroutine(PlaySoundAndDisable());
+            StartCoroutine(PlaySoundAndDestroy());
         }
 
-        private IEnumerator PlaySoundAndDisable()
+        private IEnumerator PlaySoundAndDestroy()
         {
             audioSource.PlayOneShot(pickupSound);
             yield return new WaitForSeconds(pickupSound.length);
-            photonView.RPC("DisableForAll", RpcTarget.AllBuffered);
+            photonView.RPC("DestroyForAll", RpcTarget.AllBuffered);
         }
 
         [PunRPC]
-        private void DisableForAll()
+        private void DestroyForAll()
         {
             Destroy(gameObject);
         }
@@ -108,6 +108,18 @@ namespace InteractionScripts
             oldCandle.SetActive(true);
             candleLightOld.SetActive(true);
             candleLightNew.SetActive(false);
+        }
+        
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+            if (stream.IsWriting)
+            {
+                stream.SendNext(transform.position);
+            }
+            else
+            {
+                transform.position = (Vector3)stream.ReceiveNext();
+            }
         }
     }
 }

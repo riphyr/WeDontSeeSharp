@@ -23,13 +23,20 @@ namespace InteractionScripts
 
         public void ToggleSwitch()
         {
-            if (view.IsMine)
+            if (!view.IsMine)
             {
-                isOn = !isOn;
-                audioSource.PlayOneShot(switchSound);
-
-                UpdateChildrenState();
+                view.TransferOwnership(PhotonNetwork.LocalPlayer);
             }
+
+            ActivateSwitch();
+        }
+
+
+        private void ActivateSwitch()
+        {
+            isOn = !isOn;
+            audioSource.PlayOneShot(switchSound);
+            UpdateChildrenState();
         }
 
         private void UpdateChildrenState()

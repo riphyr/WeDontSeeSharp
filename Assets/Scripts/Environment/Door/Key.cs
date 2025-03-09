@@ -24,16 +24,14 @@ namespace InteractionScripts
         
         public void PickupKey(PlayerInventory inventory)
         {
-            if (view.IsMine)
+            if (!view.IsMine)
             {
-                inventory.AddItem(keyName, 1);
-                audioSource.PlayOneShot(keyPickupSound, 1.0f);
-                view.RPC("DisableKeyForAll", RpcTarget.AllBuffered);
+                view.TransferOwnership(PhotonNetwork.LocalPlayer);
             }
-            else
-            {
-                view.RequestOwnership();
-            }
+            
+            inventory.AddItem(keyName, 1);
+            audioSource.PlayOneShot(keyPickupSound, 1.0f);
+            view.RPC("DisableKeyForAll", RpcTarget.AllBuffered);
         }
 
         [PunRPC]

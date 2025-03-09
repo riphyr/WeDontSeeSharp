@@ -24,7 +24,7 @@ namespace InteractionScripts
         {
             if (!view.IsMine)
             {
-                view.RequestOwnership();
+                view.TransferOwnership(PhotonNetwork.LocalPlayer);
             }
             
             inventory.AddItem("Match", matchesToAdd);

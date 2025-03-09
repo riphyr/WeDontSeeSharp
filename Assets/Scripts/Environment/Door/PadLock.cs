@@ -90,7 +90,7 @@ namespace InteractionScripts
         {
             if (!view.IsMine)
             {
-                photonView.RequestOwnership();
+                view.TransferOwnership(PhotonNetwork.LocalPlayer);
             }
 
             playerCamera.gameObject.SetActive(false);
@@ -175,6 +175,11 @@ namespace InteractionScripts
 
             if (currentCombination == correctCode)
             {
+                if (!view.IsMine)
+                {
+                    view.TransferOwnership(PhotonNetwork.LocalPlayer);
+                }
+                
                 StartCoroutine(UnlockPadLock());
             }
         }

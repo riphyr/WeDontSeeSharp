@@ -33,21 +33,21 @@ namespace InteractionScripts
 
         public void ToggleDrawer()
         {
-            if (view.IsMine)
-            {
-                isOpen = !isOpen;
-                StopAllCoroutines(); 
-                StartCoroutine(MoveDrawer(isOpen ? openPosition : closedPosition));
-            }
+            photonView.RPC("ToggleDrawer_RPC", RpcTarget.AllBuffered);
+        }
+        
+        [PunRPC]
+        private void ToggleDrawer_RPC()
+        {
+            isOpen = !isOpen;
+            StopAllCoroutines();
+            StartCoroutine(MoveDrawer(isOpen ? openPosition : closedPosition));
+
+            audioSource.PlayOneShot(isOpen ? drawerOpen : drawerClose, isOpen ? 0.1f : 0.05f);
         }
 
         private IEnumerator MoveDrawer(Vector3 targetPosition)
         {
-            if (view.IsMine)
-            {
-                audioSource.PlayOneShot(isOpen ? drawerOpen : drawerClose, isOpen ? 0.1f : 0.05f);
-            }
-
             while (Vector3.Distance(transform.localPosition, targetPosition) > 0.01f)
             {
                 transform.localPosition = Vector3.Lerp(transform.localPosition, targetPosition, Time.deltaTime * speed);

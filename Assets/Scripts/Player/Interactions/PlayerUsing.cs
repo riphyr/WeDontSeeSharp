@@ -18,6 +18,7 @@ public class PlayerUsing : MonoBehaviourPun
     
     [Header("Candle")]
     private GameObject previewCandle;
+    private PhotonView candleView;
     private bool placingCandle = false;
     private BoxCollider candleCollider;
 
@@ -107,11 +108,34 @@ public class PlayerUsing : MonoBehaviourPun
             previewCandle = PhotonNetwork.Instantiate(candlePrefab.name, transform.position, Quaternion.identity);
             candleCollider = previewCandle.GetComponent<BoxCollider>();
             candleCollider.enabled = false;
+            
+            candleView = previewCandle.GetComponent<PhotonView>();
+            if (candleView != null)
+            {
+                candleView.RequestOwnership(); 
+                photonView.RPC("AssignOwner_RPC", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer.ActorNumber);
+            }
+        }
+    }
+    
+    [PunRPC]
+    private void AssignOwner_RPC(int newOwnerID)
+    {
+        if (candleView != null)
+        {
+            Photon.Realtime.Player newOwner = PhotonNetwork.CurrentRoom.GetPlayer(newOwnerID);
+            if (newOwner != null)
+            {
+                candleView.TransferOwnership(newOwner);
+            }
         }
     }
 
     private void UpdateCandlePosition()
     {
+        if (candleView != null && !candleView.IsMine)
+            return; //
+        
         Ray ray = playerCamera.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f));
         RaycastHit hit;
         
@@ -119,10 +143,21 @@ public class PlayerUsing : MonoBehaviourPun
         
         if (Physics.Raycast(ray, out hit, 3f))
         {
-            previewCandle.transform.position = hit.point + new Vector3(-0.05f, 0.125f, -0.05f);
+            Vector3 newPosition = hit.point + new Vector3(-0.05f, 0.125f, -0.05f);
+            previewCandle.transform.position = newPosition;
+            photonView.RPC("UpdateCandlePosition_RPC", RpcTarget.Others, newPosition);
         }
     }
 
+    [PunRPC]
+    private void UpdateCandlePosition_RPC(Vector3 newPosition)
+    {
+        if (previewCandle != null)
+        {
+            previewCandle.transform.position = newPosition;
+        }
+    }
+    
     private void ConfirmCandlePlacement()
     {
         placingCandle = false;

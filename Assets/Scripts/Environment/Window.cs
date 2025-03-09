@@ -25,13 +25,15 @@ namespace InteractionScripts
 
         public void ToggleWindow()
         {
-            if (view.IsMine)
+            if (!view.IsMine)
             {
-                if (!open)
-                    StartCoroutine(Opening());
-                else
-                    StartCoroutine(Closing());
+                view.TransferOwnership(PhotonNetwork.LocalPlayer);
             }
+            
+            if (!open)
+                StartCoroutine(Opening());
+            else
+                StartCoroutine(Closing());
         }
 
         private IEnumerator Opening()

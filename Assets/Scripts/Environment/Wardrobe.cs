@@ -35,12 +35,14 @@ namespace InteractionScripts
 
         public void ToggleWardrobe()
         {
-            if (view.IsMine)
+            if (!view.IsMine)
             {
-                isOpen = !isOpen;
-                StopAllCoroutines();
-                StartCoroutine(RotateDoor(isOpen ? openRotation : closedRotation));
+                view.TransferOwnership(PhotonNetwork.LocalPlayer);
             }
+            
+            isOpen = !isOpen;
+            StopAllCoroutines();
+            StartCoroutine(RotateDoor(isOpen ? openRotation : closedRotation));
         }
 
         private IEnumerator RotateDoor(Quaternion targetRotation)

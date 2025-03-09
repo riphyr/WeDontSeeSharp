@@ -88,6 +88,12 @@ public class SpawnPlayers : MonoBehaviourPunCallbacks
         PlayerUsing playerUsing = player.GetComponent<PlayerUsing>();
         SimpleSpeechRecognition simpleSpeechRecognition = player.GetComponent<SimpleSpeechRecognition>();
 
+        if (playerScript == null) Debug.LogError("🚨 PlayerScript manquant sur Player !");
+        if (cameraLookingAt == null) Debug.LogError("🚨 CameraLookingAt manquant sur Player !");
+        if (playerInventory == null) Debug.LogError("🚨 PlayerInventory manquant sur Player !");
+        if (playerUsing == null) Debug.LogError("🚨 PlayerUsing manquant sur Player !");
+        if (simpleSpeechRecognition == null) Debug.LogError("🚨 SimpleSpeechRecognition manquant sur Player !");
+
         playerScript.enabled = true;
         cameraLookingAt.enabled = true;
         playerInventory.enabled = true;

@@ -12035,8 +12035,8 @@ GameObject:
   - component: {fileID: 1542760420516181966}
   - component: {fileID: 4295723436551358989}
   - component: {fileID: 4741557996133663683}
-  - component: {fileID: 3355758351020125617}
   - component: {fileID: 3176478019269776873}
+  - component: {fileID: 5202161507523636149}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -12326,20 +12326,6 @@ MonoBehaviour:
   matchPrefab: {fileID: 5044355496907704305, guid: fe95bfc6880d649419e15fcc0009c060, type: 3}
   candlePrefab: {fileID: 2989535605162448134, guid: dc0704cc56ed42646a5019b3c7010c9b, type: 3}
   flashlightPrefab: {fileID: 8293391893222592021, guid: a0983877afbd1e74b952849a4610ae25, type: 3}
---- !u!114 &3355758351020125617
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4247527032670436945}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 317adc1d046c4598bdffba3652a7a209, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  interactionDistance: 2.5
-  interactionText: {fileID: 8441686450299924166}
 --- !u!114 &3176478019269776873
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12352,6 +12338,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9deaff1aac594f6ba6816e847f4ad564, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &5202161507523636149
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4247527032670436945}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 317adc1d046c4598bdffba3652a7a209, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactionDistance: 2.5
+  interactionText: {fileID: 8441686450299924166}
 --- !u!1 &4450012435330219493
 GameObject:
   m_ObjectHideFlags: 0

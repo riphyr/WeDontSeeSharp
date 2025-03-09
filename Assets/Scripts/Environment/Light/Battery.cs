@@ -24,22 +24,23 @@ namespace InteractionScripts
         {
             if (!view.IsMine)
             {
-                view.RequestOwnership();
+                view.TransferOwnership(PhotonNetwork.LocalPlayer);
             }
 
             inventory.AddItem("Battery", (int)batteryCharge);
-            photonView.RPC("PlayPickupSound", RpcTarget.All);
+            audioSource.PlayOneShot(pickupSound);
+            photonView.RPC("PlayPickupSound", RpcTarget.Others);
+            StartCoroutine(DestroyAfterSound());
         }
 
         [PunRPC]
         private void PlayPickupSound()
         {
-            StartCoroutine(PlaySoundAndDestroy());
+            audioSource.PlayOneShot(pickupSound);
         }
 
-        private IEnumerator PlaySoundAndDestroy()
+        private IEnumerator DestroyAfterSound()
         {
-            audioSource.PlayOneShot(pickupSound);
             yield return new WaitForSeconds(pickupSound.length);
             photonView.RPC("DestroyForAll", RpcTarget.AllBuffered);
         }

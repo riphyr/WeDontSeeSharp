@@ -40,6 +40,16 @@ public class CameraLookingAt : MonoBehaviour
 
     private void DetectInteractiveObject()
     {
+        if (playerCamera == null)
+        {
+            playerCamera = GetComponentInChildren<Camera>();
+        
+            if (playerCamera == null)
+            {
+                return;
+            }
+        }
+        
         Ray ray = playerCamera.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f));
         RaycastHit hit;
 
