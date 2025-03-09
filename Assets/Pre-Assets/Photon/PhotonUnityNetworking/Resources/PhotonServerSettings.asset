@@ -51,6 +51,11 @@ MonoBehaviour:
   - DestroyForAll
   - DestroyMatch_RPC
   - UseMatch
+  - SyncEquipState
+  - SyncFlashlight
+  - UseFlashlight
+  - SyncMicLoudness
+  - SyncSpeechCommand
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

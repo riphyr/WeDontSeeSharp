@@ -4,7 +4,7 @@ using Photon.Pun;
 
 public class PlayerInventory : MonoBehaviourPun
 {
-    private Dictionary<string, int> inventory = new Dictionary<string, int>();
+    private Dictionary<string, float> inventory = new Dictionary<string, float>();
     private PhotonView view;
 
     void Start()
@@ -15,12 +15,12 @@ public class PlayerInventory : MonoBehaviourPun
         return inventory != null && inventory.ContainsKey(itemName) && inventory[itemName] > 0;
     }
 
-    public int GetItemCount(string itemName)
+    public float GetItemCount(string itemName)
     {
         return inventory.ContainsKey(itemName) ? inventory[itemName] : 0;
     }
 
-    public void AddItem(string itemName, int amount = 1)
+    public void AddItem(string itemName, float amount = 1f)
     {
         if (amount <= 0) 
             return;
@@ -35,7 +35,7 @@ public class PlayerInventory : MonoBehaviourPun
         }
     }
     
-    public bool RemoveItem(string itemName, int amount = 1)
+    public bool RemoveItem(string itemName, float amount = 1f)
     {
         if (!inventory.ContainsKey(itemName) || inventory[itemName] < amount)
         {

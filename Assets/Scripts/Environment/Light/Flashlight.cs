@@ -1,0 +1,196 @@
+﻿using UnityEngine;
+using Photon.Pun;
+using System.Collections;
+
+namespace InteractionScripts
+{
+    [RequireComponent(typeof(AudioSource))]
+    [RequireComponent(typeof(PhotonView))]
+    public class Flashlight : MonoBehaviourPun
+    {
+        private Light flashlightLight;
+        public float maxBattery = 100f;
+        public float drain = 20f;
+        private float currentBattery;
+        private bool isOn = false;
+        private bool isEquipped = false;
+        private Transform ownerTransform;
+        private Camera playerCamera;
+        private PhotonView view;
+        private AudioSource audioSource;
+
+        public AudioClip pickupSound;
+        public AudioClip switchSound;
+
+        void Start()
+        {
+            flashlightLight = transform.Find("light")?.GetComponent<Light>();
+            flashlightLight.enabled = false;
+            isOn = false;
+            
+            StartCoroutine(GetStartBattery());
+            
+            view = GetComponent<PhotonView>();
+            audioSource = GetComponent<AudioSource>();
+        }
+        
+        private IEnumerator GetStartBattery()
+        {
+            yield return new WaitForSeconds(0.5f);
+
+            if (ownerTransform == null)
+            {
+                currentBattery = maxBattery;
+            }
+        }
+
+        public void PickupFlashlight(PlayerInventory inventory)
+        {
+            if (!view.IsMine)
+            {
+                view.RequestOwnership();
+            }
+
+            inventory.AddItem("Flashlight", maxBattery);
+            inventory.PrintInventory();
+            photonView.RPC("PlayPickupSound", RpcTarget.All);
+        }
+
+        [PunRPC]
+        private void PlayPickupSound()
+        {
+            StartCoroutine(PlaySoundAndDestroy());
+        }
+
+        private IEnumerator PlaySoundAndDestroy()
+        {
+            audioSource.PlayOneShot(pickupSound);
+            yield return new WaitForSeconds(pickupSound.length);
+            photonView.RPC("DestroyForAll", RpcTarget.AllBuffered);
+        }
+
+        [PunRPC]
+        private void DestroyForAll()
+        {
+            Destroy(gameObject);
+        }
+
+        void Update()
+        {
+            if (isEquipped && ownerTransform != null)
+            {
+                transform.position = ownerTransform.position + ownerTransform.forward * 0.3f + ownerTransform.right * 0.1f + Vector3.up * 0.5f;
+                transform.rotation = Quaternion.Euler(playerCamera.transform.eulerAngles.x, ownerTransform.eulerAngles.y, 0f);
+                
+                if (!isOn && currentBattery > 0)
+                {
+                    flashlightLight.enabled = true;
+                    isOn = true;
+                }
+
+                currentBattery -= Time.deltaTime * drain;
+                if (currentBattery <= 0)
+                {
+                    OutOfBattery();
+                    currentBattery = 0;
+                }
+            }
+        }
+        
+        public void AssignOwner(Photon.Realtime.Player player, Transform ownerTransform)
+        {
+            this.ownerTransform = ownerTransform;
+            photonView.TransferOwnership(player);
+        }
+
+        [PunRPC]
+        void SyncFlashlight(bool state)
+        {
+            isOn = state;
+            flashlightLight.enabled = state;
+        }
+
+        public void OutOfBattery()
+        {
+            isOn = false;
+            flashlightLight.enabled = false;
+        }
+        
+        public bool isOutOfBattery()
+        {
+            return isEquipped && currentBattery <= 0;
+        }
+
+        public void RechargeBattery(PlayerInventory inventory)
+        {
+            if (inventory == null || !inventory.HasItem("Battery")) 
+                return;
+            
+            float availableCharge = inventory.GetItemCount("Battery");
+
+            float chargeToUse = Mathf.Min(availableCharge, maxBattery);
+            inventory.RemoveItem("Battery", chargeToUse);
+            currentBattery += chargeToUse;
+        }
+        
+        public void EquipFlashlight(PlayerInventory inventory, Transform playerTransform)
+        {
+            if (!view.IsMine)
+            {
+                view.RequestOwnership();
+            }
+
+            ownerTransform = playerTransform;
+            playerCamera = ownerTransform.GetComponentInChildren<Camera>();
+            isEquipped = true;
+            
+            currentBattery = inventory.GetItemCount("Flashlight");
+            inventory.ClearItem("Flashlight");
+            
+            audioSource.PlayOneShot(switchSound);
+
+            if (view.IsMine)
+                photonView.RPC("SyncFlashlight", RpcTarget.All, isOn);
+
+            photonView.RPC("SyncEquipState", RpcTarget.Others, true);
+        }
+
+        public void UnequipFlashlight(PlayerInventory inventory)
+        {
+            PlaySwitchSound();
+            isEquipped = false;
+            inventory.AddItem("Flashlight", currentBattery);
+            ownerTransform = null;
+
+            photonView.RPC("DestroyForAll", RpcTarget.AllBuffered);
+        }
+        
+        private IEnumerator PlaySwitchSound()
+        {
+            audioSource.PlayOneShot(switchSound);
+            yield return new WaitForSeconds(switchSound.length);
+        }
+        
+        [PunRPC]
+        private void SyncEquipState(bool state)
+        {
+            isEquipped = state;
+        }
+
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+            if (stream.IsWriting)
+            {
+                stream.SendNext(isOn);
+                stream.SendNext(currentBattery);
+                stream.SendNext(isEquipped);
+            }
+            else
+            {
+                isOn = (bool)stream.ReceiveNext();
+                currentBattery = (float)stream.ReceiveNext();
+                isEquipped = (bool)stream.ReceiveNext();
+            }
+        }
+    }
+}

@@ -20,7 +20,9 @@ namespace MainMenu{
         public GameObject previousinventorytext;
         public GameObject maptext;
         public GameObject usetext;
-        public GameObject interacttext;
+        public GameObject primaryInteractionText;
+        public GameObject secondaryInteractionText;
+        public GameObject reloadtext;
         public GameObject pausetext;
 
         private Dictionary<string, KeyCode> keyBindings = new Dictionary<string, KeyCode>();
@@ -40,7 +42,9 @@ namespace MainMenu{
             keyBindingTexts["Previous"] = previousinventorytext.GetComponent<TMP_Text>();
             keyBindingTexts["Map"] = maptext.GetComponent<TMP_Text>();
             keyBindingTexts["Use"] = usetext.GetComponent<TMP_Text>();
-            keyBindingTexts["Interact"] = interacttext.GetComponent<TMP_Text>();
+            keyBindingTexts["PrimaryInteraction"] = primaryInteractionText.GetComponent<TMP_Text>();
+            keyBindingTexts["SecondaryInteraction"] = secondaryInteractionText.GetComponent<TMP_Text>();
+            keyBindingTexts["Reload"] = reloadtext.GetComponent<TMP_Text>();
             keyBindingTexts["Pause"] = pausetext.GetComponent<TMP_Text>();
 
             LoadKeyBindings();
@@ -101,7 +105,9 @@ namespace MainMenu{
                 { "Previous", KeyCode.LeftArrow },
                 { "Map", KeyCode.M },
                 { "Use", KeyCode.Q },
-                { "Interact", KeyCode.E },
+                { "PrimaryInteraction", KeyCode.E },
+                { "SecondaryInteraction", KeyCode.F },
+                { "Reload", KeyCode.R },
                 { "Pause", KeyCode.Escape }
             };
 

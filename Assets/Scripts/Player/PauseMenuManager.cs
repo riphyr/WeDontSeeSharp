@@ -72,7 +72,9 @@ namespace PauseMenu{
 		public GameObject previousinventorytext;
 		public GameObject maptext;
 		public GameObject usetext;
-		public GameObject interacttext;
+		public GameObject primaryInteractionText;
+		public GameObject secondaryInteractionText;
+		public GameObject reloadtext;
 		public GameObject pausetext;
 
 		
@@ -100,7 +102,7 @@ namespace PauseMenu{
 			sensitivityYSlider.GetComponent<Slider>().value = PlayerPrefs.GetFloat("YSensitivity");
 
 			// Vérification du fullscreen
-			fullscreentext.GetComponent<TMP_Text>().text = Screen.fullScreen ? "off" : "on";
+			fullscreentext.GetComponent<TMP_Text>().text = Screen.fullScreen ? "on" : "off";
 			
 			// Vérification des tooltips
 			tooltipstext.GetComponent<TMP_Text>().text = PlayerPrefs.GetInt("ToolTips") == 0 ? "off" : "on";
@@ -130,7 +132,9 @@ namespace PauseMenu{
 			keyBindingTexts["Previous"] = previousinventorytext.GetComponent<TMP_Text>();
 			keyBindingTexts["Map"] = maptext.GetComponent<TMP_Text>();
 			keyBindingTexts["Use"] = usetext.GetComponent<TMP_Text>();
-			keyBindingTexts["Interact"] = interacttext.GetComponent<TMP_Text>();
+			keyBindingTexts["PrimaryInteraction"] = primaryInteractionText.GetComponent<TMP_Text>();
+			keyBindingTexts["SecondaryInteraction"] = secondaryInteractionText.GetComponent<TMP_Text>();
+			keyBindingTexts["Reload"] = reloadtext.GetComponent<TMP_Text>();
 			keyBindingTexts["Pause"] = pausetext.GetComponent<TMP_Text>();
 
 			LoadKeyBindings();
@@ -335,7 +339,7 @@ namespace PauseMenu{
 
 		public void FullScreen (){
 			Screen.fullScreen = !Screen.fullScreen;
-			fullscreentext.GetComponent<TMP_Text>().text = Screen.fullScreen ? "off" : "on";
+			fullscreentext.GetComponent<TMP_Text>().text = Screen.fullScreen ? "on" : "off";
 		}
 
 		public void MusicSlider (){
@@ -508,7 +512,9 @@ namespace PauseMenu{
                 { "Previous", KeyCode.LeftArrow },
                 { "Map", KeyCode.M },
                 { "Use", KeyCode.Q },
-                { "Interact", KeyCode.E },
+                { "PrimaryInteraction", KeyCode.E },
+                { "SecondaryInteraction", KeyCode.F },
+                { "Reload", KeyCode.R },
                 { "Pause", KeyCode.Escape }
             };
 

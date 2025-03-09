@@ -9,7 +9,8 @@ public class CameraLookingAt : MonoBehaviour
 
     private Camera playerCamera;
     private PlayerInventory inventory;
-    private KeyCode interactKey;
+    private KeyCode primaryInteractionKey;
+	private KeyCode secondaryInteractionKey;
 
     void Start()
     {
@@ -25,8 +26,11 @@ public class CameraLookingAt : MonoBehaviour
 
     private void LoadInteractionKey()
     {
-        string key = PlayerPrefs.GetString("Interact", "None");
-        interactKey = GetKeyCodeFromString(key);
+        string primaryKey = PlayerPrefs.GetString("PrimaryInteraction", "None");
+        primaryInteractionKey = GetKeyCodeFromString(primaryKey);
+
+		string secondaryKey = PlayerPrefs.GetString("SecondaryInteraction", "None");
+        secondaryInteractionKey = GetKeyCodeFromString(secondaryKey);
     }
     
     private KeyCode GetKeyCodeFromString(string key)
@@ -48,80 +52,96 @@ public class CameraLookingAt : MonoBehaviour
                 Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
                 ShowInteractionText(true, door.IsOpen() ? "Fermer la porte" : "Ouvrir la porte");
 
-                if (Input.GetKeyDown(interactKey)) 
+                if (Input.GetKeyDown(primaryInteractionKey)) 
                     door.ToggleDoor();
             }
             else if (hit.transform.TryGetComponent(out InteractionScripts.LockKey lockKey))
             {
                 Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
                 ShowInteractionText(true, $"Dévérouiller la porte");
-                if (Input.GetKeyDown(interactKey)) 
+                if (Input.GetKeyDown(primaryInteractionKey)) 
                     lockKey.AttemptUnlock();
             }
             else if (hit.transform.TryGetComponent(out InteractionScripts.PadLock padlock))
             {
                 Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
                 ShowInteractionText(true, $"Dévérouiller la porte");
-                if (Input.GetKeyDown(interactKey)) 
+                if (Input.GetKeyDown(primaryInteractionKey)) 
                     padlock.EnterPadLockMode();
             }
             else if (hit.transform.TryGetComponent(out InteractionScripts.Window window))
             {
                 Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
                 ShowInteractionText(true, window.IsOpen() ? "Fermer la fenêtre" : "Ouvrir la fenêtre");
-                if (Input.GetKeyDown(interactKey)) 
+                if (Input.GetKeyDown(primaryInteractionKey)) 
                     window.ToggleWindow();
             }
             else if (hit.transform.TryGetComponent(out InteractionScripts.Switch lightSwitch))
             {
                 Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
                 ShowInteractionText(true, lightSwitch.IsOn() ? "Désactiver l'interrupteur" : "Activer l'interrupteur");
-                if (Input.GetKeyDown(interactKey)) 
+                if (Input.GetKeyDown(primaryInteractionKey)) 
                     lightSwitch.ToggleSwitch();
             }
             else if (hit.transform.TryGetComponent(out InteractionScripts.Drawer drawer))
             {
                 Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
                 ShowInteractionText(true, drawer.IsOpen() ? "Fermer le tiroir" : "Ouvrir le tiroir");
-                if (Input.GetKeyDown(interactKey)) 
+                if (Input.GetKeyDown(primaryInteractionKey)) 
                     drawer.ToggleDrawer();
             }
             else if (hit.transform.TryGetComponent(out InteractionScripts.Wardrobe wardrobe))
             {
                 Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
                 ShowInteractionText(true, wardrobe.IsOpen() ? "Fermer l'armoire" : "Ouvrir l'armoire");
-                if (Input.GetKeyDown(interactKey)) 
+                if (Input.GetKeyDown(primaryInteractionKey)) 
                     wardrobe.ToggleWardrobe();
             }
             else if (hit.transform.TryGetComponent(out InteractionScripts.Key key))
             {
                 Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
                 ShowInteractionText(true, $"Ramasser la clef");
-                if (Input.GetKeyDown(interactKey))
+                if (Input.GetKeyDown(primaryInteractionKey))
                     key.PickupKey(inventory);
             }
             else if (hit.transform.TryGetComponent(out InteractionScripts.Candle candle))
             {
                 Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
                 ShowInteractionText(true, $"Ramasser la bougie", "Allumer la bougie");
-                if (Input.GetKeyDown(interactKey)) 
+                if (Input.GetKeyDown(primaryInteractionKey)) 
                     candle.PickupCandle(inventory);
-                else if (Input.GetKeyDown(KeyCode.F))
+                else if (Input.GetKeyDown(secondaryInteractionKey))
                     candle.LightCandle(inventory);
             }
             else if (hit.transform.TryGetComponent(out InteractionScripts.Lighter lighter))
             {
                 Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
                 ShowInteractionText(true, $"Ramasser le briquet");
-                if (Input.GetKeyDown(interactKey)) 
+                if (Input.GetKeyDown(primaryInteractionKey)) 
                     lighter.PickupLighter(inventory);
             }
 			else if (hit.transform.TryGetComponent(out InteractionScripts.MatchBox matchBox))
             {
                 Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
                 ShowInteractionText(true, $"Ramasser les allumettes");
-                if (Input.GetKeyDown(interactKey)) 
+                if (Input.GetKeyDown(primaryInteractionKey)) 
                     matchBox.PickupMatchBox(inventory);
+            }
+			else if (hit.transform.TryGetComponent(out InteractionScripts.Battery battery))
+            {
+                Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
+                ShowInteractionText(true, $"Ramasser la pile");
+
+                if (Input.GetKeyDown(primaryInteractionKey))
+                    battery.PickupBattery(inventory);
+            }
+            else if (hit.transform.TryGetComponent(out InteractionScripts.Flashlight flashlight))
+            {
+                Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
+                ShowInteractionText(true, $"Ramasser la lampe torche");
+
+                if (Input.GetKeyDown(primaryInteractionKey))
+                    flashlight.PickupFlashlight(inventory);
             }
             else
             {
@@ -145,11 +165,11 @@ public class CameraLookingAt : MonoBehaviour
             {
                 if (!string.IsNullOrEmpty(message2))
                 {
-                    interactionText.GetComponent<TMPro.TextMeshProUGUI>().text = $"{message1} [{interactKey}]\n{message2} [F]";
+                    interactionText.GetComponent<TMPro.TextMeshProUGUI>().text = $"{message1} [{primaryInteractionKey}]\n{message2} [{secondaryInteractionKey}]";
                 }
                 else
                 {
-                    interactionText.GetComponent<TMPro.TextMeshProUGUI>().text = $"{message1} [{interactKey}]";
+                    interactionText.GetComponent<TMPro.TextMeshProUGUI>().text = $"{message1} [{primaryInteractionKey}]";
                 }
             }
         }

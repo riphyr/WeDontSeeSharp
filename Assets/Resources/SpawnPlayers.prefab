@@ -44,4 +44,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65345157db4cba142ad6676c441e1216, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerPrefab: {fileID: 4640379144955867318, guid: e0fc70f5669b00f4fa319017a03b0f4a, type: 3}
+  playerPrefab: {fileID: 1965416421609774399, guid: 65792edf8c34c494e811be66484af5ca, type: 3}
+  requiredSceneName: HouseLvl
