@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using Photon.Pun;
 using System.Collections;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(AudioSource))]
 public class PlayerUsing : MonoBehaviourPun
@@ -15,6 +16,8 @@ public class PlayerUsing : MonoBehaviourPun
     private CameraLookingAt cameraLookingAt;
     private Camera playerCamera;
     private Transform playerBody;
+    private KeyCode nextKeyInteraction;
+    private KeyCode previousKeyInteraction;
     
     [Header("Candle")]
     private GameObject previewCandle;
@@ -34,8 +37,36 @@ public class PlayerUsing : MonoBehaviourPun
         cameraLookingAt = GetComponent<CameraLookingAt>();
     }
     
+    private KeyCode GetKeyCodeFromString(string key)
+    {
+        return (KeyCode)System.Enum.Parse(typeof(KeyCode), key);
+    }
+    
+    private void LoadInteractionKey()
+    {
+        string nextKey = PlayerPrefs.GetString("Next", "None");
+        nextKeyInteraction = GetKeyCodeFromString(nextKey);
+
+        string previousKey = PlayerPrefs.GetString("Previous", "None");
+        previousKeyInteraction = GetKeyCodeFromString(previousKey);
+    }
+    
     void Update()
     {
+        LoadInteractionKey();
+        
+        if (Input.GetKeyDown(nextKeyInteraction))
+        {
+            Debug.Log("Next");
+            FindObjectOfType<PlayerInventory>().SwitchToNextItem();
+        }
+
+        if (Input.GetKeyDown(previousKeyInteraction))
+        {
+            Debug.Log("Previous");
+            FindObjectOfType<PlayerInventory>().SwitchToPreviousItem();
+        }
+        
         if (Input.GetKeyDown(KeyCode.T))
         {
             photonView.RPC("UseMatch", RpcTarget.All);

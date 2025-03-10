@@ -536,6 +536,10 @@ namespace PauseMenu{
             PlayerPrefs.Save();
         }
 
+        public Dictionary<string, KeyCode> GetKeyBindings()
+        {
+	        return keyBindings;
+        }
 
         private void UpdateKeyBindingText(string action, KeyCode keyCode)
         {
