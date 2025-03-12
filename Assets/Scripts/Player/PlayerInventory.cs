@@ -16,25 +16,19 @@ public class PlayerInventory : MonoBehaviourPun
 
     void Start()
     {
-        Debug.Log("🟢 PlayerInventory Start: Initialisation...");
         LoadItemSprites();
         UpdateSelectedItemDisplay();
     }
     
     private void LoadItemSprites()
     {
-        Debug.Log("🔍 Chargement des sprites d'inventaire...");
+        Debug.Log("Chargement des sprites d'inventaire...");
         Sprite[] sprites = Resources.LoadAll<Sprite>("InventorySprites");
-
-        if (sprites.Length == 0)
-        {
-            Debug.LogError("❌ Aucun sprite trouvé dans Resources/InventorySprites !");
-        }
 
         foreach (Sprite sprite in sprites)
         {
             itemSprites[sprite.name] = sprite;
-            Debug.Log($"✅ Sprite chargé : {sprite.name}");
+            Debug.Log($"Sprite chargé : {sprite.name}");
         }
     }
 
@@ -50,7 +44,7 @@ public class PlayerInventory : MonoBehaviourPun
 
     public void AddItem(string itemName, float amount = 1f)
     {
-        if (amount <= 0) return;
+        if (amount < 0) return;
 
         if (inventory.ContainsKey(itemName))
         {
@@ -67,7 +61,7 @@ public class PlayerInventory : MonoBehaviourPun
             selectedItemIndex = 0;
         }
 
-        Debug.Log($"➕ Ajout de {amount}x {itemName}. Nouveau total : {inventory[itemName]}");
+        Debug.Log($"Ajout de {amount}x {itemName}. Nouveau total : {inventory[itemName]}");
         UpdateSelectedItemDisplay();
     }
     
@@ -75,7 +69,7 @@ public class PlayerInventory : MonoBehaviourPun
     {
         if (!inventory.ContainsKey(itemName) || inventory[itemName] < amount)
         {
-            Debug.LogWarning($"⚠️ Impossible de retirer {amount}x {itemName}, quantité insuffisante.");
+            Debug.LogWarning($"Impossible de retirer {amount}x {itemName}, quantité insuffisante.");
             return false;
         }
 
@@ -84,7 +78,7 @@ public class PlayerInventory : MonoBehaviourPun
         {
             inventory.Remove(itemName);
             inventoryKeys.Remove(itemName);
-            Debug.Log($"❌ {itemName} retiré de l'inventaire.");
+            Debug.Log($"{amount} x {itemName} retiré de l'inventaire.");
         }
 
         UpdateSelectedItemDisplay();
@@ -97,13 +91,13 @@ public class PlayerInventory : MonoBehaviourPun
         {
             inventory.Remove(itemName);
             inventoryKeys.Remove(itemName);
-            Debug.Log($"🗑️ {itemName} supprimé de l'inventaire.");
+            Debug.Log($"{itemName} supprimé de l'inventaire.");
         }
     }
 
     public void PrintInventory()
     {
-        Debug.Log("📜 Inventaire du joueur :");
+        Debug.Log("Inventaire du joueur :");
         foreach (var item in inventory)
         {
             Debug.Log($"{item.Key} : {item.Value}");
@@ -114,19 +108,19 @@ public class PlayerInventory : MonoBehaviourPun
     {
         inventory.Clear();
         inventoryKeys.Clear();
-        Debug.Log("🧹 Inventaire vidé.");
+        Debug.Log("Inventaire vidé.");
     }
     
     public void SwitchToNextItem()
     {
         if (inventoryKeys.Count == 0)
         {
-            Debug.LogWarning("⚠️ Aucun objet dans l'inventaire !");
+            Debug.LogWarning("Aucun objet dans l'inventaire !");
             return;
         }
 
         selectedItemIndex = (selectedItemIndex + 1) % inventoryKeys.Count;
-        Debug.Log($"🔄 Changement d'objet : {inventoryKeys[selectedItemIndex]}");
+        Debug.Log($"Changement d'objet : {inventoryKeys[selectedItemIndex]}");
         UpdateSelectedItemDisplay();
     }
 
@@ -134,14 +128,23 @@ public class PlayerInventory : MonoBehaviourPun
     {
         if (inventoryKeys.Count == 0)
         {
-            Debug.LogWarning("⚠️ Aucun objet dans l'inventaire !");
+            Debug.LogWarning("Aucun objet dans l'inventaire !");
             return;
         }
 
         selectedItemIndex = (selectedItemIndex - 1 + inventoryKeys.Count) % inventoryKeys.Count;
-        Debug.Log($"🔄 Changement d'objet : {inventoryKeys[selectedItemIndex]}");
+        Debug.Log($"Changement d'objet : {inventoryKeys[selectedItemIndex]}");
         UpdateSelectedItemDisplay();
     }
+
+	public string GetSelectedItem()
+	{
+    	if (selectedItemIndex >= 0 && selectedItemIndex < inventoryKeys.Count)
+    	{
+        	return inventoryKeys[selectedItemIndex];
+    	}
+    	return null;
+	}
     
     private void UpdateSelectedItemDisplay()
     {

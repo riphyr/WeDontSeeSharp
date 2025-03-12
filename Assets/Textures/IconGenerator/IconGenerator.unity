@@ -403,8 +403,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c182dc2c7d53bdb49abc013424d5884b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  iconSprite: {fileID: 0}
-  itemPrefab: {fileID: 1586436788824480, guid: 30e4790733cd3ac4184fa74b788651f8, type: 3}
 --- !u!1 &778272642
 GameObject:
   m_ObjectHideFlags: 0
@@ -679,14 +677,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targets:
-  - name: Candle
-    obj: {fileID: 2989535605162448134, guid: dc0704cc56ed42646a5019b3c7010c9b, type: 3}
-  - name: Flashlight
-    obj: {fileID: 8293391893222592021, guid: a0983877afbd1e74b952849a4610ae25, type: 3}
-  - name: Match
-    obj: {fileID: 7510659701657749189, guid: d4b8980a468b1364fa8d559bda83157a, type: 3}
-  - name: Battery
-    obj: {fileID: 4935143017026424203, guid: c1b75bc196608cd4e8ab16b166526719, type: 3}
+  - name: Lighter
+    obj: {fileID: 6692566071976834495, guid: 94cf3732cda86094dae8a628c2e3c87d, type: 3}
   overlays:
   - {fileID: 21300000, guid: ed8afe2a031df234a8fcf3442a84143b, type: 3}
   customFolder: Textures

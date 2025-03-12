@@ -18,6 +18,12 @@ public class PlayerUsing : MonoBehaviourPun
     private Transform playerBody;
     private KeyCode nextKeyInteraction;
     private KeyCode previousKeyInteraction;
+	private KeyCode useKey;
+	private KeyCode reloadKey;
+	private bool useCooldown = false;
+
+	[Header("Match")]
+	private InteractionScripts.Match matchScript;
     
     [Header("Candle")]
     private GameObject previewCandle;
@@ -35,6 +41,8 @@ public class PlayerUsing : MonoBehaviourPun
         playerBody = transform;
         playerCamera = GetComponentInChildren<Camera>();
         cameraLookingAt = GetComponent<CameraLookingAt>();
+
+		LoadInteractionKey();
     }
     
     private KeyCode GetKeyCodeFromString(string key)
@@ -49,54 +57,111 @@ public class PlayerUsing : MonoBehaviourPun
 
         string previousKey = PlayerPrefs.GetString("Previous", "None");
         previousKeyInteraction = GetKeyCodeFromString(previousKey);
+
+		string useString = PlayerPrefs.GetString("Use", "None");
+		useKey = GetKeyCodeFromString(useString);
+
+		string reloadString = PlayerPrefs.GetString("Reload", "None");
+		reloadKey = GetKeyCodeFromString(reloadString);
     }
     
     void Update()
     {
         LoadInteractionKey();
+		UpdateItemPlacement();
         
+		if (useCooldown) 
+			return;
+
         if (Input.GetKeyDown(nextKeyInteraction))
         {
-            Debug.Log("Next");
             FindObjectOfType<PlayerInventory>().SwitchToNextItem();
         }
-
-        if (Input.GetKeyDown(previousKeyInteraction))
+		else if (Input.GetKeyDown(previousKeyInteraction))
         {
-            Debug.Log("Previous");
             FindObjectOfType<PlayerInventory>().SwitchToPreviousItem();
         }
-        
-        if (Input.GetKeyDown(KeyCode.T))
+        else if (Input.GetKeyDown(useKey))
         {
-            photonView.RPC("UseMatch", RpcTarget.All);
+            UseSelectedItem();
+        }
+		else if (Input.GetKeyDown(reloadKey))
+        {
+            ReloadSelectedItem();
+        }
+    }
+
+	private void UseSelectedItem()
+    {
+        string selectedItem = inventory.GetSelectedItem();
+
+        if (string.IsNullOrEmpty(selectedItem))
+        {
+            Debug.Log("Aucun objet sélectionné !");
+            return;
         }
 
-        if (Input.GetKeyDown(KeyCode.L))
+        Debug.Log($"Utilisation de l'objet : {selectedItem}");
+
+        switch (selectedItem)
         {
-            TryToPlaceCandle();
+            case "Match":
+                photonView.RPC("UseMatch", RpcTarget.All);
+                break;
+            case "Candle":
+                TryToPlaceCandle();
+                break;
+            case "Flashlight":
+                photonView.RPC("UseFlashlight", RpcTarget.All);
+                break;
+            default:
+                Debug.Log($"Aucune action définie pour l'objet {selectedItem}");
+                break;
+        }
+    }
+
+	private void ReloadSelectedItem()
+    {
+        string selectedItem = inventory.GetSelectedItem();
+
+        if (string.IsNullOrEmpty(selectedItem))
+        {
+            Debug.Log("Aucun objet sélectionné !");
+            return;
         }
 
-        if (placingCandle)
+        Debug.Log($"Rechargement de l'objet : {selectedItem}");
+
+        switch (selectedItem)
+        {
+            case "Flashlight":
+                RechargeFlashlight();
+                break;
+            default:
+                Debug.Log($"Aucune rechargement définie pour l'objet {selectedItem}");
+                break;
+        }
+    }
+
+	private void UpdateItemPlacement()
+	{
+		if (placingCandle)
         {
             UpdateCandlePosition();
 
-            if (Input.GetKeyDown(KeyCode.E))
+            if (Input.GetKeyDown(useKey))
             {
                 ConfirmCandlePlacement();
             }
         }
+	}
 
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            photonView.RPC("UseFlashlight", RpcTarget.All);
-        }
-
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            RechargeFlashlight();
-        }
-    }
+	private IEnumerator UseCooldown()
+	{
+    	useCooldown = true;
+    	yield return new WaitForSeconds(0.2f);
+    	useCooldown = false;
+	}
 
     // Gestion allumettes
     [PunRPC]
@@ -105,7 +170,7 @@ public class PlayerUsing : MonoBehaviourPun
         if (!photonView.IsMine) 
             return;
 
-        if (!inventory.HasItem("Match"))
+        if (matchScript != null || !inventory.HasItem("Match"))
         {
             return;
         }
@@ -123,7 +188,7 @@ public class PlayerUsing : MonoBehaviourPun
 
         yield return new WaitForSeconds(0.1f);
 
-        InteractionScripts.Match matchScript = matchInstance.GetComponent<InteractionScripts.Match>();
+        matchScript = matchInstance.GetComponent<InteractionScripts.Match>();
 
         matchScript.AssignOwner(photonView.Owner, playerBody);
         matchScript.IgniteMatch();
@@ -195,6 +260,8 @@ public class PlayerUsing : MonoBehaviourPun
         inventory.RemoveItem("Candle", 1);
         cameraLookingAt.enabled = true;
         candleCollider.enabled = true;
+		
+		StartCoroutine(UseCooldown());
     }
     
     //Gestion lampe torche

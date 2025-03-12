@@ -155,7 +155,6 @@ namespace InteractionScripts
             isEquipped = true;
     
             currentBattery = inventory.GetItemCount("Flashlight");
-            inventory.ClearItem("Flashlight");
             
             photonView.RPC("SetColliderState", RpcTarget.AllBuffered, false);
             
@@ -184,6 +183,7 @@ namespace InteractionScripts
         {
             StartCoroutine(PlaySwitchSound());
             isEquipped = false;
+            inventory.ClearItem("Flashlight");
             inventory.AddItem("Flashlight", currentBattery);
             ownerTransform = null;
 
