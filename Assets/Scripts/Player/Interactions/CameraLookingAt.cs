@@ -206,6 +206,16 @@ public class CameraLookingAt : MonoBehaviour
                     }
                 }
             }
+            else if (hit.transform.TryGetComponent(out InteractionScripts.Magnetophone magnetophone))
+            {
+                Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
+                ShowInteractionText(true, "Ramasser le magnétophone");
+
+                if (Input.GetKeyDown(primaryInteractionKey))
+                {
+                    magnetophone.PickupMagnetophone(inventory);
+                }
+            }
             else
             {
                 ShowInteractionText(false);

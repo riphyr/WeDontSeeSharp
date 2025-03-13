@@ -74,6 +74,9 @@ MonoBehaviour:
   - RPC_ToggleButton
   - RPC_DestroyScrew
   - RPC_StartRemoving
+  - RPC_HandleRecognition
+  - RPC_PlayBeep
+  - UseMagnetophone
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

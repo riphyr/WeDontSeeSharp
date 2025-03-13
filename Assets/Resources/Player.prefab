@@ -12111,7 +12111,6 @@ GameObject:
   - component: {fileID: 1542760420516181966}
   - component: {fileID: 4295723436551358989}
   - component: {fileID: 4741557996133663683}
-  - component: {fileID: 3176478019269776873}
   - component: {fileID: 5202161507523636149}
   m_Layer: 0
   m_Name: Player
@@ -12405,18 +12404,8 @@ MonoBehaviour:
   flashlightPrefab: {fileID: 8293391893222592021, guid: a0983877afbd1e74b952849a4610ae25, type: 3}
   UVFlashlightPrefab: {fileID: 2695777482564835125, guid: ef7cb0b087cdab84c8ad99a7087a74b1, type: 3}
   wrenchPrefab: {fileID: 8459339731610399928, guid: eae3edc0cbaa588409e939c3989ffd11, type: 3}
---- !u!114 &3176478019269776873
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4247527032670436945}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9deaff1aac594f6ba6816e847f4ad564, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  magnetophonePrefab: {fileID: 1574256191029235216, guid: d133f52fc19d84442a874e332da67518, type: 3}
+  wrenchScript: {fileID: 0}
 --- !u!114 &5202161507523636149
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12424,7 +12413,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4247527032670436945}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 317adc1d046c4598bdffba3652a7a209, type: 3}
   m_Name: 

@@ -86,19 +86,16 @@ public class SpawnPlayers : MonoBehaviourPunCallbacks
         CameraLookingAt cameraLookingAt = player.GetComponent<CameraLookingAt>();
         PlayerInventory playerInventory = player.GetComponent<PlayerInventory>();
         PlayerUsing playerUsing = player.GetComponent<PlayerUsing>();
-        SimpleSpeechRecognition simpleSpeechRecognition = player.GetComponent<SimpleSpeechRecognition>();
 
         if (playerScript == null) Debug.LogError("🚨 PlayerScript manquant sur Player !");
         if (cameraLookingAt == null) Debug.LogError("🚨 CameraLookingAt manquant sur Player !");
         if (playerInventory == null) Debug.LogError("🚨 PlayerInventory manquant sur Player !");
         if (playerUsing == null) Debug.LogError("🚨 PlayerUsing manquant sur Player !");
-        if (simpleSpeechRecognition == null) Debug.LogError("🚨 SimpleSpeechRecognition manquant sur Player !");
 
         playerScript.enabled = true;
         cameraLookingAt.enabled = true;
         playerInventory.enabled = true;
         playerUsing.enabled = true;
-        simpleSpeechRecognition.enabled = true;
 
         // Activation du menu de pause
         GameObject pauseMenu = myPlayer.transform.Find("Pause_Menu").gameObject;

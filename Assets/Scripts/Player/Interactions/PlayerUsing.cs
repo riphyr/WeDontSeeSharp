@@ -12,6 +12,7 @@ public class PlayerUsing : MonoBehaviourPun
     public GameObject flashlightPrefab;
     public GameObject UVFlashlightPrefab;
     public GameObject wrenchPrefab;
+    public GameObject magnetophonePrefab;
 
     [Header("Player")]
     private PlayerInventory inventory;
@@ -44,6 +45,12 @@ public class PlayerUsing : MonoBehaviourPun
     [Header("Wrench")] 
     [HideInInspector]public InteractionScripts.Wrench wrenchScript;
     private BoxCollider wrenchCollider;
+    
+    [Header("Magnetophone")]
+    private GameObject activeMagnetophone;
+    private InteractionScripts.Magnetophone magnetophoneScript;
+    private BoxCollider magnetophoneCollider;
+
 
     void Start()
     {
@@ -129,6 +136,9 @@ public class PlayerUsing : MonoBehaviourPun
                 break;
             case "Wrench":
                 photonView.RPC("UseWrench", RpcTarget.All);
+                break;
+            case "Magnetophone":
+                photonView.RPC("UseMagnetophone", RpcTarget.All);
                 break;
             default:
                 Debug.Log($"Aucune action définie pour l'objet {selectedItem}");
@@ -399,5 +409,43 @@ public class PlayerUsing : MonoBehaviourPun
 
         wrenchScript.AssignOwner(photonView.Owner, playerBody);
         wrenchScript.ShowWrench(true);
+    }
+    
+    // Gestion du magnétophone
+    [PunRPC]
+    private void UseMagnetophone()
+    {
+        if (!photonView.IsMine) 
+            return;
+
+        if (magnetophoneScript == null && inventory.HasItem("Magnetophone"))
+        {
+            StartCoroutine(SpawnMagnetophone());
+        }
+        else if (magnetophoneScript != null)
+        {
+            magnetophoneScript.ShowMagnetophone(false);
+            magnetophoneScript = null;
+        }
+    }
+
+    private IEnumerator SpawnMagnetophone()
+    {
+        Quaternion magnetophoneRotation = Quaternion.Euler(0f, playerBody.eulerAngles.y, 0f);
+        Vector3 spawnPosition = playerCamera.transform.position + playerCamera.transform.forward * 0.5f;
+
+        GameObject magnetophoneInstance = PhotonNetwork.Instantiate(magnetophonePrefab.name, spawnPosition, magnetophoneRotation);
+        magnetophoneCollider = magnetophoneInstance.GetComponent<BoxCollider>();
+        magnetophoneCollider.enabled = false;
+
+        yield return new WaitForSeconds(0.1f);
+
+        magnetophoneScript = magnetophoneInstance.GetComponent<InteractionScripts.Magnetophone>();
+
+        if (magnetophoneScript != null)
+        {
+            magnetophoneScript.AssignOwner(photonView.Owner, playerBody);
+            magnetophoneScript.ActivateMagnetophone();
+        }
     }
 }
