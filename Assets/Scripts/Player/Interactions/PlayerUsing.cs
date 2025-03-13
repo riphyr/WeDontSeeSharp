@@ -10,6 +10,8 @@ public class PlayerUsing : MonoBehaviourPun
     public GameObject matchPrefab;
     public GameObject candlePrefab;
     public GameObject flashlightPrefab;
+    public GameObject UVFlashlightPrefab;
+    public GameObject wrenchPrefab;
 
     [Header("Player")]
     private PlayerInventory inventory;
@@ -34,6 +36,14 @@ public class PlayerUsing : MonoBehaviourPun
     [Header("Flashlight")] 
     private InteractionScripts.Flashlight flashlightScript;
     private CapsuleCollider flashlightCollider;
+    
+    [Header("UV Flashlight")] 
+    private InteractionScripts.UVFlashlight UVFlashlightScript;
+    private BoxCollider UVFlashlightCollider;
+    
+    [Header("Wrench")] 
+    [HideInInspector]public InteractionScripts.Wrench wrenchScript;
+    private BoxCollider wrenchCollider;
 
     void Start()
     {
@@ -114,6 +124,12 @@ public class PlayerUsing : MonoBehaviourPun
             case "Flashlight":
                 photonView.RPC("UseFlashlight", RpcTarget.All);
                 break;
+            case "UVFlashlight":
+                photonView.RPC("UseUVFlashlight", RpcTarget.All);
+                break;
+            case "Wrench":
+                photonView.RPC("UseWrench", RpcTarget.All);
+                break;
             default:
                 Debug.Log($"Aucune action définie pour l'objet {selectedItem}");
                 break;
@@ -136,6 +152,9 @@ public class PlayerUsing : MonoBehaviourPun
         {
             case "Flashlight":
                 RechargeFlashlight();
+                break;
+            case "UVFlashlight":
+                RechargeUVFlashlight();
                 break;
             default:
                 Debug.Log($"Aucune rechargement définie pour l'objet {selectedItem}");
@@ -304,5 +323,81 @@ public class PlayerUsing : MonoBehaviourPun
         {
             flashlightScript.RechargeBattery(inventory);
         }
+    }
+    
+    //Gestion lampe UV
+    [PunRPC]
+    private void UseUVFlashlight()
+    {
+        if (!photonView.IsMine) 
+            return;
+        
+        if (UVFlashlightScript == null && inventory.GetItemCount("UVFlashlight") >= 0)
+        {
+            StartCoroutine(SpawnUVFlashlight());
+        }
+        else if (UVFlashlightScript != null)
+        {
+            UVFlashlightScript.UnequipFlashlight(inventory);
+            UVFlashlightScript = null;
+        }
+    }
+    
+    private IEnumerator SpawnUVFlashlight()
+    {
+        Quaternion UVFlashlightRotation = Quaternion.Euler(0f, playerBody.eulerAngles.y, 0f);
+
+        GameObject UVFlashlightInstance = PhotonNetwork.Instantiate(UVFlashlightPrefab.name, Vector3.zero, UVFlashlightRotation);
+        UVFlashlightCollider = UVFlashlightInstance.GetComponent<BoxCollider>();
+        UVFlashlightCollider.enabled = false;
+
+        yield return new WaitForSeconds(0.1f);
+
+        UVFlashlightScript = UVFlashlightInstance.GetComponent<InteractionScripts.UVFlashlight>();
+
+        UVFlashlightScript.AssignOwner(photonView.Owner, playerBody);
+        UVFlashlightScript.EquipFlashlight(inventory, playerBody);
+    }
+
+    private void RechargeUVFlashlight()
+    {
+        if (UVFlashlightScript != null && UVFlashlightScript.isOutOfBattery())
+        {
+            UVFlashlightScript.RechargeBattery(inventory);
+        }
+    }
+    
+    // Gestion clef (outils)
+    [PunRPC]
+    private void UseWrench()
+    {
+        if (!photonView.IsMine) 
+            return;
+        
+        if (wrenchScript == null && inventory.HasItem("Wrench"))
+        {
+            StartCoroutine(SpawnWrench());
+        }
+        else if (wrenchScript != null)
+        {
+            wrenchScript.ShowWrench(false);
+            wrenchScript = null;
+        }
+    }
+
+    private IEnumerator SpawnWrench()
+    {
+        Quaternion wrenchRotation = Quaternion.Euler(-90f, playerBody.eulerAngles.y, 0f);
+
+        GameObject wrenchInstance = PhotonNetwork.Instantiate(wrenchPrefab.name, Vector3.zero, wrenchRotation);
+        wrenchCollider = wrenchInstance.GetComponent<BoxCollider>();
+        wrenchCollider.enabled = false;
+
+        yield return new WaitForSeconds(0.1f);
+
+        wrenchScript = wrenchInstance.GetComponent<InteractionScripts.Wrench>();
+
+        wrenchScript.AssignOwner(photonView.Owner, playerBody);
+        wrenchScript.ShowWrench(true);
     }
 }

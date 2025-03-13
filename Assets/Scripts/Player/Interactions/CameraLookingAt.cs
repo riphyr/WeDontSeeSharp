@@ -153,6 +153,59 @@ public class CameraLookingAt : MonoBehaviour
                 if (Input.GetKeyDown(primaryInteractionKey))
                     flashlight.PickupFlashlight(inventory);
             }
+            else if (hit.transform.TryGetComponent(out InteractionScripts.UVFlashlight UVFlashlight))
+            {
+                Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
+                ShowInteractionText(true, $"Ramasser la lampe UV");
+
+                if (Input.GetKeyDown(primaryInteractionKey))
+                    UVFlashlight.PickupFlashlight(inventory);
+            }
+            else if (hit.transform.TryGetComponent(out InteractionScripts.Wrench Wrench))
+            {
+                Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
+                ShowInteractionText(true, $"Ramasser la clef à boulon");
+
+                if (Input.GetKeyDown(primaryInteractionKey))
+                    Wrench.PickupWrench(inventory);
+            }
+            else if (hit.transform.TryGetComponent(out InteractionScripts.ElectricBox electricBox))
+            {
+                Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
+                ShowInteractionText(true, electricBox.IsOpen() ? "Fermer le boîtier" : "Ouvrir le boîtier");
+
+                if (Input.GetKeyDown(primaryInteractionKey))
+                    electricBox.ToggleBox();
+            }
+            else if (hit.transform.TryGetComponent(out InteractionScripts.ElectricButton electricButton))
+            {
+                Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
+                ShowInteractionText(true, $"Basculer le bouton");
+
+                if (Input.GetKeyDown(primaryInteractionKey))
+                    electricButton.ToggleButton();
+            }
+            else if (hit.transform.TryGetComponent(out InteractionScripts.ElectricLever electricLever))
+            {
+                Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
+                ShowInteractionText(true, $"Activer le levier");
+
+                if (Input.GetKeyDown(primaryInteractionKey))
+                    electricLever.TryActivateLever();
+            }
+            else if (hit.transform.TryGetComponent(out InteractionScripts.ElectricScrew screw))
+            {
+                if (FindObjectOfType<PlayerUsing>().wrenchScript != null)
+                {
+                    Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
+                    ShowInteractionText(true, "Dévisser la vis");
+
+                    if (Input.GetKeyDown(primaryInteractionKey))
+                    {
+                        screw.TryRemoveScrew();
+                    }
+                }
+            }
             else
             {
                 ShowInteractionText(false);

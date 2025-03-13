@@ -63,6 +63,17 @@ MonoBehaviour:
   - SyncFlashlightState
   - SyncFlashlightTransform
   - SetColliderState
+  - SyncUVFlashlightState
+  - SyncUVFlashlightTransform
+  - UseUVFlashlight
+  - SetUVIntensity_RPC
+  - UseWrench
+  - PlayUseSound
+  - RPC_ActivateLever
+  - RPC_ToggleBox
+  - RPC_ToggleButton
+  - RPC_DestroyScrew
+  - RPC_StartRemoving
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

@@ -166,4 +166,16 @@ public class PlayerInventory : MonoBehaviourPun
             selectedItemIcon.enabled = false;
         }
     }
+    
+    public void SetItemCount(string itemName, float amount)
+    {
+        if (inventory.ContainsKey(itemName))
+        {
+            inventory[itemName] = amount;
+        }
+        else
+        {
+            inventory.Add(itemName, amount);
+        }
+    }
 }

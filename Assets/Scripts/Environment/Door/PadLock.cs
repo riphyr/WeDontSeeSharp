@@ -122,7 +122,7 @@ namespace InteractionScripts
             Ray ray = padLockCamera.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("PadLock")))
+            if (Physics.Raycast(ray, out hit, 3, LayerMask.GetMask("PadLock")))
             {
                 if (hit.transform == WheelOne) 
                 {

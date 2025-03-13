@@ -10,7 +10,7 @@ namespace InteractionScripts
     {
         private Light flashlightLight;
         public float maxBattery = 100f;
-        public float drain = 20f;
+        public float drain = 10f;
         private float currentBattery;
         private bool isOn = false;
         private bool isEquipped = false;
@@ -50,7 +50,7 @@ namespace InteractionScripts
         {
             if (!view.IsMine)
             {
-                view.RequestOwnership();
+                view.TransferOwnership(PhotonNetwork.LocalPlayer);
             }
 
             inventory.AddItem("Flashlight", maxBattery);
@@ -183,8 +183,7 @@ namespace InteractionScripts
         {
             StartCoroutine(PlaySwitchSound());
             isEquipped = false;
-            inventory.ClearItem("Flashlight");
-            inventory.AddItem("Flashlight", currentBattery);
+            inventory.SetItemCount("Flashlight", currentBattery);
             ownerTransform = null;
 
             photonView.RPC("DestroyForAll", RpcTarget.AllBuffered);

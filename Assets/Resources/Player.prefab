@@ -12403,6 +12403,8 @@ MonoBehaviour:
   matchPrefab: {fileID: 5044355496907704305, guid: fe95bfc6880d649419e15fcc0009c060, type: 3}
   candlePrefab: {fileID: 2989535605162448134, guid: dc0704cc56ed42646a5019b3c7010c9b, type: 3}
   flashlightPrefab: {fileID: 8293391893222592021, guid: a0983877afbd1e74b952849a4610ae25, type: 3}
+  UVFlashlightPrefab: {fileID: 2695777482564835125, guid: ef7cb0b087cdab84c8ad99a7087a74b1, type: 3}
+  wrenchPrefab: {fileID: 8459339731610399928, guid: eae3edc0cbaa588409e939c3989ffd11, type: 3}
 --- !u!114 &3176478019269776873
 MonoBehaviour:
   m_ObjectHideFlags: 0
