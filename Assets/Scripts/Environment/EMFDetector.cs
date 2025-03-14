@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using Photon.Pun;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace InteractionScripts
 {
@@ -12,19 +13,26 @@ namespace InteractionScripts
         public AudioClip pickupSound;
         public AudioClip beepSound;
         public float detectionRange = 15f;
+        
+        public LayerMask blockLayers;       // ❌ Bloque totalement le signal
+        public LayerMask wallLayers;        // ⛔ Réduit sévèrement (~30% passe)
+        public LayerMask doorLayers;        // 🚪 Réduit moyennement (~60% passe)
+        public LayerMask thinObjectLayers;  // 🪟 Réduction faible (~85% passe)
+        public LayerMask ignoredLayers;     // 🚷 Couches ignorées (ex: joueur)
 
         private AudioSource audioSource;
         private PhotonView view;
         private Transform ownerTransform;
         private bool isActive = false;
         private int currentLevel = 0;
-        private Coroutine detectionCoroutine;
+        private float nextBeepTime = 0f;
 
         void Start()
         {
             view = GetComponent<PhotonView>();
             audioSource = GetComponent<AudioSource>();
             SetLEDLevel(0);
+            Debug.Log("🚀 EMF Detector initialized. LEDs set to 0.");
         }
 
         public void PickupEMF(PlayerInventory inventory)
@@ -36,6 +44,7 @@ namespace InteractionScripts
 
             inventory.AddItem("EMFDetector");
             photonView.RPC("PlayPickupSound", RpcTarget.All);
+            Debug.Log("🎤 EMF Detector picked up!");
         }
 
         [PunRPC]
@@ -50,7 +59,7 @@ namespace InteractionScripts
             yield return new WaitForSeconds(pickupSound.length);
             photonView.RPC("DestroyForAll", RpcTarget.AllBuffered);
         }
-
+        
         [PunRPC]
         private void DestroyForAll()
         {
@@ -60,118 +69,139 @@ namespace InteractionScripts
         public void ToggleEMF()
         {
             isActive = !isActive;
+            Debug.Log($"🔁 EMF Detector toggled. Active: {isActive}");
 
-            if (isActive)
+            if (!isActive)
             {
-                if (detectionCoroutine == null)
-                {
-                    detectionCoroutine = StartCoroutine(EMFDetectionLoop());
-                }
-            }
-            else
-            {
-                if (detectionCoroutine != null)
-                {
-                    StopCoroutine(detectionCoroutine);
-                    detectionCoroutine = null;
-                }
                 SetLEDLevel(0);
-                photonView.RPC("DestroyForAll", RpcTarget.AllBuffered);
+                Debug.Log("❌ EMF Detector turned off. LEDs set to 0.");
             }
         }
 
-        private IEnumerator EMFDetectionLoop()
+        void Update()
         {
-            while (isActive)
+            if (!isActive) return;
+
+            int newLevel = DetectEntities();
+
+            if (newLevel != currentLevel)
             {
-                int newLevel = DetectEntities();
+                currentLevel = newLevel;
+                view.RPC("RPC_SetLEDLevel", RpcTarget.All, currentLevel);
+                view.RPC("RPC_PlayEMFBeep", RpcTarget.All);
+            }
 
-                if (newLevel != currentLevel)
-                {
-                    currentLevel = newLevel;
-                    view.RPC("RPC_SetLEDLevel", RpcTarget.All, currentLevel);
-                    view.RPC("RPC_PlayEMFBeep", RpcTarget.All);
-                }
-
-                yield return new WaitForSeconds(GetBeepFrequency(currentLevel));
+            if (currentLevel == 5 && Time.time >= nextBeepTime)
+            {
+                nextBeepTime = Time.time + GetBeepFrequency(5);
+                view.RPC("RPC_PlayEMFBeep", RpcTarget.All);
             }
         }
 
         private int DetectEntities()
         {
-            Collider[] colliders = Physics.OverlapSphere(transform.position, 15f);
+            Collider[] colliders = Physics.OverlapSphere(transform.position, detectionRange);
             int detectedLevel = 0;
+
+            Debug.Log($"🛠 Checking for entities... Found {colliders.Length} objects.");
 
             foreach (Collider collider in colliders)
             {
                 if (collider.CompareTag("Ghost"))
                 {
                     float distance = Vector3.Distance(transform.position, collider.transform.position);
-                    float heightDifference = Mathf.Abs(transform.position.y - collider.transform.position.y);
+                    float signalStrength = GetSignalStrength(collider.transform, distance);
+            
+                    if (signalStrength > 0)
+                    {
+                        Debug.Log($"👻 Ghost detected at {distance}m with signal strength {signalStrength}");
 
-                    float obstructionFactor = GetObstructionFactor(collider.transform);
+                        // 🟢 Détection brute en fonction de la distance
+                        float rawLevel = 0f;
+                        if (distance < 3f) rawLevel = 5;
+                        else if (distance < 5f) rawLevel = 4;
+                        else if (distance < 7f) rawLevel = 3;
+                        else if (distance < 10f) rawLevel = 2;
+                        else if (distance < 15f) rawLevel = 1;
 
-                    float heightFactor = Mathf.Clamp01(1.0f - (heightDifference / 3.0f));
-                    float adjustedDistance = distance * (1.0f / heightFactor) * obstructionFactor; 
+                        // 🛠 Appliquer une atténuation **douce** du signalStrength
+                        float adjustedSignal = Mathf.Sqrt(signalStrength); // **Douce diminution**
+                        // ou 
+                        // float adjustedSignal = Mathf.Lerp(0.5f, 1.0f, signalStrength);  // **Autre option de lissage**
+                
+                        detectedLevel = Mathf.RoundToInt(rawLevel * adjustedSignal);
 
-                    if (adjustedDistance < 3f) detectedLevel = 5;
-                    else if (adjustedDistance < 5f) detectedLevel = Mathf.Max(detectedLevel, 4);
-                    else if (adjustedDistance < 7f) detectedLevel = Mathf.Max(detectedLevel, 3);
-                    else if (adjustedDistance < 10f) detectedLevel = Mathf.Max(detectedLevel, 2);
-                    else if (adjustedDistance < 15f) detectedLevel = Mathf.Max(detectedLevel, 1);
+                        // 🔥 Toujours garantir un niveau minimal si le signal n'est pas bloqué
+                        detectedLevel = Mathf.Clamp(detectedLevel, 1, 5);
+
+                        Debug.Log($"🔧 Final EMF Level after signal reduction: {detectedLevel}");
+                    }
                 }
             }
 
             return detectedLevel;
         }
-        
-        private float GetObstructionFactor(Transform target)
+
+        private float GetSignalStrength(Transform ghost, float distance)
         {
-            Vector3 direction = target.position - transform.position;
-            float totalReduction = 1.0f;
-            int validPaths = 0;
-            int totalChecks = 15;
+            Vector3 direction = (ghost.position - transform.position).normalized;
+            Debug.DrawRay(transform.position, direction * distance, Color.cyan, 1.0f);
 
-            for (int i = 0; i < totalChecks; i++)
+            Vector3 currentPos = transform.position;
+            float signalStrength = 1.0f;
+            float remainingDistance = distance;
+            bool reachedGhost = false;
+
+            while (remainingDistance > 0)
             {
-                Vector3 adjustedDirection = direction + new Vector3(
-                    Random.Range(-2f, 2f),
-                    Random.Range(-0.1f, 0.1f),
-                    Random.Range(-2f, 2f)
-                );
-
-                RaycastHit[] hits = Physics.RaycastAll(transform.position, adjustedDirection.normalized, detectionRange);
-        
-                float reduction = 1.0f;
-
-                foreach (RaycastHit hit in hits)
+                RaycastHit hit;
+                if (Physics.Raycast(currentPos, direction, out hit, remainingDistance))
                 {
-                    if (hit.transform == target) 
+                    if (hit.transform == ghost) // 🎯 On atteint le fantôme
                     {
-                        validPaths++;
+                        reachedGhost = true;
                         break;
                     }
 
-                    if (hit.collider.CompareTag("Wall")) reduction *= 0.4f;
-                    else if (hit.collider.CompareTag("Door")) reduction *= 0.7f;
-                    else if (hit.collider.CompareTag("ThinObject")) reduction *= 0.9f;
+                    if (((1 << hit.collider.gameObject.layer) & blockLayers) != 0)
+                    {
+                        Debug.Log($"❌ Signal bloqué par {hit.transform.name} !");
+                        return 0f;
+                    }
+                    else if (((1 << hit.collider.gameObject.layer) & wallLayers) != 0)
+                    {
+                        Debug.Log($"⛔ Mur détecté ({hit.transform.name}) : signal réduit de 40%");
+                        signalStrength *= 0.6f;
+                    }
+                    else if (((1 << hit.collider.gameObject.layer) & doorLayers) != 0)
+                    {
+                        Debug.Log($"🚪 Porte détectée ({hit.transform.name}) : signal réduit de 10%");
+                        signalStrength *= 0.9f;
+                    }
+                    else if (((1 << hit.collider.gameObject.layer) & thinObjectLayers) != 0)
+                    {
+                        Debug.Log($"🪟 Objet fin détecté ({hit.transform.name}) : signal réduit de 1%");
+                        signalStrength *= 0.99f;
+                    }
+
+                    currentPos = hit.point + (direction * 0.1f);
+                    remainingDistance -= hit.distance;
                 }
-
-                totalReduction *= reduction;
+                else
+                {
+                    reachedGhost = true;
+                    break;
+                }
             }
 
-            if (validPaths > 0)
-            {
-                return Mathf.Clamp(totalReduction, 0.2f, 1.0f);
-            }
-    
-            return 0.0f;
+            return reachedGhost ? signalStrength : 0f;
         }
 
         [PunRPC]
         private void RPC_SetLEDLevel(int level)
         {
             SetLEDLevel(level);
+            Debug.Log($"💡 LEDs updated. New level: {level}");
         }
 
         private void SetLEDLevel(int level)
@@ -188,6 +218,7 @@ namespace InteractionScripts
             if (isActive && beepSound != null)
             {
                 audioSource.PlayOneShot(beepSound);
+                Debug.Log("🔊 Beep!");
             }
         }
 
@@ -204,7 +235,7 @@ namespace InteractionScripts
             }
         }
 
-        void Update()
+        void LateUpdate()
         {
             if (ownerTransform != null)
             {
@@ -212,7 +243,7 @@ namespace InteractionScripts
                 transform.rotation = Quaternion.Euler(0f, ownerTransform.eulerAngles.y - 180f, 0f);
             }
         }
-
+        
         public void AssignOwner(Photon.Realtime.Player player, Transform owner)
         {
             this.ownerTransform = owner;

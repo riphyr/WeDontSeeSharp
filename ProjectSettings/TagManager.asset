@@ -5,6 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - UVObject
+  - Ghost
+  - Wall
+  - Door
+  - PlayerCollider
   layers:
   - Default
   - TransparentFX
@@ -13,11 +17,11 @@ TagManager:
   - Water
   - UI
   - UVObject
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Player
+  - Wall
+  - Door
+  - BlockRaycast
+  - ThinObject
   - 
   - 
   - 

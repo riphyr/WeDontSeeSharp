@@ -3259,6 +3259,21 @@ MonoBehaviour:
   pickupSound: {fileID: 8300000, guid: d109c89ab3448174aa5cb38a8f5a2b78, type: 3}
   beepSound: {fileID: 8300000, guid: 57d20af494bba6e439cb4ea28d55ae0f, type: 3}
   detectionRange: 15
+  blockLayers:
+    serializedVersion: 2
+    m_Bits: 1024
+  wallLayers:
+    serializedVersion: 2
+    m_Bits: 256
+  doorLayers:
+    serializedVersion: 2
+    m_Bits: 512
+  thinObjectLayers:
+    serializedVersion: 2
+    m_Bits: 2048
+  ignoredLayers:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!1 &7126313953264532534
 GameObject:
   m_ObjectHideFlags: 0
