@@ -166,7 +166,7 @@ namespace InteractionScripts
             if (ownerTransform != null)
             {
                 transform.position = ownerTransform.position + ownerTransform.forward * 0.3f + ownerTransform.right * 0.1f + Vector3.up * 0.4f;
-                transform.rotation = Quaternion.Euler(0f, ownerTransform.eulerAngles.y, 0f);
+                transform.rotation = Quaternion.Euler(0f, ownerTransform.eulerAngles.y - 180f, 0f);
             }
         }
 

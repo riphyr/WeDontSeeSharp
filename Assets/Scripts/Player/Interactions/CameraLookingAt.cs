@@ -206,6 +206,16 @@ public class CameraLookingAt : MonoBehaviour
                     }
                 }
             }
+            else if (hit.transform.TryGetComponent(out InteractionScripts.EMFDetector emfDetector))
+            {
+                Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
+                ShowInteractionText(true, "Ramasser le détecteur EMF");
+
+                if (Input.GetKeyDown(primaryInteractionKey))
+                {
+                    emfDetector.PickupEMF(inventory);
+                }
+            }
             else if (hit.transform.TryGetComponent(out InteractionScripts.Magnetophone magnetophone))
             {
                 Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);

@@ -13,6 +13,7 @@ public class PlayerUsing : MonoBehaviourPun
     public GameObject UVFlashlightPrefab;
     public GameObject wrenchPrefab;
     public GameObject magnetophonePrefab;
+    public GameObject emfPrefab;
 
     [Header("Player")]
     private PlayerInventory inventory;
@@ -50,8 +51,11 @@ public class PlayerUsing : MonoBehaviourPun
     private GameObject activeMagnetophone;
     private InteractionScripts.Magnetophone magnetophoneScript;
     private BoxCollider magnetophoneCollider;
-
-
+    
+    [Header("EMF Detector")]
+    private InteractionScripts.EMFDetector emfScript;
+    private BoxCollider emfCollider;
+    
     void Start()
     {
         inventory = GetComponent<PlayerInventory>();
@@ -139,6 +143,9 @@ public class PlayerUsing : MonoBehaviourPun
                 break;
             case "Magnetophone":
                 photonView.RPC("UseMagnetophone", RpcTarget.All);
+                break;
+            case "EMFDetector":
+                photonView.RPC("UseEMFDetector", RpcTarget.All);
                 break;
             default:
                 Debug.Log($"Aucune action définie pour l'objet {selectedItem}");
@@ -446,6 +453,43 @@ public class PlayerUsing : MonoBehaviourPun
         {
             magnetophoneScript.AssignOwner(photonView.Owner, playerBody);
             magnetophoneScript.ActivateMagnetophone();
+        }
+    }
+    
+    // Gestion de l'EMF
+    [PunRPC]
+    private void UseEMFDetector()
+    {
+        if (!photonView.IsMine) 
+            return;
+
+        if (emfScript == null && inventory.HasItem("EMFDetector"))
+        {
+            StartCoroutine(SpawnEMFDetector());
+        }
+        else if (emfScript != null)
+        {
+            emfScript.ToggleEMF();
+        }
+    }
+
+    private IEnumerator SpawnEMFDetector()
+    {
+        Quaternion emfRotation = Quaternion.Euler(0f, playerBody.eulerAngles.y, 0f);
+        Vector3 spawnPosition = playerCamera.transform.position + playerCamera.transform.forward * 0.5f;
+
+        GameObject emfInstance = PhotonNetwork.Instantiate(emfPrefab.name, spawnPosition, emfRotation);
+        emfCollider = emfInstance.GetComponent<BoxCollider>();
+        emfCollider.enabled = false;
+
+        yield return new WaitForSeconds(0.1f);
+
+        emfScript = emfInstance.GetComponent<InteractionScripts.EMFDetector>();
+
+        if (emfScript != null)
+        {
+            emfScript.AssignOwner(photonView.Owner, playerBody);
+            emfScript.ToggleEMF();
         }
     }
 }

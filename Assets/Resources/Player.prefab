@@ -12405,6 +12405,7 @@ MonoBehaviour:
   UVFlashlightPrefab: {fileID: 2695777482564835125, guid: ef7cb0b087cdab84c8ad99a7087a74b1, type: 3}
   wrenchPrefab: {fileID: 8459339731610399928, guid: eae3edc0cbaa588409e939c3989ffd11, type: 3}
   magnetophonePrefab: {fileID: 1574256191029235216, guid: d133f52fc19d84442a874e332da67518, type: 3}
+  emfPrefab: {fileID: 7049254324596496369, guid: 50e209d955cb97543a706a5f8507e37e, type: 3}
   wrenchScript: {fileID: 0}
 --- !u!114 &5202161507523636149
 MonoBehaviour:

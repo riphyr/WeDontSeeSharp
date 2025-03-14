@@ -77,6 +77,9 @@ MonoBehaviour:
   - RPC_HandleRecognition
   - RPC_PlayBeep
   - UseMagnetophone
+  - RPC_PlayEMFBeep
+  - RPC_SetLEDLevel
+  - UseEMFDetector
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
