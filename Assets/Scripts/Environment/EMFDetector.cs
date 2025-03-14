@@ -14,11 +14,11 @@ namespace InteractionScripts
         public AudioClip beepSound;
         public float detectionRange = 15f;
         
-        public LayerMask blockLayers;       // ❌ Bloque totalement le signal
-        public LayerMask wallLayers;        // ⛔ Réduit sévèrement (~30% passe)
-        public LayerMask doorLayers;        // 🚪 Réduit moyennement (~60% passe)
-        public LayerMask thinObjectLayers;  // 🪟 Réduction faible (~85% passe)
-        public LayerMask ignoredLayers;     // 🚷 Couches ignorées (ex: joueur)
+        public LayerMask blockLayers;
+        public LayerMask wallLayers;
+        public LayerMask doorLayers;
+        public LayerMask thinObjectLayers;
+        public LayerMask ignoredLayers;
 
         private AudioSource audioSource;
         private PhotonView view;
@@ -32,7 +32,6 @@ namespace InteractionScripts
             view = GetComponent<PhotonView>();
             audioSource = GetComponent<AudioSource>();
             SetLEDLevel(0);
-            Debug.Log("🚀 EMF Detector initialized. LEDs set to 0.");
         }
 
         public void PickupEMF(PlayerInventory inventory)
@@ -44,7 +43,6 @@ namespace InteractionScripts
 
             inventory.AddItem("EMFDetector");
             photonView.RPC("PlayPickupSound", RpcTarget.All);
-            Debug.Log("🎤 EMF Detector picked up!");
         }
 
         [PunRPC]
@@ -69,12 +67,10 @@ namespace InteractionScripts
         public void ToggleEMF()
         {
             isActive = !isActive;
-            Debug.Log($"🔁 EMF Detector toggled. Active: {isActive}");
 
             if (!isActive)
             {
                 SetLEDLevel(0);
-                Debug.Log("❌ EMF Detector turned off. LEDs set to 0.");
             }
         }
 
@@ -103,8 +99,6 @@ namespace InteractionScripts
             Collider[] colliders = Physics.OverlapSphere(transform.position, detectionRange);
             int detectedLevel = 0;
 
-            Debug.Log($"🛠 Checking for entities... Found {colliders.Length} objects.");
-
             foreach (Collider collider in colliders)
             {
                 if (collider.CompareTag("Ghost"))
@@ -116,7 +110,6 @@ namespace InteractionScripts
                     {
                         Debug.Log($"👻 Ghost detected at {distance}m with signal strength {signalStrength}");
 
-                        // 🟢 Détection brute en fonction de la distance
                         float rawLevel = 0f;
                         if (distance < 3f) rawLevel = 5;
                         else if (distance < 5f) rawLevel = 4;
@@ -124,14 +117,9 @@ namespace InteractionScripts
                         else if (distance < 10f) rawLevel = 2;
                         else if (distance < 15f) rawLevel = 1;
 
-                        // 🛠 Appliquer une atténuation **douce** du signalStrength
-                        float adjustedSignal = Mathf.Sqrt(signalStrength); // **Douce diminution**
-                        // ou 
-                        // float adjustedSignal = Mathf.Lerp(0.5f, 1.0f, signalStrength);  // **Autre option de lissage**
+                        float adjustedSignal = Mathf.Sqrt(signalStrength);
                 
                         detectedLevel = Mathf.RoundToInt(rawLevel * adjustedSignal);
-
-                        // 🔥 Toujours garantir un niveau minimal si le signal n'est pas bloqué
                         detectedLevel = Mathf.Clamp(detectedLevel, 1, 5);
 
                         Debug.Log($"🔧 Final EMF Level after signal reduction: {detectedLevel}");
@@ -157,7 +145,7 @@ namespace InteractionScripts
                 RaycastHit hit;
                 if (Physics.Raycast(currentPos, direction, out hit, remainingDistance))
                 {
-                    if (hit.transform == ghost) // 🎯 On atteint le fantôme
+                    if (hit.transform == ghost)
                     {
                         reachedGhost = true;
                         break;
@@ -218,7 +206,6 @@ namespace InteractionScripts
             if (isActive && beepSound != null)
             {
                 audioSource.PlayOneShot(beepSound);
-                Debug.Log("🔊 Beep!");
             }
         }
 

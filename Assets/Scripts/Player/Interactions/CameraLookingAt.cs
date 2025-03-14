@@ -226,6 +226,17 @@ public class CameraLookingAt : MonoBehaviour
                     magnetophone.PickupMagnetophone(inventory);
                 }
             }
+			else if (hit.transform.CompareTag("CameraSwitchButton"))
+            {
+                Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
+                ShowInteractionText(true, "Changer de caméra");
+
+                if (Input.GetKeyDown(primaryInteractionKey))
+                {
+                    Debug.Log("📡 Changement de caméra !");
+                    hit.transform.GetComponent<CameraSwitcher>().NextCamera();
+                }
+            }
             else
             {
                 ShowInteractionText(false);
