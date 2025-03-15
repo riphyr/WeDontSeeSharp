@@ -12406,7 +12406,9 @@ MonoBehaviour:
   wrenchPrefab: {fileID: 8459339731610399928, guid: eae3edc0cbaa588409e939c3989ffd11, type: 3}
   magnetophonePrefab: {fileID: 1574256191029235216, guid: d133f52fc19d84442a874e332da67518, type: 3}
   emfPrefab: {fileID: 7049254324596496369, guid: 50e209d955cb97543a706a5f8507e37e, type: 3}
+  diskPrefab: {fileID: 541087474435445290, guid: 5e511e6f4a1d0074fad23d73fe1a7979, type: 3}
   wrenchScript: {fileID: 0}
+  diskScript: {fileID: 0}
 --- !u!114 &5202161507523636149
 MonoBehaviour:
   m_ObjectHideFlags: 0

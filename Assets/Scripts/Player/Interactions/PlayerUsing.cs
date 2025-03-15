@@ -14,6 +14,7 @@ public class PlayerUsing : MonoBehaviourPun
     public GameObject wrenchPrefab;
     public GameObject magnetophonePrefab;
     public GameObject emfPrefab;
+    public GameObject diskPrefab;
 
     [Header("Player")]
     private PlayerInventory inventory;
@@ -55,6 +56,10 @@ public class PlayerUsing : MonoBehaviourPun
     [Header("EMF Detector")]
     private InteractionScripts.EMFDetector emfScript;
     private BoxCollider emfCollider;
+    
+    [Header("Wrench")] 
+    [HideInInspector]public InteractionScripts.CDDisk diskScript;
+    private BoxCollider diskCollider;
     
     void Start()
     {
@@ -146,6 +151,9 @@ public class PlayerUsing : MonoBehaviourPun
                 break;
             case "EMFDetector":
                 photonView.RPC("UseEMFDetector", RpcTarget.All);
+                break;
+            case "CDDisk":
+                photonView.RPC("UseDisk", RpcTarget.All);
                 break;
             default:
                 Debug.Log($"Aucune action définie pour l'objet {selectedItem}");
@@ -491,5 +499,44 @@ public class PlayerUsing : MonoBehaviourPun
             emfScript.AssignOwner(photonView.Owner, playerBody);
             emfScript.ToggleEMF();
         }
+    }
+    
+    // Gestion CD Disk
+    [PunRPC]
+    private void UseDisk()
+    {
+        if (!photonView.IsMine) 
+            return;
+        
+        if (diskScript == null && inventory.HasItem("CDDisk"))
+        {
+            StartCoroutine(SpawnDisk());
+        }
+        else if (diskScript != null)
+        {
+            diskScript.ShowDisk(false);
+            diskScript = null;
+        }
+    }
+
+    private IEnumerator SpawnDisk()
+    {
+        Quaternion diskRotation = Quaternion.Euler(-90f, playerBody.eulerAngles.y, 0f);
+
+        GameObject diskInstance = PhotonNetwork.Instantiate(diskPrefab.name, Vector3.zero, diskRotation);
+        diskCollider = diskInstance.GetComponent<BoxCollider>();
+        diskCollider.enabled = false;
+
+        yield return new WaitForSeconds(0.1f);
+
+        diskScript = diskInstance.GetComponent<InteractionScripts.CDDisk>();
+
+        diskScript.AssignOwner(photonView.Owner, playerBody);
+        diskScript.ShowDisk(true);
+    }
+    
+    public bool HasCDInHand()
+    {
+        return diskScript != null && diskScript.isTaken;
     }
 }

@@ -206,6 +206,22 @@ public class CameraLookingAt : MonoBehaviour
                     }
                 }
             }
+			else if (hit.transform.TryGetComponent(out InteractionScripts.CDReader cdReader))
+			{
+    			PlayerUsing playerUsing = FindObjectOfType<PlayerUsing>();
+
+    			if (playerUsing != null && playerUsing.HasCDInHand())
+    			{
+        			Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
+        			ShowInteractionText(true, "Insérer le CD");
+
+        			if (Input.GetKeyDown(primaryInteractionKey))
+        			{
+						inventory.RemoveItem("CDDisk");
+            			playerUsing.diskScript.TryInsertIntoReader(cdReader);
+        			}
+    			}
+			}
             else if (hit.transform.TryGetComponent(out InteractionScripts.EMFDetector emfDetector))
             {
                 Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
@@ -214,6 +230,16 @@ public class CameraLookingAt : MonoBehaviour
                 if (Input.GetKeyDown(primaryInteractionKey))
                 {
                     emfDetector.PickupEMF(inventory);
+                }
+            }
+			else if (hit.transform.TryGetComponent(out InteractionScripts.CDDisk cdDisk))
+            {
+                Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
+                ShowInteractionText(true, "Ramasser le CD");
+
+                if (Input.GetKeyDown(primaryInteractionKey))
+                {
+                    cdDisk.PickupDisk(inventory);
                 }
             }
             else if (hit.transform.TryGetComponent(out InteractionScripts.Magnetophone magnetophone))
@@ -226,15 +252,14 @@ public class CameraLookingAt : MonoBehaviour
                     magnetophone.PickupMagnetophone(inventory);
                 }
             }
-			else if (hit.transform.CompareTag("CameraSwitchButton"))
+			else if (hit.transform.TryGetComponent(out InteractionScripts.KeyboardCameraSwitcher keyboardCameraSwitcher))
             {
                 Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
                 ShowInteractionText(true, "Changer de caméra");
 
                 if (Input.GetKeyDown(primaryInteractionKey))
                 {
-                    Debug.Log("📡 Changement de caméra !");
-                    hit.transform.GetComponent<CameraSwitcher>().NextCamera();
+                    keyboardCameraSwitcher.NextCamera();
                 }
             }
             else
