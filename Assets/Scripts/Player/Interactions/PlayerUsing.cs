@@ -26,6 +26,7 @@ public class PlayerUsing : MonoBehaviourPun
 	private KeyCode useKey;
 	private KeyCode reloadKey;
 	private bool useCooldown = false;
+    private Dictionary<string, bool> equippedItems = new Dictionary<string, bool>();
 
 	[Header("Match")]
 	private InteractionScripts.Match matchScript;
@@ -117,7 +118,7 @@ public class PlayerUsing : MonoBehaviourPun
         }
     }
 
-	private void UseSelectedItem()
+    private void UseSelectedItem()
     {
         string selectedItem = inventory.GetSelectedItem();
 
@@ -128,6 +129,15 @@ public class PlayerUsing : MonoBehaviourPun
         }
 
         Debug.Log($"Utilisation de l'objet : {selectedItem}");
+
+        if (equippedItems.ContainsKey(selectedItem))
+        {
+            equippedItems[selectedItem] = !equippedItems[selectedItem];
+        }
+        else
+        {
+            equippedItems[selectedItem] = true;
+        }
 
         switch (selectedItem)
         {
@@ -159,6 +169,8 @@ public class PlayerUsing : MonoBehaviourPun
                 Debug.Log($"Aucune action définie pour l'objet {selectedItem}");
                 break;
         }
+
+        inventory.UpdateActionText();
     }
 
 	private void ReloadSelectedItem()
@@ -199,13 +211,75 @@ public class PlayerUsing : MonoBehaviourPun
             }
         }
 	}
-
+    
+    public bool IsItemEquipped(string itemName)
+    {
+        return equippedItems.ContainsKey(itemName) && equippedItems[itemName];
+    }
+    
 	private IEnumerator UseCooldown()
 	{
     	useCooldown = true;
     	yield return new WaitForSeconds(0.2f);
     	useCooldown = false;
 	}
+    
+    public void ForceUnequipItem(string itemName)
+    {
+        if (equippedItems.ContainsKey(itemName) && equippedItems[itemName])
+        {
+            equippedItems[itemName] = false;
+
+            switch (itemName)
+            {
+                case "Flashlight":
+                    if (flashlightScript != null)
+                    {
+                        flashlightScript.UnequipFlashlight(inventory);
+                        flashlightScript = null;
+                    }
+                    break;
+                case "UVFlashlight":
+                    if (UVFlashlightScript != null)
+                    {
+                        UVFlashlightScript.UnequipFlashlight(inventory);
+                        UVFlashlightScript = null;
+                    }
+                    break;
+                case "Wrench":
+                    if (wrenchScript != null)
+                    {
+                        wrenchScript.ShowWrench(false);
+                        wrenchScript = null;
+                    }
+                    break;
+                case "Magnetophone":
+                    if (magnetophoneScript != null)
+                    {
+                        magnetophoneScript.ShowMagnetophone(false);
+                        magnetophoneScript = null;
+                    }
+                    break;
+                case "EMFDetector":
+                    if (emfScript != null)
+                    {
+                        emfScript.gameObject.SetActive(false);
+                        PhotonNetwork.Destroy(emfScript.gameObject);
+                        emfScript = null;
+                    }
+                    break;
+                case "CDDisk":
+                    if (diskScript != null)
+                    {
+                        diskScript.ShowDisk(false);
+                        diskScript = null;
+                    }
+                    break;
+            }
+
+            inventory.UpdateActionText();
+        }
+    }
 
     // Gestion allumettes
     [PunRPC]

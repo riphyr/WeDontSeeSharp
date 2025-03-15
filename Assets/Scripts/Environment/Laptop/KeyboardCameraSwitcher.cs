@@ -63,8 +63,6 @@ namespace InteractionScripts
         public void RPC_PowerOnSystem()
         {
             isPoweredOn = true;
-
-            Invoke(nameof(NextCamera), startupSound.length);
         }
 
         public void NextCamera()

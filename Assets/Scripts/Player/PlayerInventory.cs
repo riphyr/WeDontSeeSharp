@@ -1,21 +1,30 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using TMPro;
 using UnityEngine.UI;
 
 public class PlayerInventory : MonoBehaviourPun
 {
     private Dictionary<string, float> inventory = new Dictionary<string, float>();
     private PhotonView view;
+    private PlayerUsing playerUsing;
     
     [Header("Affichage de l'inventaire")]
     public Image selectedItemIcon;
+    
+    [Header("Affichage des actions")]
+    public TextMeshProUGUI itemActionText;
+    
+
     private Dictionary<string, Sprite> itemSprites = new Dictionary<string, Sprite>();
     private List<string> inventoryKeys = new List<string>();
     private int selectedItemIndex = -1;
 
     void Start()
     {
+        playerUsing = GetComponent<PlayerUsing>();
+        
         LoadItemSprites();
         UpdateSelectedItemDisplay();
     }
@@ -118,6 +127,12 @@ public class PlayerInventory : MonoBehaviourPun
             Debug.LogWarning("Aucun objet dans l'inventaire !");
             return;
         }
+        
+        string currentItem = GetSelectedItem();
+        if (!string.IsNullOrEmpty(currentItem) && playerUsing.IsItemEquipped(currentItem))
+        {
+            playerUsing.ForceUnequipItem(currentItem);
+        }
 
         selectedItemIndex = (selectedItemIndex + 1) % inventoryKeys.Count;
         Debug.Log($"Changement d'objet : {inventoryKeys[selectedItemIndex]}");
@@ -130,6 +145,12 @@ public class PlayerInventory : MonoBehaviourPun
         {
             Debug.LogWarning("Aucun objet dans l'inventaire !");
             return;
+        }
+        
+        string currentItem = GetSelectedItem();
+        if (!string.IsNullOrEmpty(currentItem) && playerUsing.IsItemEquipped(currentItem))
+        {
+            playerUsing.ForceUnequipItem(currentItem);
         }
 
         selectedItemIndex = (selectedItemIndex - 1 + inventoryKeys.Count) % inventoryKeys.Count;
@@ -165,6 +186,8 @@ public class PlayerInventory : MonoBehaviourPun
         {
             selectedItemIcon.enabled = false;
         }
+        
+        UpdateActionText();
     }
     
     public void SetItemCount(string itemName, float amount)
@@ -177,5 +200,60 @@ public class PlayerInventory : MonoBehaviourPun
         {
             inventory.Add(itemName, amount);
         }
+    }
+    
+    public void UpdateActionText()
+    {
+        if (selectedItemIndex < 0 || selectedItemIndex >= inventoryKeys.Count)
+        {
+            itemActionText.text = "";
+            return;
+        }
+
+        string selectedItem = inventoryKeys[selectedItemIndex];
+        string useAction = "";
+        string reloadAction = "";
+
+        bool isEquipped = playerUsing.IsItemEquipped(selectedItem);
+
+        switch (selectedItem)
+        {
+            case "Match":
+                useAction = "Utiliser";
+                break;
+            case "Candle":
+                useAction = "Poser";
+                break;
+            case "Flashlight":
+                useAction = isEquipped ? "Ranger" : "Prendre";
+                reloadAction = "Recharger";
+                break;
+            case "UVFlashlight":
+                useAction = isEquipped ? "Ranger" : "Prendre";
+                reloadAction = "Recharger";
+                break;
+            case "Wrench":
+                useAction = isEquipped ? "Ranger" : "Prendre";
+                break;
+            case "Magnetophone":
+                useAction = isEquipped ? "Ranger" : "Prendre";
+                break;
+            case "EMFDetector":
+                useAction = isEquipped ? "Ranger" : "Prendre";
+                break;
+            case "CDDisk":
+                useAction = isEquipped ? "Ranger" : "Prendre";
+                break;
+            default:
+                itemActionText.text = "";
+                return;
+        }
+
+        string useKey = PlayerPrefs.GetString("Use", "None");
+        string reloadKey = PlayerPrefs.GetString("Reload", "None");
+
+        itemActionText.text = !string.IsNullOrEmpty(reloadAction) 
+            ? $"{useAction} [{useKey}]\n{reloadAction} [{reloadKey}]"
+            : $"{useAction} [{useKey}]";
     }
 }
