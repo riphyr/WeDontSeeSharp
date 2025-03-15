@@ -477,7 +477,9 @@ public class PlayerUsing : MonoBehaviourPun
         }
         else if (emfScript != null)
         {
-            emfScript.ToggleEMF();
+            emfScript.gameObject.SetActive(false);
+            PhotonNetwork.Destroy(emfScript.gameObject);
+            emfScript = null;
         }
     }
 

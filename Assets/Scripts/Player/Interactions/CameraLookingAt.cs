@@ -201,9 +201,7 @@ public class CameraLookingAt : MonoBehaviour
                     ShowInteractionText(true, "Dévisser la vis");
 
                     if (Input.GetKeyDown(primaryInteractionKey))
-                    {
                         screw.TryRemoveScrew();
-                    }
                 }
             }
 			else if (hit.transform.TryGetComponent(out InteractionScripts.CDReader cdReader))
@@ -254,14 +252,26 @@ public class CameraLookingAt : MonoBehaviour
             }
 			else if (hit.transform.TryGetComponent(out InteractionScripts.KeyboardCameraSwitcher keyboardCameraSwitcher))
             {
-                Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
-                ShowInteractionText(true, "Changer de caméra");
+				if (keyboardCameraSwitcher.isOn())
+    			{
+        			Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
+        			ShowInteractionText(true, "Changer de caméra");
 
-                if (Input.GetKeyDown(primaryInteractionKey))
-                {
-                    keyboardCameraSwitcher.NextCamera();
-                }
+        			if (Input.GetKeyDown(primaryInteractionKey))
+            			keyboardCameraSwitcher.NextCamera();
+    			}
             }
+			else if (hit.transform.TryGetComponent(out InteractionScripts.ScreenInteraction screen))
+			{
+    			if (screen.isOn())
+    			{
+        			Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
+        			ShowInteractionText(true, "Regarder l'écran");
+
+        			if (Input.GetKeyDown(primaryInteractionKey))
+            			screen.EnterScreenMode();
+    			}
+			}
             else
             {
                 ShowInteractionText(false);

@@ -28,6 +28,11 @@ namespace InteractionScripts
                 cam.enabled = false;
             }
         }
+        
+        public bool isOn()
+        {
+            return isPoweredOn;
+        }
 
         public void PowerOnSystem()
         {
@@ -37,6 +42,8 @@ namespace InteractionScripts
             isPoweredOn = true;
 
             photonView.RPC("RPC_PlayStartupSound", RpcTarget.All);
+
+            FindObjectOfType<ScreenInteraction>()?.PowerOnScreen();
         }
         
         [PunRPC]

@@ -24,6 +24,7 @@ namespace InteractionScripts
         public Camera padLockCamera;
         private PlayerScript playerScript;
         private CameraLookingAt cameraLookingAt;
+        private PlayerUsing playerUsing;
         private GameObject gui;
         private PhotonView view;
 
@@ -64,6 +65,7 @@ namespace InteractionScripts
                 playerCamera = playerTransform.Find("Main Camera")?.GetComponent<Camera>();
                 playerScript = playerTransform.GetComponent<PlayerScript>();
                 cameraLookingAt = playerTransform.GetComponent<CameraLookingAt>();
+                playerUsing = playerTransform.GetComponent<PlayerUsing>();
             }
             
             gui = localPlayer.transform.Find("GUI")?.gameObject;
@@ -98,6 +100,7 @@ namespace InteractionScripts
 
             playerScript.enabled = false;
             cameraLookingAt.enabled = false;
+            playerUsing.enabled = false;
             gui.SetActive(false);
             
             Cursor.lockState = CursorLockMode.None;
@@ -114,6 +117,7 @@ namespace InteractionScripts
             
             playerScript.enabled = true;
             cameraLookingAt.enabled = true;
+            playerUsing.enabled = true;
             gui.SetActive(true);
         }
         
