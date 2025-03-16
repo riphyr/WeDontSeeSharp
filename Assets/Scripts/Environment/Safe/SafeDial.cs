@@ -1,73 +1,100 @@
 ﻿using UnityEngine;
 using Photon.Pun;
-using System.Collections;
+using System.Collections.Generic;
 
-public class SafeDial : MonoBehaviourPun
+namespace InteractionScripts
 {
-    public AudioClip clickSound;
-    public int[] correctCombination;
-    private int[] enteredCombination;
-    private int currentStep = 0;
-    private int currentNumber = 0;
-    private bool isTurningRight = true;
-    private AudioSource audioSource;
-    
-    void Start()
+    public class SafeDial : MonoBehaviourPun
     {
-        enteredCombination = new int[correctCombination.Length];
-        audioSource = GetComponent<AudioSource>();
-    }
-    
-    void Update()
-    {
-        if (!photonView.IsMine) return;
-        
-        int direction = 0;
-        if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
-            direction = -1;
-        else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
-            direction = 1;
-        
-        if (direction != 0)
+        public Transform dialTransform;
+        public AudioClip clickSound;
+        public int[] correctCombination;
+
+        private List<int> enteredCombination = new List<int>();
+        private int currentNumber = 0;
+        private bool isTurningRight = true;
+        private AudioSource audioSource;
+        public BoxCollider collider;
+
+        void Start()
         {
-            RotateDial(direction);
+            audioSource = GetComponent<AudioSource>();
+            photonView.TransferOwnership(PhotonNetwork.LocalPlayer);
         }
-    }
-    
-    void RotateDial(int direction)
-    {
-        if (isTurningRight != (direction > 0))
+
+        public void RotateDial(int direction)
         {
-            if (currentStep < correctCombination.Length)
+            if (!photonView.IsMine) return;
+
+            // Enregistre la valeur si on change de sens
+            if (enteredCombination.Count < correctCombination.Length && isTurningRight != (direction > 0))
             {
-                enteredCombination[currentStep] = currentNumber;
-                currentStep++;
+                enteredCombination.Add(currentNumber);
             }
+
             isTurningRight = direction > 0;
+            currentNumber = (currentNumber + direction + 100) % 100;
+
+            // Applique la rotation
+            dialTransform.localEulerAngles = new Vector3(0, 0, currentNumber * 3.6f);
+            photonView.RPC("SyncRotation", RpcTarget.Others, dialTransform.localEulerAngles);
+
+            if (clickSound != null)
+                audioSource.PlayOneShot(clickSound);
         }
-        
-        currentNumber = (currentNumber + direction + 100) % 100; 
-        transform.Rotate(0, 0, -direction * 9); 
-        photonView.RPC("SyncRotation", RpcTarget.Others, transform.rotation);
-        
-        if (clickSound != null)
-            audioSource.PlayOneShot(clickSound);
-        
-        if (currentStep == correctCombination.Length - 1 && enteredCombination[currentStep] == correctCombination[currentStep])
+
+        public void RegisterCurrentNumber()
         {
-            photonView.RPC("UnlockSafe", RpcTarget.All);
+            if (enteredCombination.Count < correctCombination.Length)
+            {
+                enteredCombination.Add(currentNumber);
+                Debug.Log($"✅ Enregistrement de la dernière valeur: {currentNumber}");
+            }
+
+            // 🔥 Vérifie immédiatement si le code est correct
+            if (enteredCombination.Count == correctCombination.Length && CheckCode())
+            {
+                photonView.RPC("UnlockSafe", RpcTarget.All);
+            }
         }
-    }
-    
-    [PunRPC]
-    void SyncRotation(Quaternion rotation)
-    {
-        transform.rotation = rotation;
-    }
-    
-    [PunRPC]
-    void UnlockSafe()
-    {
-        FindObjectOfType<SafeValve>().SetUnlocked(true);
+
+        public void ResetCombination()
+        {
+            photonView.RPC("RPC_ResetCombination", RpcTarget.All);
+        }
+
+        [PunRPC]
+        private void RPC_ResetCombination()
+        {
+            enteredCombination.Clear();
+            currentNumber = 0;
+            isTurningRight = true;
+
+            dialTransform.localEulerAngles = Vector3.zero;
+            photonView.RPC("SyncRotation", RpcTarget.Others, dialTransform.localEulerAngles);
+        }
+
+        private bool CheckCode()
+        {
+            for (int i = 0; i < correctCombination.Length; i++)
+            {
+                if (enteredCombination[i] != correctCombination[i])
+                    return false;
+            }
+            return true;
+        }
+
+        [PunRPC]
+        private void SyncRotation(Vector3 rotation)
+        {
+            dialTransform.localEulerAngles = rotation;
+        }
+
+        [PunRPC]
+        private void UnlockSafe()
+        {
+            collider.enabled = false;
+            FindObjectOfType<SafeValve>().SetUnlocked(true);
+        }
     }
 }

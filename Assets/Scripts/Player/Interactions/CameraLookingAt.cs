@@ -51,6 +51,9 @@ public class CameraLookingAt : MonoBehaviour
             { typeof(InteractionScripts.CDDisk), hit => HandleCDDisk(hit) },
             { typeof(InteractionScripts.Magnetophone), hit => HandleMagnetophone(hit) },
             { typeof(InteractionScripts.KeyboardCameraSwitcher), hit => HandleKeyboardCameraSwitcher(hit) },
+			{ typeof(InteractionScripts.SafeDial), hit => HandleSafeDial(hit) },
+			{ typeof(InteractionScripts.SafeValve), hit => HandleSafeValve(hit) },
+			{ typeof(InteractionScripts.SafeDoor), hit => HandleSafeDoor(hit) },
             { typeof(InteractionScripts.ScreenInteraction), hit => HandleScreen(hit) }
         };
     }
@@ -286,5 +289,26 @@ public class CameraLookingAt : MonoBehaviour
     {
         ShowInteractionText(true, "Ramasser le magnétophone");
         if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.Magnetophone>().PickupMagnetophone(inventory);
+    }
+
+	private void HandleSafeDial(RaycastHit hit)
+    {
+		var dial = hit.transform.GetComponent<InteractionScripts.SafeDial>();
+		
+        ShowInteractionText(true, "Incrémenter", "Décrémenter");
+        if (Input.GetKeyDown(primaryInteractionKey)) dial.RotateDial(1);
+		if (Input.GetKeyDown(secondaryInteractionKey)) dial.RotateDial(-1);
+    }
+
+	private void HandleSafeValve(RaycastHit hit)
+    {
+        ShowInteractionText(true, "Tourner la valve");
+        if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.SafeValve>().TryUnlock();
+    }
+
+	private void HandleSafeDoor(RaycastHit hit)
+    {
+        ShowInteractionText(true, "Ouvrir le coffre");
+        if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.SafeDoor>().OpenDoor();
     }
 }

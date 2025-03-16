@@ -2,31 +2,61 @@
 using Photon.Pun;
 using System.Collections;
 
-public class SafeDoor : MonoBehaviourPun
+namespace InteractionScripts
 {
-    public Transform openPosition;
-    public float openSpeed = 1f;
-    private bool isOpen = false;
-    
-    public void OpenDoor()
+    [RequireComponent(typeof(AudioSource))]
+    [RequireComponent(typeof(PhotonView))]
+    public class SafeDoor : MonoBehaviourPun
     {
-        if (!isOpen)
+        public Transform openPosition;
+        public AudioClip doorOpenSound;
+        
+        private bool isOpen = false;
+        private Vector3 initialPosition;
+        private Quaternion initialRotation;
+        private AudioSource audioSource;
+
+        private void Start()
         {
-            StartCoroutine(OpenSequence());
+            initialPosition = transform.position;
+            initialRotation = transform.rotation;
+            audioSource = GetComponent<AudioSource>();
         }
-    }
-    
-    private IEnumerator OpenSequence()
-    {
-        isOpen = true;
-        Vector3 startPosition = transform.position;
-        float elapsedTime = 0f;
-        while (elapsedTime < 1f)
+
+        public void OpenDoor()
         {
-            transform.position = Vector3.Lerp(startPosition, openPosition.position, elapsedTime);
-            elapsedTime += Time.deltaTime * openSpeed;
-            yield return null;
+            if (isOpen) return;
+            isOpen = true;
+            photonView.RPC("RPC_OpenDoor", RpcTarget.All);
         }
-        transform.position = openPosition.position;
+
+        [PunRPC]
+        private void RPC_OpenDoor()
+        {
+            StartCoroutine(MoveDoor());
+        }
+
+        private IEnumerator MoveDoor()
+        {
+            float duration = 1.5f;
+            float elapsed = 0;
+            
+            Vector3 startPos = transform.position;
+            Quaternion startRot = transform.rotation;
+
+            if (doorOpenSound != null)
+                audioSource.PlayOneShot(doorOpenSound);
+
+            while (elapsed < duration)
+            {
+                transform.position = Vector3.Lerp(startPos, openPosition.position, elapsed / duration);
+                transform.rotation = Quaternion.Lerp(startRot, openPosition.rotation, elapsed / duration);
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
+
+            transform.position = openPosition.position;
+            transform.rotation = openPosition.rotation;
+        }
     }
 }

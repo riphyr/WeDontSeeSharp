@@ -2,56 +2,96 @@
 using Photon.Pun;
 using System.Collections;
 
-public class SafeValve : MonoBehaviourPun
+namespace InteractionScripts
 {
-    public AudioClip unlockSound;
-    public AudioClip failSound;
-    private bool isUnlocked = false;
-    private AudioSource audioSource;
-    
-    void Start()
+    public class SafeValve : MonoBehaviourPun
     {
-        audioSource = GetComponent<AudioSource>();
-    }
-    
-    public void SetUnlocked(bool state)
-    {
-        isUnlocked = state;
-    }
-    
-    void Update()
-    {
-        if (!photonView.IsMine) return;
-        if (Input.GetKeyDown(KeyCode.E))
+        public Transform valveTransform;
+        public SafeDial safeDial;
+        public SafeDoor safeDoor;
+        public AudioClip unlockSound;
+        public AudioClip failSound;
+        public BoxCollider collider;
+
+        private AudioSource audioSource;
+        private bool isUnlocked = false;
+
+        private void Start()
         {
-            TryUnlock();
+            audioSource = GetComponent<AudioSource>();
         }
-    }
-    
-    void TryUnlock()
-    {
-        if (isUnlocked)
+
+        public void SetUnlocked(bool unlocked)
         {
-            photonView.RPC("Unlock", RpcTarget.All);
+            isUnlocked = unlocked;
         }
-        else
+
+        public void TryUnlock()
         {
-            photonView.RPC("FailUnlock", RpcTarget.All);
+            if (!photonView.IsMine) return;
+
+            safeDial.RegisterCurrentNumber(); // 🔥 Enregistre la dernière valeur affichée
+
+            if (isUnlocked)
+            {
+                photonView.RPC("UnlockSafe", RpcTarget.All);
+            }
+            else
+            {
+                StartCoroutine(FailedUnlock());
+            }
+
+            ResetSafeDial();
         }
-    }
-    
-    [PunRPC]
-    void Unlock()
-    {
-        if (unlockSound != null)
+
+        private void ResetSafeDial()
+        {
+            if (safeDial != null)
+            {
+                safeDial.ResetCombination();
+            }
+        }
+
+        [PunRPC]
+        private void UnlockSafe()
+        {
             audioSource.PlayOneShot(unlockSound);
-        FindObjectOfType<SafeDoor>().OpenDoor();
-    }
-    
-    [PunRPC]
-    void FailUnlock()
-    {
-        if (failSound != null)
+            StartCoroutine(RotateValve());
+        }
+
+        private IEnumerator RotateValve()
+        {
+            float duration = 1.5f;
+            float elapsed = 0;
+
+            while (elapsed < duration)
+            {
+                valveTransform.Rotate(Vector3.forward, 5f);
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
+
+            collider.enabled = false;
+            safeDoor.OpenDoor();
+        }
+
+        private IEnumerator FailedUnlock()
+        {
             audioSource.PlayOneShot(failSound);
+            float startRotation = valveTransform.localEulerAngles.z;
+            float targetRotation = startRotation + 10f;
+
+            float elapsed = 0;
+            float duration = 0.2f;
+
+            while (elapsed < duration)
+            {
+                valveTransform.localEulerAngles = new Vector3(0, 0, Mathf.Lerp(startRotation, targetRotation, elapsed / duration));
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
+
+            valveTransform.localEulerAngles = new Vector3(0, 0, startRotation);
+        }
     }
 }
