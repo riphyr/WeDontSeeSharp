@@ -15,6 +15,9 @@ public class PlayerUsing : MonoBehaviourPun
     public GameObject magnetophonePrefab;
     public GameObject emfPrefab;
     public GameObject diskPrefab;
+	public GameObject redKeyPrefab;
+	public GameObject lighterPrefab;
+	public GameObject batteryPrefab;
 
     [Header("Player")]
     private PlayerInventory inventory;
@@ -25,6 +28,7 @@ public class PlayerUsing : MonoBehaviourPun
     private KeyCode previousKeyInteraction;
 	private KeyCode useKey;
 	private KeyCode reloadKey;
+	private KeyCode dropKey;
 	private bool useCooldown = false;
     private Dictionary<string, bool> equippedItems = new Dictionary<string, bool>();
 
@@ -90,6 +94,9 @@ public class PlayerUsing : MonoBehaviourPun
 
 		string reloadString = PlayerPrefs.GetString("Reload", "None");
 		reloadKey = GetKeyCodeFromString(reloadString);
+
+		string dropString = PlayerPrefs.GetString("Drop", "None");
+		dropKey = GetKeyCodeFromString(dropString);
     }
     
     void Update()
@@ -115,6 +122,10 @@ public class PlayerUsing : MonoBehaviourPun
 		else if (Input.GetKeyDown(reloadKey))
         {
             ReloadSelectedItem();
+        }
+		else if (Input.GetKeyDown(dropKey))
+        {
+            DropSelectedItem();
         }
     }
 
@@ -197,6 +208,75 @@ public class PlayerUsing : MonoBehaviourPun
                 Debug.Log($"Aucune rechargement définie pour l'objet {selectedItem}");
                 break;
         }
+    }
+
+	private void DropSelectedItem()
+	{
+        string selectedItem = inventory.GetSelectedItem();
+
+        if (string.IsNullOrEmpty(selectedItem))
+        {
+            Debug.Log("Aucun objet sélectionné !");
+            return;
+        }
+
+        GameObject itemPrefab = null;
+
+        switch (selectedItem)
+        {
+            case "Flashlight":
+                itemPrefab = flashlightPrefab;
+                break;
+            case "UVFlashlight":
+                itemPrefab = UVFlashlightPrefab;
+                break;
+            case "CDDisk":
+                itemPrefab = diskPrefab;
+                break;
+            case "Lighter":
+                itemPrefab = lighterPrefab;
+                break;
+            case "RedKey":
+                itemPrefab = redKeyPrefab;
+                break;
+            case "Wrench":
+                itemPrefab = wrenchPrefab;
+                break;
+            case "EMFDetector":
+                itemPrefab = emfPrefab;
+                break;
+            case "Magnetophone":
+                itemPrefab = magnetophonePrefab;
+                break;
+            case "Battery":
+                itemPrefab = batteryPrefab;
+                break;
+            default:
+                Debug.Log($"Aucun prefab associé pour {selectedItem}");
+                return;
+        }
+
+        Vector3 dropPosition = playerCamera.transform.position + playerCamera.transform.forward * 0.75f + Vector3.down * 0.2f;
+        Quaternion dropRotation = Quaternion.identity;
+
+        GameObject droppedItem = PhotonNetwork.Instantiate(itemPrefab.name, dropPosition, dropRotation);
+        
+        Rigidbody rb = droppedItem.GetComponent<Rigidbody>();
+        if (rb == null)
+        {
+            rb = droppedItem.AddComponent<Rigidbody>();
+        }
+        rb.isKinematic = false;
+        rb.useGravity = true;
+        
+        ForceUnequipItem(selectedItem);
+
+		if (selectedItem == "Flashlight" || selectedItem == "UVFlashlight")
+			inventory.RemoveItem(selectedItem, inventory.GetItemCount(selectedItem));
+        else
+			inventory.RemoveItem(selectedItem, 1);
+
+        Debug.Log($"{selectedItem} a été jeté !");
     }
 
 	private void UpdateItemPlacement()
