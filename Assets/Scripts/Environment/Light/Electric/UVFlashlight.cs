@@ -58,7 +58,7 @@ namespace InteractionScripts
                 view.TransferOwnership(PhotonNetwork.LocalPlayer);
             }
 
-            inventory.AddItem("UVFlashlight", maxBattery);
+            inventory.AddItem("UVFlashlight", currentBattery);
             audioSource.PlayOneShot(pickupSound);
             photonView.RPC("PlayPickupSound", RpcTarget.Others);
             StartCoroutine(DestroyAfterSound());
@@ -229,6 +229,17 @@ namespace InteractionScripts
         {
             this.ownerTransform = ownerTransform;
             photonView.TransferOwnership(player);
+        }
+        
+        public void SetCurrentBattery(float level)
+        {
+            currentBattery = level;
+        }
+        
+        [PunRPC]
+        public void SyncBattery(float battery)
+        {
+            currentBattery = battery;
         }
 
         public void OutOfBattery()

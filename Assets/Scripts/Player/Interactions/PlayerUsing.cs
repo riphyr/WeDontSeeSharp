@@ -3,7 +3,6 @@ using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 
-[RequireComponent(typeof(AudioSource))]
 public class PlayerUsing : MonoBehaviourPun
 {
     [Header("Prefabs")]
@@ -211,7 +210,7 @@ public class PlayerUsing : MonoBehaviourPun
     }
 
 	private void DropSelectedItem()
-	{
+    {
         string selectedItem = inventory.GetSelectedItem();
 
         if (string.IsNullOrEmpty(selectedItem))
@@ -256,28 +255,74 @@ public class PlayerUsing : MonoBehaviourPun
                 return;
         }
 
-        Vector3 dropPosition = playerCamera.transform.position + playerCamera.transform.forward * 0.75f + Vector3.down * 0.2f;
+        ForceUnequipItem(selectedItem);
+
+        Vector3 dropPosition = playerCamera.transform.position + playerCamera.transform.forward * 0.75f + Vector3.up * 0.2f;
         Quaternion dropRotation = Quaternion.identity;
 
         GameObject droppedItem = PhotonNetwork.Instantiate(itemPrefab.name, dropPosition, dropRotation);
-        
+
+        // Vérifier et activer le collider
+        Collider col = droppedItem.GetComponent<Collider>();
+        if (col != null)
+        {
+            col.enabled = true;
+        }
+
+        // Ajouter un Rigidbody
         Rigidbody rb = droppedItem.GetComponent<Rigidbody>();
         if (rb == null)
         {
             rb = droppedItem.AddComponent<Rigidbody>();
         }
+
         rb.isKinematic = false;
         rb.useGravity = true;
-        
-        ForceUnequipItem(selectedItem);
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
+        rb.collisionDetectionMode = CollisionDetectionMode.Continuous; // Évite de traverser les objets
 
-		if (selectedItem == "Flashlight" || selectedItem == "UVFlashlight")
-			inventory.RemoveItem(selectedItem, inventory.GetItemCount(selectedItem));
-        else
-			inventory.RemoveItem(selectedItem, 1);
+        // Repositionner légèrement pour éviter d’être à l’intérieur d’un autre objet
+        droppedItem.transform.position += Vector3.up * 0.05f;
+
+        switch (selectedItem)
+        {
+            case "Flashlight":
+            {
+                float batteryLevel = inventory.GetItemCount(selectedItem);
+                var droppedFlashlight = droppedItem.GetComponent<InteractionScripts.Flashlight>();
+                if (droppedFlashlight != null)
+                {
+                    droppedFlashlight.AssignOwner(photonView.Owner, playerBody); // Empêche le reset de la batterie
+                    droppedFlashlight.SetCurrentBattery(batteryLevel);
+                    droppedItem.GetComponent<PhotonView>().RPC("SyncBattery", RpcTarget.AllBuffered, batteryLevel);
+                }
+                inventory.RemoveItem(selectedItem, batteryLevel);
+                break;
+            }
+            case "UVFlashlight":
+            {
+                float batteryLevelUV = inventory.GetItemCount(selectedItem);
+                var droppedUVFlashlight = droppedItem.GetComponent<InteractionScripts.UVFlashlight>();
+                if (droppedUVFlashlight != null)
+                {
+                    droppedUVFlashlight.AssignOwner(photonView.Owner, playerBody); // Empêche le reset de la batterie
+                    droppedUVFlashlight.SetCurrentBattery(batteryLevelUV);
+                    droppedItem.GetComponent<PhotonView>().RPC("SyncBattery", RpcTarget.AllBuffered, batteryLevelUV);
+                }
+                inventory.RemoveItem(selectedItem, batteryLevelUV);
+                break;
+            }
+            case "Battery":
+                inventory.RemoveItem(selectedItem, 100);
+                break;
+            default:
+                inventory.RemoveItem(selectedItem, 1);
+                break;
+        }
 
         Debug.Log($"{selectedItem} a été jeté !");
     }
+
 
 	private void UpdateItemPlacement()
 	{

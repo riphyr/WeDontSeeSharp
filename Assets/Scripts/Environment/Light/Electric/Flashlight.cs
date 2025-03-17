@@ -53,7 +53,7 @@ namespace InteractionScripts
                 view.TransferOwnership(PhotonNetwork.LocalPlayer);
             }
 
-            inventory.AddItem("Flashlight", maxBattery);
+            inventory.AddItem("Flashlight", currentBattery);
             audioSource.PlayOneShot(pickupSound);
             photonView.RPC("PlayPickupSound", RpcTarget.Others);
             StartCoroutine(DestroyAfterSound());
@@ -193,6 +193,17 @@ namespace InteractionScripts
         private void SetColliderState(bool state)
         {
             flashlightCollider.enabled = state;
+        }
+        
+        public void SetCurrentBattery(float level)
+        {
+            currentBattery = level;
+        }
+        
+        [PunRPC]
+        public void SyncBattery(float battery)
+        {
+            currentBattery = battery;
         }
         
         private void ToggleFlashlight(bool state)
