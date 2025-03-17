@@ -23,6 +23,7 @@ namespace MainMenu{
         public GameObject primaryInteractionText;
         public GameObject secondaryInteractionText;
         public GameObject reloadtext;
+        public GameObject droptext;
         public GameObject pausetext;
 
         private Dictionary<string, KeyCode> keyBindings = new Dictionary<string, KeyCode>();
@@ -45,6 +46,7 @@ namespace MainMenu{
             keyBindingTexts["PrimaryInteraction"] = primaryInteractionText.GetComponent<TMP_Text>();
             keyBindingTexts["SecondaryInteraction"] = secondaryInteractionText.GetComponent<TMP_Text>();
             keyBindingTexts["Reload"] = reloadtext.GetComponent<TMP_Text>();
+            keyBindingTexts["Drop"] = droptext.GetComponent<TMP_Text>();
             keyBindingTexts["Pause"] = pausetext.GetComponent<TMP_Text>();
 
             LoadKeyBindings();
@@ -95,19 +97,20 @@ namespace MainMenu{
         {
             Dictionary<string, KeyCode> defaultBindings = new Dictionary<string, KeyCode>
             {
-                { "Forward", KeyCode.W },
+                { "Forward", KeyCode.Z },
                 { "Backward", KeyCode.S },
-                { "Left", KeyCode.A },
+                { "Left", KeyCode.Q },
                 { "Right", KeyCode.D },
                 { "Jump", KeyCode.Space },
                 { "Sprint", KeyCode.LeftShift },
                 { "Next", KeyCode.RightArrow },
                 { "Previous", KeyCode.LeftArrow },
                 { "Map", KeyCode.M },
-                { "Use", KeyCode.Q },
+                { "Use", KeyCode.A },
                 { "PrimaryInteraction", KeyCode.E },
                 { "SecondaryInteraction", KeyCode.F },
                 { "Reload", KeyCode.R },
+                { "Drop", KeyCode.T },
                 { "Pause", KeyCode.Escape }
             };
 
