@@ -103,7 +103,7 @@ namespace PauseMenu{
 			sensitivityYSlider.GetComponent<Slider>().value = PlayerPrefs.GetFloat("YSensitivity");
 
 			// Vérification du fullscreen
-			fullscreentext.GetComponent<TMP_Text>().text = Screen.fullScreen ? "on" : "off";
+			fullscreentext.GetComponent<TMP_Text>().text = Screen.fullScreen ? "off" : "on";
 			
 			// Vérification des tooltips
 			tooltipstext.GetComponent<TMP_Text>().text = PlayerPrefs.GetInt("ToolTips") == 0 ? "off" : "on";
@@ -341,7 +341,7 @@ namespace PauseMenu{
 
 		public void FullScreen (){
 			Screen.fullScreen = !Screen.fullScreen;
-			fullscreentext.GetComponent<TMP_Text>().text = Screen.fullScreen ? "on" : "off";
+			fullscreentext.GetComponent<TMP_Text>().text = Screen.fullScreen ? "off" : "on";
 		}
 
 		public void MusicSlider (){

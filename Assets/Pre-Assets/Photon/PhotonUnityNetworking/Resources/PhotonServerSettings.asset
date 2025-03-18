@@ -93,6 +93,7 @@ MonoBehaviour:
   - UnlockSafe
   - RPC_OpenDoor
   - RPC_ResetCombination
+  - SyncBattery
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
