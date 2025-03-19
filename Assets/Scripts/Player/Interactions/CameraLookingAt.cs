@@ -42,6 +42,7 @@ public class CameraLookingAt : MonoBehaviour
             { typeof(InteractionScripts.Flashlight), hit => HandleFlashlight(hit) },
             { typeof(InteractionScripts.UVFlashlight), hit => HandleUVFlashlight(hit) },
             { typeof(InteractionScripts.Wrench), hit => HandleWrench(hit) },
+            { typeof(InteractionScripts.Crowbar), hit => HandleCrowbar(hit) },
             { typeof(InteractionScripts.ElectricBox), hit => HandleElectricBox(hit) },
             { typeof(InteractionScripts.ElectricButton), hit => HandleElectricButton(hit) },
             { typeof(InteractionScripts.ElectricLever), hit => HandleElectricLever(hit) },
@@ -124,121 +125,121 @@ public class CameraLookingAt : MonoBehaviour
     private void HandleDoor(RaycastHit hit)
     {
         var door = hit.transform.GetComponent<InteractionScripts.Door>();
-        ShowInteractionText(true, door.IsOpen() ? "Fermer la porte" : "Ouvrir la porte");
+        ShowInteractionText(true, door.IsOpen() ? "Close the door" : "Open the door");
         if (Input.GetKeyDown(primaryInteractionKey)) door.ToggleDoor();
     }
 
     private void HandleLockKey(RaycastHit hit)
     {
-        ShowInteractionText(true, "Déverrouiller la porte");
+        ShowInteractionText(true, "Unlock the door");
         if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.LockKey>().AttemptUnlock();
     }
 
     private void HandlePadLock(RaycastHit hit)
     {
-        ShowInteractionText(true, "Déverrouiller la porte");
+        ShowInteractionText(true, "Unlock the door");
         if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.PadLock>().EnterPadLockMode();
     }
 
-	private void HandleWindow(RaycastHit hit)
+    private void HandleWindow(RaycastHit hit)
     {
-        ShowInteractionText(true, hit.transform.GetComponent<InteractionScripts.Window>().IsOpen() ? "Fermer la fenêtre" : "Ouvrir la fenêtre");
+        ShowInteractionText(true, hit.transform.GetComponent<InteractionScripts.Window>().IsOpen() ? "Close the window" : "Open the window");
         if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.Window>().ToggleWindow();
     }
 
-	private void HandleSwitch(RaycastHit hit)
+    private void HandleSwitch(RaycastHit hit)
     {
-        ShowInteractionText(true, hit.transform.GetComponent<InteractionScripts.Switch>().IsOn() ? "Désactiver l'interrupteur" : "Activer l'interrupteur");
+        ShowInteractionText(true, hit.transform.GetComponent<InteractionScripts.Switch>().IsOn() ? "Turn off the switch" : "Turn on the switch");
         if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.Switch>().ToggleSwitch();
-    }	
+    }    
 
-	private void HandleDrawer(RaycastHit hit)
+    private void HandleDrawer(RaycastHit hit)
     {
-        ShowInteractionText(true, hit.transform.GetComponent<InteractionScripts.Drawer>().IsOpen() ? "Fermer le tiroir" : "Ouvrir le tiroir");
+        ShowInteractionText(true, hit.transform.GetComponent<InteractionScripts.Drawer>().IsOpen() ? "Close the drawer" : "Open the drawer");
         if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.Drawer>().ToggleDrawer();
     }
 
-	private void HandleWardrobe(RaycastHit hit)
+    private void HandleWardrobe(RaycastHit hit)
     {
-        ShowInteractionText(true, hit.transform.GetComponent<InteractionScripts.Wardrobe>().IsOpen() ? "Fermer l'armoire" : "Ouvrir l'armoire");
+        ShowInteractionText(true, hit.transform.GetComponent<InteractionScripts.Wardrobe>().IsOpen() ? "Close the wardrobe" : "Open the wardrobe");
         if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.Wardrobe>().ToggleWardrobe();
     }
 
-	private void HandleKey(RaycastHit hit)
+    private void HandleKey(RaycastHit hit)
     {
-        ShowInteractionText(true, $"Ramasser la clef");
+        ShowInteractionText(true, "Pick up the key");
         if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.Key>().PickupKey(inventory);
     }
 
-	private void HandleCandle(RaycastHit hit)
+    private void HandleCandle(RaycastHit hit)
     {
-        ShowInteractionText(true, $"Ramasser la bougie", "Allumer la bougie");
+        ShowInteractionText(true, "Pick up the candle", "Light the candle");
         if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.Candle>().PickupCandle(inventory);
-		else if (Input.GetKeyDown(secondaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.Candle>().LightCandle(inventory);
+        else if (Input.GetKeyDown(secondaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.Candle>().LightCandle(inventory);
     }
 
-	private void HandleLighter(RaycastHit hit)
+    private void HandleLighter(RaycastHit hit)
     {
-        ShowInteractionText(true, $"Ramasser le briquet");
+        ShowInteractionText(true, "Pick up the lighter");
         if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.Lighter>().PickupLighter(inventory);
     }
 
-	private void HandleMatchBox(RaycastHit hit)
+    private void HandleMatchBox(RaycastHit hit)
     {
-        ShowInteractionText(true, $"Ramasser les allumettes");
+        ShowInteractionText(true, "Pick up the matchbox");
         if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.MatchBox>().PickupMatchBox(inventory);
     }
 
-	private void HandleBattery(RaycastHit hit)
+    private void HandleBattery(RaycastHit hit)
     {
-        ShowInteractionText(true, $"Ramasser la pile");
+        ShowInteractionText(true, "Pick up the battery");
         if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.Battery>().PickupBattery(inventory);
     }
 
-	private void HandleFlashlight(RaycastHit hit)
+    private void HandleFlashlight(RaycastHit hit)
     {
-        ShowInteractionText(true, $"Ramasser la lampe torche");
+        ShowInteractionText(true, "Pick up the flashlight");
         if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.Flashlight>().PickupFlashlight(inventory);
     }
 
-	private void HandleUVFlashlight(RaycastHit hit)
+    private void HandleUVFlashlight(RaycastHit hit)
     {
-        ShowInteractionText(true, $"Ramasser la lampe UV");
+        ShowInteractionText(true, "Pick up the UV flashlight");
         if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.UVFlashlight>().PickupFlashlight(inventory);
     }
 
-	private void HandleElectricBox(RaycastHit hit)
+    private void HandleElectricBox(RaycastHit hit)
     {
-        ShowInteractionText(true, hit.transform.GetComponent<InteractionScripts.ElectricBox>().IsOpen() ? "Fermer le boîtier" : "Ouvrir le boîtier");
+        ShowInteractionText(true, hit.transform.GetComponent<InteractionScripts.ElectricBox>().IsOpen() ? "Close the box" : "Open the box");
         if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.ElectricBox>().ToggleBox();
     }
 
-	private void HandleElectricButton(RaycastHit hit)
+    private void HandleElectricButton(RaycastHit hit)
     {
-        ShowInteractionText(true, $"Basculer le bouton");
+        ShowInteractionText(true, "Toggle the button");
         if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.ElectricButton>().ToggleButton();
     }
 
-	private void HandleElectricLever(RaycastHit hit)
+    private void HandleElectricLever(RaycastHit hit)
     {
-        ShowInteractionText(true, $"Activer le levier");
+        ShowInteractionText(true, "Activate the lever");
         if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.ElectricLever>().TryActivateLever();
     }
 
-	private void HandleElectricScrew(RaycastHit hit)
+    private void HandleElectricScrew(RaycastHit hit)
     {
-		if (FindObjectOfType<PlayerUsing>().wrenchScript != null)
-		{
-        	ShowInteractionText(true, "Dévisser la vis");
-        	if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.ElectricScrew>().TryRemoveScrew();
-    	}
-	}
+        if (FindObjectOfType<PlayerUsing>().wrenchScript != null)
+        {
+            ShowInteractionText(true, "Unscrew the screw");
+            if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.ElectricScrew>().TryRemoveScrew();
+        }
+    }
 
     private void HandleCDReader(RaycastHit hit)
     {
-		if (playerUsing != null && playerUsing.HasCDInHand())
+        if (playerUsing != null && playerUsing.HasCDInHand())
         {
-            ShowInteractionText(true, "Insérer le CD");
+            ShowInteractionText(true, "Insert the CD");
             if (Input.GetKeyDown(primaryInteractionKey))
             {
                 inventory.RemoveItem("CDDisk");
@@ -252,7 +253,7 @@ public class CameraLookingAt : MonoBehaviour
         var keyboardCameraSwitcher = hit.transform.GetComponent<InteractionScripts.KeyboardCameraSwitcher>();
         if (keyboardCameraSwitcher.isOn())
         {
-            ShowInteractionText(true, "Changer de caméra");
+            ShowInteractionText(true, "Switch camera");
             if (Input.GetKeyDown(primaryInteractionKey)) keyboardCameraSwitcher.NextCamera();
         }
     }
@@ -262,53 +263,59 @@ public class CameraLookingAt : MonoBehaviour
         var screen = hit.transform.GetComponent<InteractionScripts.ScreenInteraction>();
         if (screen.isOn())
         {
-            ShowInteractionText(true, "Regarder l'écran");
+            ShowInteractionText(true, "Look at the screen");
             if (Input.GetKeyDown(primaryInteractionKey)) screen.EnterScreenMode();
         }
     }
 
     private void HandleWrench(RaycastHit hit)
     {
-        ShowInteractionText(true, "Ramasser la clef à boulon");
+        ShowInteractionText(true, "Pick up the wrench");
         if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.Wrench>().PickupWrench(inventory);
+    }
+    
+    private void HandleCrowbar(RaycastHit hit)
+    {
+        ShowInteractionText(true, "Pick up the crowbar");
+        if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.Crowbar>().PickupCrowbar(inventory);
     }
 
     private void HandleEMFDetector(RaycastHit hit)
     {
-        ShowInteractionText(true, "Ramasser le détecteur EMF");
+        ShowInteractionText(true, "Pick up the EMF detector");
         if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.EMFDetector>().PickupEMF(inventory);
     }
 
     private void HandleCDDisk(RaycastHit hit)
     {
-        ShowInteractionText(true, "Ramasser le CD");
+        ShowInteractionText(true, "Pick up the CD");
         if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.CDDisk>().PickupDisk(inventory);
     }
 
     private void HandleMagnetophone(RaycastHit hit)
     {
-        ShowInteractionText(true, "Ramasser le magnétophone");
+        ShowInteractionText(true, "Pick up the tape recorder");
         if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.Magnetophone>().PickupMagnetophone(inventory);
     }
 
-	private void HandleSafeDial(RaycastHit hit)
+    private void HandleSafeDial(RaycastHit hit)
     {
-		var dial = hit.transform.GetComponent<InteractionScripts.SafeDial>();
-		
-        ShowInteractionText(true, "Incrémenter", "Décrémenter");
+        var dial = hit.transform.GetComponent<InteractionScripts.SafeDial>();
+        
+        ShowInteractionText(true, "Increase", "Decrease");
         if (Input.GetKeyDown(primaryInteractionKey)) dial.RotateDial(1);
-		if (Input.GetKeyDown(secondaryInteractionKey)) dial.RotateDial(-1);
+        if (Input.GetKeyDown(secondaryInteractionKey)) dial.RotateDial(-1);
     }
 
-	private void HandleSafeValve(RaycastHit hit)
+    private void HandleSafeValve(RaycastHit hit)
     {
-        ShowInteractionText(true, "Tourner la valve");
+        ShowInteractionText(true, "Turn the valve");
         if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.SafeValve>().TryUnlock();
     }
 
-	private void HandleSafeDoor(RaycastHit hit)
+    private void HandleSafeDoor(RaycastHit hit)
     {
-        ShowInteractionText(true, "Ouvrir le coffre");
+        ShowInteractionText(true, "Open the safe");
         if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.SafeDoor>().OpenDoor();
     }
 }

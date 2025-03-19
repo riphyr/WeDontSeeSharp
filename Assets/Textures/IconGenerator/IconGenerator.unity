@@ -677,11 +677,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targets:
-  - name: Magnetophone
-    obj: {fileID: 1574256191029235216, guid: d133f52fc19d84442a874e332da67518, type: 3}
+  - name: Crowbar
+    obj: {fileID: 4287185658615562509, guid: cee0874d7e3e2fe44b84c2cf6aca2242, type: 3}
   overlays:
   - {fileID: 21300000, guid: ed8afe2a031df234a8fcf3442a84143b, type: 3}
-  customFolder: Textures
+  customFolder: Resources
   rawIcon: {fileID: 0}
   icon: {fileID: 0}
   overlayIcons: []

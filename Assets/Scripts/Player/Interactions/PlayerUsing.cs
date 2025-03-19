@@ -15,8 +15,12 @@ public class PlayerUsing : MonoBehaviourPun
     public GameObject emfPrefab;
     public GameObject diskPrefab;
 	public GameObject redKeyPrefab;
+    public GameObject blueKeyPrefab;
+    public GameObject greenKeyPrefab;
+    public GameObject blackKeyPrefab;
 	public GameObject lighterPrefab;
 	public GameObject batteryPrefab;
+    public GameObject crowbarPrefab;
 
     [Header("Player")]
     private PlayerInventory inventory;
@@ -61,9 +65,13 @@ public class PlayerUsing : MonoBehaviourPun
     private InteractionScripts.EMFDetector emfScript;
     private BoxCollider emfCollider;
     
-    [Header("Wrench")] 
+    [Header("CD Disk")] 
     [HideInInspector]public InteractionScripts.CDDisk diskScript;
     private BoxCollider diskCollider;
+    
+    [Header("Crowbar")] 
+    [HideInInspector]public InteractionScripts.Crowbar crowbarScript;
+    private BoxCollider crowbarCollider;
     
     void Start()
     {
@@ -166,6 +174,9 @@ public class PlayerUsing : MonoBehaviourPun
             case "Wrench":
                 photonView.RPC("UseWrench", RpcTarget.All);
                 break;
+            case "Crowbar":
+                photonView.RPC("UseCrowbar", RpcTarget.All);
+                break;
             case "Magnetophone":
                 photonView.RPC("UseMagnetophone", RpcTarget.All);
                 break;
@@ -238,6 +249,15 @@ public class PlayerUsing : MonoBehaviourPun
             case "RedKey":
                 itemPrefab = redKeyPrefab;
                 break;
+            case "BlueKey":
+                itemPrefab = blueKeyPrefab;
+                break;
+            case "GreenKey":
+                itemPrefab = greenKeyPrefab;
+                break;
+            case "BlackKey":
+                itemPrefab = blackKeyPrefab;
+                break;
             case "Wrench":
                 itemPrefab = wrenchPrefab;
                 break;
@@ -249,6 +269,9 @@ public class PlayerUsing : MonoBehaviourPun
                 break;
             case "Battery":
                 itemPrefab = batteryPrefab;
+                break;
+            case "Crowbar":
+                itemPrefab = crowbarPrefab;
                 break;
             default:
                 Debug.Log($"Aucun prefab associé pour {selectedItem}");
@@ -262,14 +285,12 @@ public class PlayerUsing : MonoBehaviourPun
 
         GameObject droppedItem = PhotonNetwork.Instantiate(itemPrefab.name, dropPosition, dropRotation);
 
-        // Vérifier et activer le collider
         Collider col = droppedItem.GetComponent<Collider>();
         if (col != null)
         {
             col.enabled = true;
         }
 
-        // Ajouter un Rigidbody
         Rigidbody rb = droppedItem.GetComponent<Rigidbody>();
         if (rb == null)
         {
@@ -279,9 +300,8 @@ public class PlayerUsing : MonoBehaviourPun
         rb.isKinematic = false;
         rb.useGravity = true;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
-        rb.collisionDetectionMode = CollisionDetectionMode.Continuous; // Évite de traverser les objets
+        rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
 
-        // Repositionner légèrement pour éviter d’être à l’intérieur d’un autre objet
         droppedItem.transform.position += Vector3.up * 0.05f;
 
         switch (selectedItem)
@@ -292,7 +312,7 @@ public class PlayerUsing : MonoBehaviourPun
                 var droppedFlashlight = droppedItem.GetComponent<InteractionScripts.Flashlight>();
                 if (droppedFlashlight != null)
                 {
-                    droppedFlashlight.AssignOwner(photonView.Owner, playerBody); // Empêche le reset de la batterie
+                    droppedFlashlight.AssignOwner(photonView.Owner, playerBody);
                     droppedFlashlight.SetCurrentBattery(batteryLevel);
                     droppedItem.GetComponent<PhotonView>().RPC("SyncBattery", RpcTarget.AllBuffered, batteryLevel);
                 }
@@ -305,7 +325,7 @@ public class PlayerUsing : MonoBehaviourPun
                 var droppedUVFlashlight = droppedItem.GetComponent<InteractionScripts.UVFlashlight>();
                 if (droppedUVFlashlight != null)
                 {
-                    droppedUVFlashlight.AssignOwner(photonView.Owner, playerBody); // Empêche le reset de la batterie
+                    droppedUVFlashlight.AssignOwner(photonView.Owner, playerBody);
                     droppedUVFlashlight.SetCurrentBattery(batteryLevelUV);
                     droppedItem.GetComponent<PhotonView>().RPC("SyncBattery", RpcTarget.AllBuffered, batteryLevelUV);
                 }
@@ -376,6 +396,13 @@ public class PlayerUsing : MonoBehaviourPun
                     {
                         wrenchScript.ShowWrench(false);
                         wrenchScript = null;
+                    }
+                    break;
+                case "Crowbar":
+                    if (crowbarScript != null)
+                    {
+                        crowbarScript.ShowCrowbar(false);
+                        crowbarScript = null;
                     }
                     break;
                 case "Magnetophone":
@@ -591,7 +618,7 @@ public class PlayerUsing : MonoBehaviourPun
         }
     }
     
-    // Gestion clef (outils)
+    // Gestion wrench
     [PunRPC]
     private void UseWrench()
     {
@@ -739,5 +766,39 @@ public class PlayerUsing : MonoBehaviourPun
     public bool HasCDInHand()
     {
         return diskScript != null && diskScript.isTaken;
+    }
+    
+    // Gestion crowbar
+    [PunRPC]
+    private void UseCrowbar()
+    {
+        if (!photonView.IsMine) 
+            return;
+        
+        if (wrenchScript == null && inventory.HasItem("Crowbar"))
+        {
+            StartCoroutine(SpawnWrench());
+        }
+        else if (crowbarScript != null)
+        {
+            crowbarScript.ShowCrowbar(false);
+            crowbarScript = null;
+        }
+    }
+
+    private IEnumerator SpawnCrowbar()
+    {
+        Quaternion crowbarRotation = Quaternion.Euler(-90f, playerBody.eulerAngles.y, 0f);
+
+        GameObject crowbarInstance = PhotonNetwork.Instantiate(crowbarPrefab.name, Vector3.zero, crowbarRotation);
+        crowbarCollider = crowbarInstance.GetComponent<BoxCollider>();
+        crowbarCollider.enabled = false;
+
+        yield return new WaitForSeconds(0.1f);
+
+        crowbarScript = crowbarInstance.GetComponent<InteractionScripts.Crowbar>();
+
+        crowbarScript.AssignOwner(photonView.Owner, playerBody);
+        crowbarScript.ShowCrowbar(true);
     }
 }

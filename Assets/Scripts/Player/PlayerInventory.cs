@@ -219,30 +219,30 @@ public class PlayerInventory : MonoBehaviourPun
         switch (selectedItem)
         {
             case "Match":
-                useAction = "Utiliser";
+                useAction = "Use";
                 break;
             case "Candle":
-                useAction = "Poser";
+                useAction = "Place";
                 break;
             case "Flashlight":
-                useAction = isEquipped ? "Ranger" : "Prendre";
-                reloadAction = "Recharger";
+                useAction = isEquipped ? "Stow" : "Take";
+                reloadAction = HasItem("Flashlight") ? "" : "Recharge";
                 break;
             case "UVFlashlight":
-                useAction = isEquipped ? "Ranger" : "Prendre";
-                reloadAction = "Recharger";
+                useAction = isEquipped ? "Stow" : "Take";
+                reloadAction = HasItem("UVFlashlight") ? "" : "Recharge";
                 break;
             case "Wrench":
-                useAction = isEquipped ? "Ranger" : "Prendre";
+                useAction = isEquipped ? "Stow" : "Take";
                 break;
             case "Magnetophone":
-                useAction = isEquipped ? "Ranger" : "Prendre";
+                useAction = isEquipped ? "Stow" : "Take";
                 break;
             case "EMFDetector":
-                useAction = isEquipped ? "Ranger" : "Prendre";
+                useAction = isEquipped ? "Stow" : "Take";
                 break;
             case "CDDisk":
-                useAction = isEquipped ? "Ranger" : "Prendre";
+                useAction = isEquipped ? "Stow" : "Take";
                 break;
             default:
                 itemActionText.text = "";

@@ -12844,10 +12844,15 @@ MonoBehaviour:
   emfPrefab: {fileID: 7049254324596496369, guid: 50e209d955cb97543a706a5f8507e37e, type: 3}
   diskPrefab: {fileID: 541087474435445290, guid: 5e511e6f4a1d0074fad23d73fe1a7979, type: 3}
   redKeyPrefab: {fileID: 2866990502264049246, guid: b6e1aa7b6fa85e74fb3271a54e54da67, type: 3}
+  blueKeyPrefab: {fileID: 5804937205455601444, guid: d2213b78a74611d4f860cb0ffd778749, type: 3}
+  greenKeyPrefab: {fileID: 8409210534740655514, guid: 8096e1b0751e5384d934f683a5fe59e3, type: 3}
+  blackKeyPrefab: {fileID: 5459600120005769577, guid: b99a36bf6d010264f93fb319fc1646cd, type: 3}
   lighterPrefab: {fileID: 6692566071976834495, guid: 94cf3732cda86094dae8a628c2e3c87d, type: 3}
   batteryPrefab: {fileID: 4935143017026424203, guid: c1b75bc196608cd4e8ab16b166526719, type: 3}
+  crowbarPrefab: {fileID: 4287185658615562509, guid: cee0874d7e3e2fe44b84c2cf6aca2242, type: 3}
   wrenchScript: {fileID: 0}
   diskScript: {fileID: 0}
+  crowbarScript: {fileID: 0}
 --- !u!114 &5202161507523636149
 MonoBehaviour:
   m_ObjectHideFlags: 0
