@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 2063571687894204757}
   - component: {fileID: 1397406548877711570}
   - component: {fileID: 4517364568215908302}
-  - component: {fileID: 4507084526498054644}
   - component: {fileID: 8584923868163627120}
   - component: {fileID: 3202156794281390328}
   - component: {fileID: 1675906498309961556}
@@ -31,7 +30,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4287185658615562509}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.000000021855694, y: 0, z: -0, w: 1}
+  m_LocalRotation: {x: 0.000000021855694, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -5.288, y: 2.9126952, z: -3.394}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -88,28 +87,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &4507084526498054644
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4287185658615562509}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 8918077550557095614, guid: 517f14a6a97c9a14a8d88d6a0daaaca3, type: 3}
 --- !u!82 &8584923868163627120
 AudioSource:
   m_ObjectHideFlags: 0
@@ -222,7 +199,7 @@ MonoBehaviour:
   Group: 0
   prefixField: -1
   Synchronization: 3
-  OwnershipTransfer: 0
+  OwnershipTransfer: 1
   observableSearch: 2
   ObservedComponents: []
   sceneViewId: 0
@@ -240,8 +217,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e668a4c6c3364d5ba507d7b3ad5e9f3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pickupSound: {fileID: 8300000, guid: d109c89ab3448174aa5cb38a8f5a2b78, type: 3}
-  useSound: {fileID: 8300000, guid: d109c89ab3448174aa5cb38a8f5a2b78, type: 3}
+  pickupSound: {fileID: 8300000, guid: 293739fe4ac73754bbbde4d8d54e947c, type: 3}
+  useSound: {fileID: 8300000, guid: a61c33c5ebc684f419cf0799aef5c4e6, type: 3}
 --- !u!65 &1878937992050233004
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -95,6 +95,11 @@ MonoBehaviour:
   - RPC_ResetCombination
   - SyncBattery
   - UseCrowbar
+  - RPC_InteractBoilingFlask
+  - RPC_InteractBunsenBurner
+  - RPC_InteractFlatBottomFlask
+  - RPC_ResetStation
+  - RPC_SetOutput
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

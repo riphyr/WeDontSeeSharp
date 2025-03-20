@@ -43,7 +43,7 @@ namespace InteractionScripts
         
         private IEnumerator PlaySoundAndDestroy()
         {
-            audioSource.PlayOneShot(pickupSound);
+            audioSource.PlayOneShot(pickupSound, 0.05f);
             yield return new WaitForSeconds(pickupSound.length);
             photonView.RPC("DestroyForAll", RpcTarget.AllBuffered);
         }
@@ -64,8 +64,8 @@ namespace InteractionScripts
         {
             if (ownerTransform != null)
             {
-                transform.position = ownerTransform.position + ownerTransform.forward * 0.3f + ownerTransform.right * 0.1f + Vector3.up * 0.6f;
-                transform.rotation = Quaternion.Euler(0f, ownerTransform.eulerAngles.y, 0f);
+                transform.position = ownerTransform.position + ownerTransform.forward * 0.1f + ownerTransform.right * 0.14f + Vector3.up * 0.3f;
+                transform.rotation = Quaternion.Euler(-110f, ownerTransform.eulerAngles.y, 0f);
             }
         }
         

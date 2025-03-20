@@ -5,6 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - Ghost
+  - FlatBottomFlask
+  - BoilingFlask
+  - BunsenBurner
+  - OutputFlask
   layers:
   - Default
   - TransparentFX

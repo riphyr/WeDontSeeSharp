@@ -27,9 +27,9 @@ public class CameraLookingAt : MonoBehaviour
 
         interactionHandlers = new Dictionary<Type, Action<RaycastHit>>()
         {
-            { typeof(InteractionScripts.Door), hit => HandleDoor(hit) },
             { typeof(InteractionScripts.LockKey), hit => HandleLockKey(hit) },
             { typeof(InteractionScripts.PadLock), hit => HandlePadLock(hit) },
+            { typeof(InteractionScripts.Door), hit => HandleDoor(hit) },
             { typeof(InteractionScripts.Window), hit => HandleWindow(hit) },
             { typeof(InteractionScripts.Switch), hit => HandleSwitch(hit) },
             { typeof(InteractionScripts.Drawer), hit => HandleDrawer(hit) },
@@ -43,10 +43,10 @@ public class CameraLookingAt : MonoBehaviour
             { typeof(InteractionScripts.UVFlashlight), hit => HandleUVFlashlight(hit) },
             { typeof(InteractionScripts.Wrench), hit => HandleWrench(hit) },
             { typeof(InteractionScripts.Crowbar), hit => HandleCrowbar(hit) },
-            { typeof(InteractionScripts.ElectricBox), hit => HandleElectricBox(hit) },
             { typeof(InteractionScripts.ElectricButton), hit => HandleElectricButton(hit) },
             { typeof(InteractionScripts.ElectricLever), hit => HandleElectricLever(hit) },
             { typeof(InteractionScripts.ElectricScrew), hit => HandleElectricScrew(hit) },
+            { typeof(InteractionScripts.ElectricBox), hit => HandleElectricBox(hit) },
             { typeof(InteractionScripts.CDReader), hit => HandleCDReader(hit) },
             { typeof(InteractionScripts.EMFDetector), hit => HandleEMFDetector(hit) },
             { typeof(InteractionScripts.CDDisk), hit => HandleCDDisk(hit) },
@@ -55,7 +55,9 @@ public class CameraLookingAt : MonoBehaviour
 			{ typeof(InteractionScripts.SafeDial), hit => HandleSafeDial(hit) },
 			{ typeof(InteractionScripts.SafeValve), hit => HandleSafeValve(hit) },
 			{ typeof(InteractionScripts.SafeDoor), hit => HandleSafeDoor(hit) },
-            { typeof(InteractionScripts.ScreenInteraction), hit => HandleScreen(hit) }
+            { typeof(InteractionScripts.ScreenInteraction), hit => HandleScreen(hit) },
+            { typeof(InteractionScripts.ChemistryStation), hit => HandleChemistryStation(hit) },
+            { typeof(InteractionScripts.Item), hit => HandleItem(hit) }
         };
     }
 
@@ -87,23 +89,32 @@ public class CameraLookingAt : MonoBehaviour
         Ray ray = playerCamera.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f));
         RaycastHit hit;
 
+        Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue, 0.1f);
+
         if (Physics.Raycast(ray, out hit, interactionDistance))
         {
-            Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.red);
+            GameObject targetObject = hit.transform.gameObject;
+            var foundComponent = false;
 
             foreach (var entry in interactionHandlers)
-			{
-    			if (hit.transform.TryGetComponent(entry.Key, out var component))
-    			{
-        			entry.Value.Invoke(hit);
-        			return;
-    			}
-			}
-			ShowInteractionText(false);
+            {
+                var component = targetObject.GetComponent(entry.Key) ?? targetObject.GetComponentInParent(entry.Key);
+    
+                if (component != null)
+                {
+                    entry.Value.Invoke(hit);
+                    foundComponent = true;
+                    break;
+                }
+            }
+
+            if (!foundComponent)
+            {
+                ShowInteractionText(false);
+            }
         }
         else
         {
-            Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.green);
             ShowInteractionText(false);
         }
     }
@@ -112,21 +123,27 @@ public class CameraLookingAt : MonoBehaviour
     {
         if (interactionText)
         {
-            interactionText.SetActive(show);
-            if (show)
+            if (!show || (string.IsNullOrEmpty(message1) && string.IsNullOrEmpty(message2)))
             {
-                interactionText.GetComponent<TextMeshProUGUI>().text = !string.IsNullOrEmpty(message2) 
-                    ? $"{message1} [{primaryInteractionKey}]\n{message2} [{secondaryInteractionKey}]"
-                    : $"{message1} [{primaryInteractionKey}]";
+                interactionText.SetActive(false);
+                return;
             }
+
+            interactionText.SetActive(true);
+
+            string primaryText = !string.IsNullOrEmpty(message1) ? $"{message1} [{primaryInteractionKey}]" : "";
+            string secondaryText = !string.IsNullOrEmpty(message2) ? $"{message2} [{secondaryInteractionKey}]" : "";
+
+            interactionText.GetComponent<TextMeshProUGUI>().text = !string.IsNullOrEmpty(primaryText) && !string.IsNullOrEmpty(secondaryText)
+                ? $"{primaryText}\n{secondaryText}"
+                : $"{primaryText}{secondaryText}";
         }
     }
 
     private void HandleDoor(RaycastHit hit)
     {
-        var door = hit.transform.GetComponent<InteractionScripts.Door>();
-        ShowInteractionText(true, door.IsOpen() ? "Close the door" : "Open the door");
-        if (Input.GetKeyDown(primaryInteractionKey)) door.ToggleDoor();
+        ShowInteractionText(true, hit.transform.GetComponent<InteractionScripts.Door>().IsOpen() ? "Close the door" : "Open the door");
+        if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.Door>().ToggleDoor();
     }
 
     private void HandleLockKey(RaycastHit hit)
@@ -317,5 +334,111 @@ public class CameraLookingAt : MonoBehaviour
     {
         ShowInteractionText(true, "Open the safe");
         if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.SafeDoor>().OpenDoor();
+    }
+    
+    private void HandleChemistryStation(RaycastHit hit)
+    {
+        var chemistryStation = hit.collider.GetComponentInParent<InteractionScripts.ChemistryStation>();
+
+        if (chemistryStation == null)
+        {
+            return;
+        }
+
+        string interactMessage1 = null;
+        string interactMessage2 = null;
+
+        if (hit.collider.CompareTag("FlatBottomFlask"))
+        {
+            if (!chemistryStation.IsFlatBottomFilled())
+            {
+                if (inventory.HasItem("Lemon juice")) interactMessage1 = "Add lemon juice";
+                if (inventory.HasItem("Bleach")) interactMessage2 = "Add bleach";
+            }
+        }
+        else if (hit.collider.CompareTag("BoilingFlask"))
+        {
+            if (!chemistryStation.IsBoilingFilled())
+            {
+                if (inventory.HasItem("WD40")) interactMessage1 = "Add WD40";
+                if (inventory.HasItem("Red wine")) interactMessage2 = "Add red wine";
+            }
+        }
+        else if (hit.collider.CompareTag("BunsenBurner"))
+        {
+            if (chemistryStation.IsFlatBottomFilled() && chemistryStation.IsBoilingFilled() && !chemistryStation.IsBurning())
+            {
+                interactMessage1 = "Turn on the burner";
+            }
+        }
+        else if (hit.collider.CompareTag("OutputFlask"))
+        {
+            if (chemistryStation.IsOutputFilled())
+            {
+                interactMessage1 = "Pick up the solution";
+            }
+        }
+
+        if (!string.IsNullOrEmpty(interactMessage1) || !string.IsNullOrEmpty(interactMessage2))
+        {
+            ShowInteractionText(true, interactMessage1, interactMessage2);
+
+            if (Input.GetKeyDown(primaryInteractionKey) || Input.GetKeyDown(secondaryInteractionKey))
+            {
+                HandleChemistryInteraction(hit, chemistryStation);
+            }
+        }
+        else
+        {
+            ShowInteractionText(false);
+        }
+    }
+
+    private void HandleChemistryInteraction(RaycastHit hit, InteractionScripts.ChemistryStation chemistryStation)
+    {
+        if (hit.collider.CompareTag("FlatBottomFlask"))
+        {
+            if (Input.GetKeyDown(primaryInteractionKey) && inventory.HasItem("Lemon juice"))
+            {
+                chemistryStation.InteractFlatBottomFlask("Lemon juice", inventory);
+            }
+            else if (Input.GetKeyDown(secondaryInteractionKey) && inventory.HasItem("Bleach"))
+            {
+                chemistryStation.InteractFlatBottomFlask("Bleach", inventory);
+            }
+        }
+        else if (hit.collider.CompareTag("BoilingFlask"))
+        {
+            if (Input.GetKeyDown(primaryInteractionKey) && inventory.HasItem("WD40"))
+            {
+                chemistryStation.InteractBoilingFlask("WD40", inventory);
+            }
+            else if (Input.GetKeyDown(secondaryInteractionKey) && inventory.HasItem("Red wine"))
+            {
+                chemistryStation.InteractBoilingFlask("Red wine", inventory);
+            }
+        }
+        else if (hit.collider.CompareTag("BunsenBurner"))
+        {
+            if (Input.GetKeyDown(primaryInteractionKey))
+            {
+                chemistryStation.InteractBunsenBurner();
+            }
+        }
+        else if (hit.collider.CompareTag("OutputFlask"))
+        {
+            if (Input.GetKeyDown(primaryInteractionKey))
+            {
+                chemistryStation.CollectOutput(inventory);
+            }
+        }
+    }
+
+    private void HandleItem(RaycastHit hit)
+    {
+        var item = hit.transform.GetComponent<InteractionScripts.Item>();
+        
+        ShowInteractionText(true, $"Pick up the {item.GetItemName()}");
+        if (Input.GetKeyDown(primaryInteractionKey)) item.Pickup(inventory);
     }
 }

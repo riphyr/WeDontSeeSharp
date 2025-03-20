@@ -235,6 +235,9 @@ public class PlayerInventory : MonoBehaviourPun
             case "Wrench":
                 useAction = isEquipped ? "Stow" : "Take";
                 break;
+            case "Crowbar":
+                useAction = isEquipped ? "Stow" : "Take";
+                break;
             case "Magnetophone":
                 useAction = isEquipped ? "Stow" : "Take";
                 break;

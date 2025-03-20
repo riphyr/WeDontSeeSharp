@@ -775,9 +775,9 @@ public class PlayerUsing : MonoBehaviourPun
         if (!photonView.IsMine) 
             return;
         
-        if (wrenchScript == null && inventory.HasItem("Crowbar"))
+        if (crowbarScript == null && inventory.HasItem("Crowbar"))
         {
-            StartCoroutine(SpawnWrench());
+            StartCoroutine(SpawnCrowbar());
         }
         else if (crowbarScript != null)
         {
