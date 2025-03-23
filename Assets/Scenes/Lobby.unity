@@ -5735,6 +5735,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   createInput: {fileID: 126547796}
   joinInput: {fileID: 746577383}
+  createPanel: {fileID: 2016743777}
+  joinPanel: {fileID: 1550188486}
   errorMessage: {fileID: 1053565370}
 --- !u!114 &1605843265
 MonoBehaviour:

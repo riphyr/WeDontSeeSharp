@@ -18,7 +18,6 @@ namespace PauseMenu{
         public GameObject saveMenu;				// Panel SAVE
 
         [Header("PANELS")]
-        public GameObject PanelMain;			// Canva MAIN
         public GameObject PanelGame;			// Panel GAME
         public GameObject PanelControls;		// Panel CONTROLS
         public GameObject PanelVideo;			// Panel VIDEO
@@ -60,6 +59,7 @@ namespace PauseMenu{
 		
 		[Header("PANEL KEYBINDINGS")]
 		public GameObject keyConfirmationPanel;
+		public GameObject keyConfirmationBackground;
         
 		[Header("KEY NAMES")]
 		public GameObject forwardtext;
@@ -88,12 +88,15 @@ namespace PauseMenu{
 		private Dictionary<string, TMP_Text> keyBindingTexts = new Dictionary<string, TMP_Text>();
 
 		private string currentKeyBinding; 
+		private bool isPaused = false;
 
 		void Start(){
+			pauseObject.SetActive(false);
+			isPaused = false;
+			
 			settingsCanva.SetActive(false);
 			exitMenu.SetActive(false);
-			mainCanva.SetActive(true);
-			pauseObject.SetActive(true);
+			mainCanva.SetActive(false);
 			saveMenu.SetActive(false);
 			
 			// Vérification des sliders
@@ -159,9 +162,36 @@ namespace PauseMenu{
 						SaveKeyBindings();
 						UpdateKeyBindingText(currentKeyBinding, keyCode);
 						keyConfirmationPanel.SetActive(false);
+						keyConfirmationBackground.SetActive(false);
 						currentKeyBinding = null;
 						break;
 					}
+				}
+				if (currentKeyBinding == null)
+					return;
+			}
+
+			if (Input.GetKeyDown(KeyCode.Escape))
+			{
+				Debug.Log("[PAUSE MENU MANAGER] Escape Pressed");
+				if (isPaused)
+				{
+					Debug.Log("[PAUSE MENU MANAGER] It is currently paused");
+					if (settingsCanva.activeSelf && !keyConfirmationPanel.activeSelf)
+					{
+						Debug.Log("[PAUSE MENU MANAGER] Return button");
+						ReturnButton();
+					}
+					else if (mainCanva.activeSelf)
+					{
+						Debug.Log("[PAUSE MENU MANAGER] Resume button");
+						ResumeButton();
+					}
+				}
+				else
+				{
+					Debug.Log("[PAUSE MENU MANAGER] Is not already paused");
+					PauseGame();
 				}
 			}
 		}
@@ -177,10 +207,28 @@ namespace PauseMenu{
 			saveMenu.SetActive(true);
 		}
 		
-		public void ResumeButton(){
+		public void ResumeButton()
+		{
+			isPaused = false;
 			pauseObject.SetActive(false);
+
 			Cursor.lockState = CursorLockMode.Locked;
-        	Cursor.visible = false;
+			Cursor.visible = false;
+		}
+		
+		private void PauseGame()
+		{
+			Debug.Log("[PAUSE MENU MANAGER] PAUSE METHOD");
+			isPaused = true;
+			pauseObject.SetActive(true);
+
+			mainCanva.SetActive(true);
+			settingsCanva.SetActive(false);
+			exitMenu.SetActive(false);
+			saveMenu.SetActive(false);
+
+			Cursor.lockState = CursorLockMode.None;
+			Cursor.visible = true;
 		}
 
 		public void LoadScene(string scene)
@@ -482,11 +530,13 @@ namespace PauseMenu{
         {
             currentKeyBinding = keyBindingName;
             keyConfirmationPanel.SetActive(true);
+            keyConfirmationBackground.SetActive(true);
         }
         
         public void CancelButton()
         {
             keyConfirmationPanel.SetActive(false);
+            keyConfirmationBackground.SetActive(false);
             currentKeyBinding = null;
         }
 

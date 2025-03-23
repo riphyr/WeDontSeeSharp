@@ -34,10 +34,7 @@ public class PlayerScript : MonoBehaviour, IPunObservable
 	public Camera playerCamera;					// GameObject relié à la caméra
 	public GameObject character;				// GameObject relié au prefab du joueur
 	public Animator animator;					// Controller pour les animations
-
-	[Header("MENUS")]
-	public GameObject pauseObject;				// Menu de pause
-
+	
 	// Synchronisation des animations
     private float animatorSides;
     private float animatorFrontBack;
@@ -65,8 +62,6 @@ public class PlayerScript : MonoBehaviour, IPunObservable
 		// Blocage et disparition du curseur
 		Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        
-        pauseObject.SetActive(false);
     }
 
     void Update()
@@ -84,8 +79,6 @@ public class PlayerScript : MonoBehaviour, IPunObservable
 	        {
 		        UdpateSensitivityCamera();
 	        }
-
-	        CheckPauseActivation(); // Activation ou désactivation du menu pause
 
 	        animator.SetBool("isRunning", false);
 	        animator.SetBool("isJumping", false);
@@ -126,25 +119,6 @@ public class PlayerScript : MonoBehaviour, IPunObservable
 			animator.SetBool("isJumping", animatorIsJumping);
         }
     }
-
-	private void CheckPauseActivation()
-	{
-		if (Input.GetKey(GetKeyCodeFromString(PlayerPrefs.GetString("Pause", "None"))))
-	    {
-		    pauseObject.SetActive(true);
-		    Cursor.lockState = CursorLockMode.None;
-			Cursor.visible = true;
-	    }
-
-		if (Cursor.lockState == CursorLockMode.None && Cursor.visible)
-	    {
-			pauseObject.SetActive(true);
-	    }
-	    else
-	    {
-			pauseObject.SetActive(false);
-	    }
-	}
 	
 	// Update des sensibilités de rotation camera
 	private void UdpateSensitivityCamera()

@@ -7,7 +7,9 @@ using Photon.Pun;
 public class CreateAndJoinRooms : MonoBehaviourPunCallbacks
 {
     public TMP_InputField createInput;
-    public TMP_InputField joinInput; 
+    public TMP_InputField joinInput;
+    public GameObject createPanel;
+    public GameObject joinPanel;
     public GameObject errorMessage;
 
     public void CreateRoom()
@@ -34,5 +36,16 @@ public class CreateAndJoinRooms : MonoBehaviourPunCallbacks
     {
         if (errorMessage.activeSelf)
             errorMessage.SetActive(false);
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            if (createPanel.activeSelf && !string.IsNullOrWhiteSpace(createInput.text))
+                PhotonNetwork.CreateRoom(createInput.text);
+            else if (joinPanel.activeSelf && !string.IsNullOrWhiteSpace(joinInput.text))
+                PhotonNetwork.JoinRoom(joinInput.text);
+        }
     }
 }

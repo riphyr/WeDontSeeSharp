@@ -105,8 +105,6 @@ public class PlayerUsing : MonoBehaviourPun
         string dropString = PlayerPrefs.GetString("Drop", "T");
         dropKey = GetKeyCodeFromString(dropString);
     }
-
-
     
     void Update()
     {

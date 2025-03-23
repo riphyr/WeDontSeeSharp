@@ -87,21 +87,19 @@ public class SpawnPlayers : MonoBehaviourPunCallbacks
         CameraLookingAt cameraLookingAt = player.GetComponent<CameraLookingAt>();
         PlayerInventory playerInventory = player.GetComponent<PlayerInventory>();
         PlayerUsing playerUsing = player.GetComponent<PlayerUsing>();
+        PauseMenuManager pauseMenuManager = player.GetComponent<PauseMenuManager>();
 
         if (playerScript == null) Debug.LogError("🚨 PlayerScript manquant sur Player !");
         if (cameraLookingAt == null) Debug.LogError("🚨 CameraLookingAt manquant sur Player !");
         if (playerInventory == null) Debug.LogError("🚨 PlayerInventory manquant sur Player !");
         if (playerUsing == null) Debug.LogError("🚨 PlayerUsing manquant sur Player !");
+        if (pauseMenuManager == null) Debug.LogError("🚨 PauseMenuManager manquant sur Player !");
 
         playerScript.enabled = true;
         cameraLookingAt.enabled = true;
         playerInventory.enabled = true;
         playerUsing.enabled = true;
-
-        // Activation du menu de pause
-        GameObject pauseMenu = myPlayer.transform.Find("Pause_Menu").gameObject;
-        PauseMenuManager pauseMenuScript = pauseMenu.GetComponent<PauseMenuManager>();
-        pauseMenuScript.enabled = true;
+        pauseMenuManager.enabled = true;
 
         // Activation de la caméra individuelle
         GameObject mainCamera = player.transform.Find("Main Camera").gameObject;
