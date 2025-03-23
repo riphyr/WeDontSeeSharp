@@ -90,21 +90,23 @@ public class PlayerUsing : MonoBehaviourPun
     
     private void LoadInteractionKey()
     {
-        string nextKey = PlayerPrefs.GetString("Next", "None");
+        string nextKey = PlayerPrefs.GetString("Next", "RightArrow");
         nextKeyInteraction = GetKeyCodeFromString(nextKey);
-
-        string previousKey = PlayerPrefs.GetString("Previous", "None");
+    
+        string previousKey = PlayerPrefs.GetString("Previous", "LeftArrow");
         previousKeyInteraction = GetKeyCodeFromString(previousKey);
-
-		string useString = PlayerPrefs.GetString("Use", "None");
-		useKey = GetKeyCodeFromString(useString);
-
-		string reloadString = PlayerPrefs.GetString("Reload", "None");
-		reloadKey = GetKeyCodeFromString(reloadString);
-
-		string dropString = PlayerPrefs.GetString("Drop", "None");
-		dropKey = GetKeyCodeFromString(dropString);
+    
+        string useString = PlayerPrefs.GetString("Use", "A");
+        useKey = GetKeyCodeFromString(useString);
+    
+        string reloadString = PlayerPrefs.GetString("Reload", "R");
+        reloadKey = GetKeyCodeFromString(reloadString);
+    
+        string dropString = PlayerPrefs.GetString("Drop", "T");
+        dropKey = GetKeyCodeFromString(dropString);
     }
+
+
     
     void Update()
     {
@@ -116,11 +118,13 @@ public class PlayerUsing : MonoBehaviourPun
 
         if (Input.GetKeyDown(nextKeyInteraction))
         {
-            FindObjectOfType<PlayerInventory>().SwitchToNextItem();
+            Debug.Log("[DEBUG] Touche Next pressée !");
+            inventory.SwitchToNextItem();
         }
-		else if (Input.GetKeyDown(previousKeyInteraction))
+        else if (Input.GetKeyDown(previousKeyInteraction))
         {
-            FindObjectOfType<PlayerInventory>().SwitchToPreviousItem();
+            Debug.Log("[DEBUG] Touche Previous pressée !");
+            inventory.SwitchToPreviousItem();
         }
         else if (Input.GetKeyDown(useKey))
         {
@@ -230,119 +234,127 @@ public class PlayerUsing : MonoBehaviourPun
             return;
         }
 
-        GameObject itemPrefab = null;
-
-        switch (selectedItem)
+        GameObject itemPrefab = selectedItem switch
         {
-            case "Flashlight":
-                itemPrefab = flashlightPrefab;
-                break;
-            case "UVFlashlight":
-                itemPrefab = UVFlashlightPrefab;
-                break;
-            case "CDDisk":
-                itemPrefab = diskPrefab;
-                break;
-            case "Lighter":
-                itemPrefab = lighterPrefab;
-                break;
-            case "RedKey":
-                itemPrefab = redKeyPrefab;
-                break;
-            case "BlueKey":
-                itemPrefab = blueKeyPrefab;
-                break;
-            case "GreenKey":
-                itemPrefab = greenKeyPrefab;
-                break;
-            case "BlackKey":
-                itemPrefab = blackKeyPrefab;
-                break;
-            case "Wrench":
-                itemPrefab = wrenchPrefab;
-                break;
-            case "EMFDetector":
-                itemPrefab = emfPrefab;
-                break;
-            case "Magnetophone":
-                itemPrefab = magnetophonePrefab;
-                break;
-            case "Battery":
-                itemPrefab = batteryPrefab;
-                break;
-            case "Crowbar":
-                itemPrefab = crowbarPrefab;
-                break;
-            default:
-                Debug.Log($"Aucun prefab associé pour {selectedItem}");
-                return;
+            "Flashlight" => flashlightPrefab,
+            "UVFlashlight" => UVFlashlightPrefab,
+            "CDDisk" => diskPrefab,
+            "Lighter" => lighterPrefab,
+            "RedKey" => redKeyPrefab,
+            "BlueKey" => blueKeyPrefab,
+            "GreenKey" => greenKeyPrefab,
+            "BlackKey" => blackKeyPrefab,
+            "Wrench" => wrenchPrefab,
+            "EMFDetector" => emfPrefab,
+            "Magnetophone" => magnetophonePrefab,
+            "Battery" => batteryPrefab,
+            "Crowbar" => crowbarPrefab,
+            _ => null
+        };
+
+        if (itemPrefab == null)
+        {
+            Debug.Log($"Aucun prefab associé pour {selectedItem}");
+            return;
         }
 
         ForceUnequipItem(selectedItem);
 
         Vector3 dropPosition = playerCamera.transform.position + playerCamera.transform.forward * 0.75f + Vector3.up * 0.2f;
         Quaternion dropRotation = Quaternion.identity;
+        GameObject droppedItem = null;
 
-        GameObject droppedItem = PhotonNetwork.Instantiate(itemPrefab.name, dropPosition, dropRotation);
+        // Cas particuliers avec batterie (retirer AVANT le spawn pour transmettre la bonne valeur)
+        if (selectedItem == "Flashlight")
+        {
+            float batteryLevel = inventory.GetItemCount(selectedItem);
+            inventory.RemoveItem(selectedItem, batteryLevel);
 
+            object[] instantiationData = new object[] { batteryLevel };
+            droppedItem = PhotonNetwork.Instantiate(itemPrefab.name, dropPosition, dropRotation, 0, instantiationData);
+
+            var flashlight = droppedItem.GetComponent<InteractionScripts.Flashlight>();
+            if (flashlight != null)
+            {
+                flashlight.AssignOwner(photonView.Owner, playerBody);
+                flashlight.SetCurrentBattery(batteryLevel);
+                droppedItem.GetComponent<PhotonView>().RPC("SyncBattery", RpcTarget.AllBuffered, batteryLevel);
+                droppedItem.GetComponent<PhotonView>().RPC("EnablePhysicsRPC", RpcTarget.AllBuffered);
+            }
+        }
+        else if (selectedItem == "UVFlashlight")
+        {
+            float batteryLevel = inventory.GetItemCount(selectedItem);
+            inventory.RemoveItem(selectedItem, batteryLevel);
+
+            object[] instantiationData = new object[] { batteryLevel };
+            droppedItem = PhotonNetwork.Instantiate(itemPrefab.name, dropPosition, dropRotation, 0, instantiationData);
+
+            var uvFlashlight = droppedItem.GetComponent<InteractionScripts.UVFlashlight>();
+            if (uvFlashlight != null)
+            {
+                uvFlashlight.AssignOwner(photonView.Owner, playerBody);
+                uvFlashlight.SetCurrentBattery(batteryLevel);
+                droppedItem.GetComponent<PhotonView>().RPC("SyncBattery", RpcTarget.AllBuffered, batteryLevel);
+                droppedItem.GetComponent<PhotonView>().RPC("EnablePhysicsRPC", RpcTarget.AllBuffered);
+            }
+        }
+        else
+        {
+            // Drop standard pour objets sans batterie
+            droppedItem = PhotonNetwork.Instantiate(itemPrefab.name, dropPosition, dropRotation);
+
+            switch (selectedItem)
+            {
+                case string key when key.Contains("Key"):
+                    droppedItem.GetComponent<InteractionScripts.Key>()?.DropKey();
+                    break;
+                case "Lighter":
+                    droppedItem.GetComponent<InteractionScripts.Lighter>()?.DropLighter();
+                    break;
+                case "Battery":
+                    droppedItem.GetComponent<InteractionScripts.Battery>()?.DropBattery();
+                    inventory.RemoveItem(selectedItem, 100);
+                    break;
+                default:
+                    inventory.RemoveItem(selectedItem, 1);
+                    break;
+            }
+
+            // Ajout du Rigidbody
+            Rigidbody rb = droppedItem.GetComponent<Rigidbody>();
+            if (rb == null)
+            {
+                rb = droppedItem.AddComponent<Rigidbody>();
+            }
+
+            rb.isKinematic = false;
+            rb.useGravity = true;
+            rb.interpolation = RigidbodyInterpolation.Interpolate;
+            rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+        }
+
+        // Sécurité sur le collider
         Collider col = droppedItem.GetComponent<Collider>();
         if (col != null)
         {
-            col.enabled = true;
+            col.enabled = false;
+            StartCoroutine(EnableColliderWithDelay(col, 0.3f));
         }
-
-        Rigidbody rb = droppedItem.GetComponent<Rigidbody>();
-        if (rb == null)
-        {
-            rb = droppedItem.AddComponent<Rigidbody>();
-        }
-
-        rb.isKinematic = false;
-        rb.useGravity = true;
-        rb.interpolation = RigidbodyInterpolation.Interpolate;
-        rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
 
         droppedItem.transform.position += Vector3.up * 0.05f;
-
-        switch (selectedItem)
-        {
-            case "Flashlight":
-            {
-                float batteryLevel = inventory.GetItemCount(selectedItem);
-                var droppedFlashlight = droppedItem.GetComponent<InteractionScripts.Flashlight>();
-                if (droppedFlashlight != null)
-                {
-                    droppedFlashlight.AssignOwner(photonView.Owner, playerBody);
-                    droppedFlashlight.SetCurrentBattery(batteryLevel);
-                    droppedItem.GetComponent<PhotonView>().RPC("SyncBattery", RpcTarget.AllBuffered, batteryLevel);
-                }
-                inventory.RemoveItem(selectedItem, batteryLevel);
-                break;
-            }
-            case "UVFlashlight":
-            {
-                float batteryLevelUV = inventory.GetItemCount(selectedItem);
-                var droppedUVFlashlight = droppedItem.GetComponent<InteractionScripts.UVFlashlight>();
-                if (droppedUVFlashlight != null)
-                {
-                    droppedUVFlashlight.AssignOwner(photonView.Owner, playerBody);
-                    droppedUVFlashlight.SetCurrentBattery(batteryLevelUV);
-                    droppedItem.GetComponent<PhotonView>().RPC("SyncBattery", RpcTarget.AllBuffered, batteryLevelUV);
-                }
-                inventory.RemoveItem(selectedItem, batteryLevelUV);
-                break;
-            }
-            case "Battery":
-                inventory.RemoveItem(selectedItem, 100);
-                break;
-            default:
-                inventory.RemoveItem(selectedItem, 1);
-                break;
-        }
 
         Debug.Log($"{selectedItem} a été jeté !");
     }
 
+    private IEnumerator EnableColliderWithDelay(Collider col, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        if (col != null)
+        {
+            col.enabled = true;
+        }
+    }
 
 	private void UpdateItemPlacement()
 	{
@@ -367,6 +379,20 @@ public class PlayerUsing : MonoBehaviourPun
     	useCooldown = true;
     	yield return new WaitForSeconds(0.2f);
     	useCooldown = false;
+	}
+
+	[PunRPC]
+	private void DisableItemColliderRPC(int viewID)
+	{
+    	PhotonView targetView = PhotonView.Find(viewID);
+    	if (targetView != null)
+    	{
+        	Collider col = targetView.GetComponent<Collider>();
+        	if (col != null)
+        	{
+            	col.enabled = false;
+        	}
+    	}
 	}
     
     public void ForceUnequipItem(string itemName)
@@ -415,8 +441,7 @@ public class PlayerUsing : MonoBehaviourPun
                 case "EMFDetector":
                     if (emfScript != null)
                     {
-                        emfScript.gameObject.SetActive(false);
-                        PhotonNetwork.Destroy(emfScript.gameObject);
+                        emfScript.ShowEMF(false);
                         emfScript = null;
                     }
                     break;
@@ -500,7 +525,7 @@ public class PlayerUsing : MonoBehaviourPun
     private void UpdateCandlePosition()
     {
         if (candleView != null && !candleView.IsMine)
-            return; //
+            return;
         
         Ray ray = playerCamera.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f));
         RaycastHit hit;
@@ -556,7 +581,11 @@ public class PlayerUsing : MonoBehaviourPun
     {
         Quaternion flashlightRotation = Quaternion.Euler(0f, playerBody.eulerAngles.y, 0f);
 
-        GameObject flashlightInstance = PhotonNetwork.Instantiate(flashlightPrefab.name, Vector3.zero, flashlightRotation);
+        float batteryLevel = inventory.GetItemCount("Flashlight");
+		object[] instantiationData = new object[] { batteryLevel };
+
+		GameObject flashlightInstance = PhotonNetwork.Instantiate(flashlightPrefab.name, Vector3.zero, flashlightRotation, 0, instantiationData);
+
         flashlightCollider = flashlightInstance.GetComponent<CapsuleCollider>();
         flashlightCollider.enabled = false;
 
@@ -598,9 +627,13 @@ public class PlayerUsing : MonoBehaviourPun
     {
         Quaternion UVFlashlightRotation = Quaternion.Euler(0f, playerBody.eulerAngles.y, 0f);
 
-        GameObject UVFlashlightInstance = PhotonNetwork.Instantiate(UVFlashlightPrefab.name, Vector3.zero, UVFlashlightRotation);
-        UVFlashlightCollider = UVFlashlightInstance.GetComponent<BoxCollider>();
-        UVFlashlightCollider.enabled = false;
+		float batteryLevel = inventory.GetItemCount("UVFlashlight");
+		object[] instantiationData = new object[] { batteryLevel };
+
+		GameObject UVFlashlightInstance = PhotonNetwork.Instantiate(UVFlashlightPrefab.name, Vector3.zero, UVFlashlightRotation, 0, instantiationData);
+
+        PhotonView uvView = UVFlashlightInstance.GetComponent<PhotonView>();
+		uvView.RPC("SetColliderState", RpcTarget.AllBuffered, false);
 
         yield return new WaitForSeconds(0.1f);
 
@@ -641,8 +674,7 @@ public class PlayerUsing : MonoBehaviourPun
         Quaternion wrenchRotation = Quaternion.Euler(-90f, playerBody.eulerAngles.y, 0f);
 
         GameObject wrenchInstance = PhotonNetwork.Instantiate(wrenchPrefab.name, Vector3.zero, wrenchRotation);
-        wrenchCollider = wrenchInstance.GetComponent<BoxCollider>();
-        wrenchCollider.enabled = false;
+        photonView.RPC("DisableItemColliderRPC", RpcTarget.AllBuffered, wrenchInstance.GetComponent<PhotonView>().ViewID);
 
         yield return new WaitForSeconds(0.1f);
 
@@ -673,21 +705,16 @@ public class PlayerUsing : MonoBehaviourPun
     private IEnumerator SpawnMagnetophone()
     {
         Quaternion magnetophoneRotation = Quaternion.Euler(0f, playerBody.eulerAngles.y, 0f);
-        Vector3 spawnPosition = playerCamera.transform.position + playerCamera.transform.forward * 0.5f;
 
-        GameObject magnetophoneInstance = PhotonNetwork.Instantiate(magnetophonePrefab.name, spawnPosition, magnetophoneRotation);
-        magnetophoneCollider = magnetophoneInstance.GetComponent<BoxCollider>();
-        magnetophoneCollider.enabled = false;
+        GameObject magnetophoneInstance = PhotonNetwork.Instantiate(magnetophonePrefab.name, Vector3.zero, magnetophoneRotation);
+        photonView.RPC("DisableItemColliderRPC", RpcTarget.AllBuffered, magnetophoneInstance.GetComponent<PhotonView>().ViewID);
 
         yield return new WaitForSeconds(0.1f);
 
         magnetophoneScript = magnetophoneInstance.GetComponent<InteractionScripts.Magnetophone>();
 
-        if (magnetophoneScript != null)
-        {
-            magnetophoneScript.AssignOwner(photonView.Owner, playerBody);
-            magnetophoneScript.ActivateMagnetophone();
-        }
+        magnetophoneScript.AssignOwner(photonView.Owner, playerBody);
+		magnetophoneScript.ShowMagnetophone(true);
     }
     
     // Gestion de l'EMF
@@ -703,8 +730,7 @@ public class PlayerUsing : MonoBehaviourPun
         }
         else if (emfScript != null)
         {
-            emfScript.gameObject.SetActive(false);
-            PhotonNetwork.Destroy(emfScript.gameObject);
+            emfScript.ShowEMF(false);
             emfScript = null;
         }
     }
@@ -712,21 +738,16 @@ public class PlayerUsing : MonoBehaviourPun
     private IEnumerator SpawnEMFDetector()
     {
         Quaternion emfRotation = Quaternion.Euler(0f, playerBody.eulerAngles.y, 0f);
-        Vector3 spawnPosition = playerCamera.transform.position + playerCamera.transform.forward * 0.5f;
 
-        GameObject emfInstance = PhotonNetwork.Instantiate(emfPrefab.name, spawnPosition, emfRotation);
-        emfCollider = emfInstance.GetComponent<BoxCollider>();
-        emfCollider.enabled = false;
+        GameObject emfInstance = PhotonNetwork.Instantiate(emfPrefab.name, Vector3.zero, emfRotation);
+        photonView.RPC("DisableItemColliderRPC", RpcTarget.AllBuffered, emfInstance.GetComponent<PhotonView>().ViewID);
 
         yield return new WaitForSeconds(0.1f);
 
         emfScript = emfInstance.GetComponent<InteractionScripts.EMFDetector>();
 
-        if (emfScript != null)
-        {
-            emfScript.AssignOwner(photonView.Owner, playerBody);
-            emfScript.ToggleEMF();
-        }
+        emfScript.AssignOwner(photonView.Owner, playerBody);
+		emfScript.ShowEMF(true);
     }
     
     // Gestion CD Disk
@@ -752,8 +773,7 @@ public class PlayerUsing : MonoBehaviourPun
         Quaternion diskRotation = Quaternion.Euler(-90f, playerBody.eulerAngles.y, 0f);
 
         GameObject diskInstance = PhotonNetwork.Instantiate(diskPrefab.name, Vector3.zero, diskRotation);
-        diskCollider = diskInstance.GetComponent<BoxCollider>();
-        diskCollider.enabled = false;
+        photonView.RPC("DisableItemColliderRPC", RpcTarget.AllBuffered, diskInstance.GetComponent<PhotonView>().ViewID);
 
         yield return new WaitForSeconds(0.1f);
 
@@ -791,8 +811,7 @@ public class PlayerUsing : MonoBehaviourPun
         Quaternion crowbarRotation = Quaternion.Euler(-90f, playerBody.eulerAngles.y, 0f);
 
         GameObject crowbarInstance = PhotonNetwork.Instantiate(crowbarPrefab.name, Vector3.zero, crowbarRotation);
-        crowbarCollider = crowbarInstance.GetComponent<BoxCollider>();
-        crowbarCollider.enabled = false;
+        photonView.RPC("DisableItemColliderRPC", RpcTarget.AllBuffered, crowbarInstance.GetComponent<PhotonView>().ViewID);
 
         yield return new WaitForSeconds(0.1f);
 

@@ -46,7 +46,7 @@ public class CameraLookingAt : MonoBehaviour
             { typeof(InteractionScripts.ElectricButton), hit => HandleElectricButton(hit) },
             { typeof(InteractionScripts.ElectricLever), hit => HandleElectricLever(hit) },
             { typeof(InteractionScripts.ElectricScrew), hit => HandleElectricScrew(hit) },
-            { typeof(InteractionScripts.ElectricBox), hit => HandleElectricBox(hit) },
+			{ typeof(InteractionScripts.ElectricBox), hit => HandleElectricBox(hit) },
             { typeof(InteractionScripts.CDReader), hit => HandleCDReader(hit) },
             { typeof(InteractionScripts.EMFDetector), hit => HandleEMFDetector(hit) },
             { typeof(InteractionScripts.CDDisk), hit => HandleCDDisk(hit) },
@@ -54,7 +54,6 @@ public class CameraLookingAt : MonoBehaviour
             { typeof(InteractionScripts.KeyboardCameraSwitcher), hit => HandleKeyboardCameraSwitcher(hit) },
 			{ typeof(InteractionScripts.SafeDial), hit => HandleSafeDial(hit) },
 			{ typeof(InteractionScripts.SafeValve), hit => HandleSafeValve(hit) },
-			{ typeof(InteractionScripts.SafeDoor), hit => HandleSafeDoor(hit) },
             { typeof(InteractionScripts.ScreenInteraction), hit => HandleScreen(hit) },
             { typeof(InteractionScripts.ChemistryStation), hit => HandleChemistryStation(hit) },
             { typeof(InteractionScripts.Item), hit => HandleItem(hit) }
@@ -245,7 +244,7 @@ public class CameraLookingAt : MonoBehaviour
 
     private void HandleElectricScrew(RaycastHit hit)
     {
-        if (FindObjectOfType<PlayerUsing>().wrenchScript != null)
+        if (playerUsing != null && playerUsing.wrenchScript != null)
         {
             ShowInteractionText(true, "Unscrew the screw");
             if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.ElectricScrew>().TryRemoveScrew();
@@ -328,12 +327,6 @@ public class CameraLookingAt : MonoBehaviour
     {
         ShowInteractionText(true, "Turn the valve");
         if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.SafeValve>().TryUnlock();
-    }
-
-    private void HandleSafeDoor(RaycastHit hit)
-    {
-        ShowInteractionText(true, "Open the safe");
-        if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.SafeDoor>().OpenDoor();
     }
     
     private void HandleChemistryStation(RaycastHit hit)

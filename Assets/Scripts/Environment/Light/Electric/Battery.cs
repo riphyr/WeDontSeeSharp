@@ -6,18 +6,37 @@ namespace InteractionScripts
 {
     [RequireComponent(typeof(AudioSource))]
     [RequireComponent(typeof(PhotonView))]
-    public class Battery : MonoBehaviourPun
+    public class Battery : MonoBehaviourPun, IPunObservable
     {
-        public float batteryCharge = 100f; // Charge d'une pile
+        public float batteryCharge = 100f;
         public AudioClip pickupSound;
         private AudioSource audioSource;
         private PhotonView view;
+        private Vector3 networkPosition;
+        private Quaternion networkRotation;
+        private bool isDropped = false;
+
+        private Rigidbody rb;
 
         void Start()
         {
             audioSource = GetComponent<AudioSource>();
             view = GetComponent<PhotonView>();
+            rb = GetComponent<Rigidbody>();
 
+            if (photonView.IsMine)
+            {
+                photonView.RPC("RPC_SyncPosition", RpcTarget.OthersBuffered, transform.position, transform.rotation);
+            }
+        }
+
+        [PunRPC]
+        private void RPC_SyncPosition(Vector3 position, Quaternion rotation)
+        {
+            transform.position = position;
+            transform.rotation = rotation;
+            networkPosition = position;
+            networkRotation = rotation;
         }
 
         public void PickupBattery(PlayerInventory inventory)
@@ -28,9 +47,8 @@ namespace InteractionScripts
             }
 
             inventory.AddItem("Battery", (int)batteryCharge);
-            audioSource.PlayOneShot(pickupSound);
-            photonView.RPC("PlayPickupSound", RpcTarget.Others);
-            StartCoroutine(DestroyAfterSound());
+            photonView.RPC("PlayPickupSound", RpcTarget.All);
+            photonView.RPC("DestroyForAll", RpcTarget.AllBuffered);
         }
 
         [PunRPC]
@@ -39,16 +57,57 @@ namespace InteractionScripts
             audioSource.PlayOneShot(pickupSound);
         }
 
-        private IEnumerator DestroyAfterSound()
-        {
-            yield return new WaitForSeconds(pickupSound.length);
-            photonView.RPC("DestroyForAll", RpcTarget.AllBuffered);
-        }
-
         [PunRPC]
         private void DestroyForAll()
         {
             Destroy(gameObject);
+        }
+
+        public void DropBattery()
+        {
+            if (!photonView.IsMine) return;
+
+            isDropped = true;
+            photonView.RPC("RPC_EnablePhysics", RpcTarget.All);
+        }
+
+        [PunRPC]
+        private void RPC_EnablePhysics()
+        {
+            isDropped = true;
+
+            if (rb == null)
+                rb = gameObject.AddComponent<Rigidbody>();
+
+            rb.isKinematic = false;
+            rb.useGravity = true;
+            rb.interpolation = RigidbodyInterpolation.Interpolate;
+            rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+        }
+
+        void Update()
+        {
+            if (!photonView.IsMine && isDropped)
+            {
+                transform.position = Vector3.Lerp(transform.position, networkPosition, Time.deltaTime * 10);
+                transform.rotation = Quaternion.Lerp(transform.rotation, networkRotation, Time.deltaTime * 10);
+            }
+        }
+
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+            if (stream.IsWriting)
+            {
+                stream.SendNext(transform.position);
+                stream.SendNext(transform.rotation);
+                stream.SendNext(isDropped);
+            }
+            else
+            {
+                networkPosition = (Vector3)stream.ReceiveNext();
+                networkRotation = (Quaternion)stream.ReceiveNext();
+                isDropped = (bool)stream.ReceiveNext();
+            }
         }
     }
 }

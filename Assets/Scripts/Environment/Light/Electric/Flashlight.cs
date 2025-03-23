@@ -6,7 +6,7 @@ namespace InteractionScripts
 {
     [RequireComponent(typeof(AudioSource))]
     [RequireComponent(typeof(PhotonView))]
-    public class Flashlight : MonoBehaviourPun
+    public class Flashlight : MonoBehaviourPun, IPunObservable
     {
         private Light flashlightLight;
         public float maxBattery = 100f;
@@ -28,12 +28,21 @@ namespace InteractionScripts
             flashlightLight = transform.Find("light")?.GetComponent<Light>();
             flashlightLight.enabled = false;
             isOn = false;
-            
-            StartCoroutine(GetStartBattery());
-            
+
             view = GetComponent<PhotonView>();
             audioSource = GetComponent<AudioSource>();
             flashlightCollider = GetComponent<Collider>();
+
+            if (view.InstantiationData != null && view.InstantiationData.Length > 0)
+            {
+                currentBattery = (float)view.InstantiationData[0];
+                Debug.Log($"[DEBUG] Batterie reçue via InstantiationData : {currentBattery}");
+            }
+            else
+            {
+                currentBattery = maxBattery;
+                Debug.Log("[DEBUG] Aucune InstantiationData, batterie full.");
+            }
         }
         
         private IEnumerator GetStartBattery()
@@ -153,21 +162,15 @@ namespace InteractionScripts
             ownerTransform = playerTransform;
             playerCamera = ownerTransform.GetComponentInChildren<Camera>();
             isEquipped = true;
-    
-            currentBattery = inventory.GetItemCount("Flashlight");
-            
+
             photonView.RPC("SetColliderState", RpcTarget.AllBuffered, false);
-            
+
             audioSource.PlayOneShot(switchSound);
-    
+
             if (currentBattery > 0)
-            {
                 ToggleFlashlight(true);
-            }
             else
-            {
                 ToggleFlashlight(false);
-            }
 
             photonView.RPC("SyncFlashlightState", RpcTarget.All, isOn);
         }
@@ -218,6 +221,24 @@ namespace InteractionScripts
             audioSource.PlayOneShot(switchSound);
             yield return new WaitForSeconds(switchSound.length);
         }
+
+		[PunRPC]
+		public void EnablePhysicsRPC()
+		{
+    		Rigidbody rb = GetComponent<Rigidbody>();
+    		if (rb == null)
+        		rb = gameObject.AddComponent<Rigidbody>();
+
+    		rb.isKinematic = false;
+    		rb.useGravity = true;
+    		rb.interpolation = RigidbodyInterpolation.Interpolate;
+    		rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+
+    		Collider col = GetComponent<Collider>();
+    		if (col != null)
+        		col.enabled = true;
+		}
+
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {

@@ -49,6 +49,7 @@ public class PlayerScript : MonoBehaviour, IPunObservable
 	private bool canMove = true;				// Booléen de blocage du joueur (à utiliser sous certains cas)
 
 	CharacterController characterController;
+	public static Transform LocalPlayerTransform;
     Vector3 moveDirection = Vector3.zero;
 
     void Start()

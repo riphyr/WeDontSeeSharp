@@ -7,8 +7,8 @@ using UnityEngine.UI;
 public class PlayerInventory : MonoBehaviourPun
 {
     private Dictionary<string, float> inventory = new Dictionary<string, float>();
-    private PhotonView view;
     private PlayerUsing playerUsing;
+    private PhotonView photonView;
     
     [Header("Affichage de l'inventaire")]
     public Image selectedItemIcon;
@@ -24,6 +24,8 @@ public class PlayerInventory : MonoBehaviourPun
     void Start()
     {
         playerUsing = GetComponent<PlayerUsing>();
+        photonView = GetComponent<PhotonView>();
+        Debug.Log($"[DEBUG] {PhotonNetwork.NickName} - PhotonView Owner: {photonView.Owner}, IsMine: {photonView.IsMine}");
         
         LoadItemSprites();
         UpdateSelectedItemDisplay();
@@ -122,12 +124,15 @@ public class PlayerInventory : MonoBehaviourPun
     
     public void SwitchToNextItem()
     {
+        Debug.Log("In sitch next1");
+        if (!photonView.IsMine) return;  // S'assure que seul le joueur local peut exécuter cette action
+        Debug.Log("In sitch next2");
         if (inventoryKeys.Count == 0)
         {
             Debug.LogWarning("Aucun objet dans l'inventaire !");
             return;
         }
-        
+    
         string currentItem = GetSelectedItem();
         if (!string.IsNullOrEmpty(currentItem) && playerUsing.IsItemEquipped(currentItem))
         {
@@ -141,12 +146,14 @@ public class PlayerInventory : MonoBehaviourPun
 
     public void SwitchToPreviousItem()
     {
+        if (!photonView.IsMine) return;  // S'assure que seul le joueur local peut exécuter cette action
+
         if (inventoryKeys.Count == 0)
         {
             Debug.LogWarning("Aucun objet dans l'inventaire !");
             return;
         }
-        
+    
         string currentItem = GetSelectedItem();
         if (!string.IsNullOrEmpty(currentItem) && playerUsing.IsItemEquipped(currentItem))
         {

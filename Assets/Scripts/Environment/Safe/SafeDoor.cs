@@ -27,7 +27,7 @@ namespace InteractionScripts
         {
             if (isOpen) return;
             isOpen = true;
-            photonView.RPC("RPC_OpenDoor", RpcTarget.All);
+            photonView.RPC("RPC_OpenDoor", RpcTarget.AllBuffered);
         }
 
         [PunRPC]

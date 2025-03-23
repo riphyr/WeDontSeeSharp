@@ -8,7 +8,7 @@ namespace InteractionScripts
 {
     [RequireComponent(typeof(AudioSource))]
     [RequireComponent(typeof(PhotonView))]
-    public class Magnetophone : MonoBehaviourPun
+    public class Magnetophone : MonoBehaviourPun, IPunObservable
     {
         private AudioSource audioSource;
         public AudioClip beepSound;
@@ -17,6 +17,9 @@ namespace InteractionScripts
         private float confidenceThreshold = 0.65f;
 
         private Transform ownerTransform;
+        private Vector3 networkPosition;
+        private Quaternion networkRotation;
+
         private PhotonView view;
         private bool isTaken = false;
 
@@ -56,10 +59,22 @@ namespace InteractionScripts
             Destroy(gameObject);
         }
 
-        public void AssignOwner(Photon.Realtime.Player player, Transform ownerTransform)
+        public void AssignOwner(Photon.Realtime.Player player, Transform newOwnerTransform)
         {
-            this.ownerTransform = ownerTransform;
+            this.ownerTransform = newOwnerTransform;
             photonView.TransferOwnership(player);
+
+            photonView.RPC("RPC_SetOwnerTransform", RpcTarget.OthersBuffered, player.ActorNumber);
+        }
+
+        [PunRPC]
+        private void RPC_SetOwnerTransform(int playerID)
+        {
+            Photon.Realtime.Player player = PhotonNetwork.CurrentRoom.GetPlayer(playerID);
+            if (player != null)
+            {
+                ownerTransform = player.TagObject as Transform;
+            }
         }
 
         public void ActivateMagnetophone()
@@ -163,10 +178,24 @@ namespace InteractionScripts
 
         void Update()
         {
-            if (ownerTransform != null)
+            if (photonView.IsMine)
             {
-                transform.position = ownerTransform.position + ownerTransform.forward * 0.3f + ownerTransform.right * 0.1f + Vector3.up * 0.4f;
-                transform.rotation = Quaternion.Euler(0f, ownerTransform.eulerAngles.y - 180f, 0f);
+                if (ownerTransform != null)
+                {
+                    transform.position = ownerTransform.position + ownerTransform.forward * 0.3f + ownerTransform.right * 0.1f + Vector3.up * 0.3f;
+                    transform.rotation = Quaternion.Euler(0f, ownerTransform.eulerAngles.y - 180f, 0f);
+                }
+            }
+            else
+            {
+                transform.position = Vector3.Lerp(transform.position, networkPosition, Time.deltaTime * 10);
+                transform.rotation = Quaternion.Lerp(transform.rotation, networkRotation, Time.deltaTime * 10);
+            }
+
+			if (isTaken)
+            {
+                isTaken = false;
+                ActivateMagnetophone();
             }
         }
 
@@ -177,6 +206,20 @@ namespace InteractionScripts
             if (!show)
             {
                 photonView.RPC("DestroyForAll", RpcTarget.AllBuffered);
+            }
+        }
+
+         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+            if (stream.IsWriting)
+            {
+                stream.SendNext(transform.position);
+                stream.SendNext(transform.rotation);
+            }
+            else
+            {
+                networkPosition = (Vector3)stream.ReceiveNext();
+                networkRotation = (Quaternion)stream.ReceiveNext();
             }
         }
     }

@@ -40,7 +40,10 @@ namespace InteractionScripts
         {
             PhotonView cdView = PhotonView.Find(cdViewID);
             if (cdView != null)
+            {
+                cdObject = cdView.gameObject;
                 StartCoroutine(AnimateCDInsertion(cdView.gameObject));
+            }
         }
         
         private IEnumerator AnimateCDInsertion(GameObject cd)
@@ -124,7 +127,7 @@ namespace InteractionScripts
             }
 
             yield return new WaitForSeconds(5f);
-            if (cdObject != null)
+            if (cdObject != null && cdObject.GetComponent<PhotonView>().IsMine)
             {
                 PhotonNetwork.Destroy(cdObject);
             }

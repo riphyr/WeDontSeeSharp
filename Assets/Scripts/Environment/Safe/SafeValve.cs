@@ -20,29 +20,34 @@ namespace InteractionScripts
         {
             audioSource = GetComponent<AudioSource>();
         }
-
-        public void SetUnlocked(bool unlocked)
+        
+        [PunRPC]
+        public void RPC_SetUnlocked(bool unlocked)
         {
             isUnlocked = unlocked;
         }
-
+        
         public void TryUnlock()
         {
-            if (!photonView.IsMine) return;
+            if (!photonView.IsMine)
+                photonView.RequestOwnership();
 
-            safeDial.RegisterCurrentNumber(); // 🔥 Enregistre la dernière valeur affichée
+            photonView.RPC("RPC_TryUnlock", RpcTarget.AllBuffered);
+        }
+
+        [PunRPC]
+        private void RPC_TryUnlock()
+        {
+            safeDial.RegisterCurrentNumber();
 
             if (isUnlocked)
-            {
-                photonView.RPC("UnlockSafe", RpcTarget.All);
-            }
+                StartCoroutine(RotateValve());
             else
-            {
                 StartCoroutine(FailedUnlock());
-            }
 
             ResetSafeDial();
         }
+
 
         private void ResetSafeDial()
         {
@@ -51,16 +56,10 @@ namespace InteractionScripts
                 safeDial.ResetCombination();
             }
         }
-
-        [PunRPC]
-        private void UnlockSafe()
-        {
-            audioSource.PlayOneShot(unlockSound);
-            StartCoroutine(RotateValve());
-        }
-
+        
         private IEnumerator RotateValve()
         {
+            audioSource.PlayOneShot(unlockSound);
             float duration = 1.5f;
             float elapsed = 0;
 

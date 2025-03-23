@@ -7,7 +7,7 @@ namespace InteractionScripts
 {
     [RequireComponent(typeof(AudioSource))]
     [RequireComponent(typeof(PhotonView))]
-    public class UVFlashlight : MonoBehaviourPun
+    public class UVFlashlight : MonoBehaviourPun, IPunObservable
     {
         private Light flashlightLight;
         public float maxBattery = 100f;
@@ -19,6 +19,7 @@ namespace InteractionScripts
         private Camera playerCamera;
         private PhotonView view;
         private AudioSource audioSource;
+		private Collider UVflashlightCollider;
 
         public AudioClip pickupSound;
         public AudioClip switchSound;
@@ -35,19 +36,19 @@ namespace InteractionScripts
             flashlightLight.enabled = false;
             isOn = false;
 
-            StartCoroutine(GetStartBattery());
-
             view = GetComponent<PhotonView>();
             audioSource = GetComponent<AudioSource>();
-        }
+            UVflashlightCollider = GetComponent<BoxCollider>();
 
-        private IEnumerator GetStartBattery()
-        {
-            yield return new WaitForSeconds(0.5f);
-
-            if (ownerTransform == null)
+            if (view.InstantiationData != null && view.InstantiationData.Length > 0)
+            {
+                currentBattery = (float)view.InstantiationData[0];
+                Debug.Log($"[DEBUG][UV] Batterie reçue via InstantiationData : {currentBattery}");
+            }
+            else
             {
                 currentBattery = maxBattery;
+                Debug.Log("[DEBUG][UV] Aucune InstantiationData, batterie full.");
             }
         }
 
@@ -283,6 +284,8 @@ namespace InteractionScripts
 
             currentBattery = inventory.GetItemCount("UVFlashlight");
 
+			photonView.RPC("SetColliderState", RpcTarget.AllBuffered, false);
+
             audioSource.PlayOneShot(switchSound);
 
             if (currentBattery > 0)
@@ -295,6 +298,16 @@ namespace InteractionScripts
             }
 
             photonView.RPC("SyncFlashlightState", RpcTarget.All, isOn);
+        }
+
+        [PunRPC]
+        private void SetColliderState(bool state)
+        {
+            if (UVflashlightCollider == null)
+                UVflashlightCollider = GetComponent<Collider>();
+
+            if (UVflashlightCollider != null)
+                UVflashlightCollider.enabled = state;
         }
 
         [PunRPC]
@@ -339,6 +352,24 @@ namespace InteractionScripts
             audioSource.PlayOneShot(switchSound);
             yield return new WaitForSeconds(switchSound.length);
         }
+
+		[PunRPC]
+		public void EnablePhysicsRPC()
+		{
+    		Rigidbody rb = GetComponent<Rigidbody>();
+    		if (rb == null)
+        		rb = gameObject.AddComponent<Rigidbody>();
+
+    		rb.isKinematic = false;
+    		rb.useGravity = true;
+    		rb.interpolation = RigidbodyInterpolation.Interpolate;
+    		rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+
+    		BoxCollider col = GetComponent<BoxCollider>();
+    		if (col != null)
+        		col.enabled = true;
+		}
+
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {

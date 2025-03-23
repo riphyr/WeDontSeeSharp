@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7611334665960567724}
   - component: {fileID: 6670455619986234869}
   - component: {fileID: 1811462025588143302}
+  - component: {fileID: -498616709969263805}
   m_Layer: 0
   m_Name: Battery
   m_TagString: Untagged
@@ -171,7 +172,8 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 1
   observableSearch: 2
-  ObservedComponents: []
+  ObservedComponents:
+  - {fileID: 1811462025588143302}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -189,6 +191,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   batteryCharge: 100
   pickupSound: {fileID: 8300000, guid: d109c89ab3448174aa5cb38a8f5a2b78, type: 3}
+--- !u!54 &-498616709969263805
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4935143017026424203}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1001 &7746310918580479104
 PrefabInstance:
   m_ObjectHideFlags: 0

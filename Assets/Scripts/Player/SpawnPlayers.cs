@@ -50,7 +50,7 @@ public class SpawnPlayers : MonoBehaviourPunCallbacks
             IsOpen = true     // La Room peut être rejointe
         };
 
-        PhotonNetwork.JoinOrCreateRoom("DefaultRoom", roomOptions, TypedLobby.Default);
+        PhotonNetwork.JoinOrCreateRoom("a", roomOptions, TypedLobby.Default);
     }
 
     public override void OnJoinedRoom()
@@ -82,6 +82,7 @@ public class SpawnPlayers : MonoBehaviourPunCallbacks
         
         // Activation des scripts de mouvement et d'interactions
         GameObject player = myPlayer.transform.Find("Player").gameObject;
+        PlayerScript.LocalPlayerTransform = player.transform;
         PlayerScript playerScript = player.GetComponent<PlayerScript>();
         CameraLookingAt cameraLookingAt = player.GetComponent<CameraLookingAt>();
         PlayerInventory playerInventory = player.GetComponent<PlayerInventory>();

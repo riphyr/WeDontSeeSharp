@@ -3234,7 +3234,8 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 1
   observableSearch: 2
-  ObservedComponents: []
+  ObservedComponents:
+  - {fileID: 5155040826801022627}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -3271,9 +3272,6 @@ MonoBehaviour:
   thinObjectLayers:
     serializedVersion: 2
     m_Bits: 2048
-  ignoredLayers:
-    serializedVersion: 2
-    m_Bits: 128
 --- !u!1 &7126313953264532534
 GameObject:
   m_ObjectHideFlags: 0

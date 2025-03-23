@@ -7,6 +7,7 @@ namespace InteractionScripts
     public class SafeDial : MonoBehaviourPun
     {
         public Transform dialTransform;
+        public SafeValve safeValve;
         public AudioClip clickSound;
         public int[] correctCombination;
 
@@ -21,12 +22,18 @@ namespace InteractionScripts
             audioSource = GetComponent<AudioSource>();
             photonView.TransferOwnership(PhotonNetwork.LocalPlayer);
         }
-
+        
         public void RotateDial(int direction)
         {
-            if (!photonView.IsMine) return;
+            if (!photonView.IsMine)
+                photonView.RequestOwnership();
 
-            // Enregistre la valeur si on change de sens
+            photonView.RPC("RPC_RotateDial", RpcTarget.AllBuffered, direction);
+        }
+
+        [PunRPC]
+        private void RPC_RotateDial(int direction)
+        {
             if (enteredCombination.Count < correctCombination.Length && isTurningRight != (direction > 0))
             {
                 enteredCombination.Add(currentNumber);
@@ -35,13 +42,12 @@ namespace InteractionScripts
             isTurningRight = direction > 0;
             currentNumber = (currentNumber + direction + 100) % 100;
 
-            // Applique la rotation
             dialTransform.localEulerAngles = new Vector3(0, 0, currentNumber * 3.6f);
-            photonView.RPC("SyncRotation", RpcTarget.Others, dialTransform.localEulerAngles);
 
             if (clickSound != null)
                 audioSource.PlayOneShot(clickSound);
         }
+
 
         public void RegisterCurrentNumber()
         {
@@ -51,10 +57,9 @@ namespace InteractionScripts
                 Debug.Log($"✅ Enregistrement de la dernière valeur: {currentNumber}");
             }
 
-            // 🔥 Vérifie immédiatement si le code est correct
             if (enteredCombination.Count == correctCombination.Length && CheckCode())
             {
-                photonView.RPC("UnlockSafe", RpcTarget.All);
+                photonView.RPC("UnlockSafe", RpcTarget.AllBuffered);
             }
         }
 
@@ -85,16 +90,13 @@ namespace InteractionScripts
         }
 
         [PunRPC]
-        private void SyncRotation(Vector3 rotation)
-        {
-            dialTransform.localEulerAngles = rotation;
-        }
-
-        [PunRPC]
         private void UnlockSafe()
         {
             collider.enabled = false;
-            FindObjectOfType<SafeValve>().SetUnlocked(true);
+
+            PhotonView valveView = safeValve.GetComponent<PhotonView>();
+            valveView.RPC("RPC_SetUnlocked", RpcTarget.AllBuffered, true);
         }
+
     }
 }

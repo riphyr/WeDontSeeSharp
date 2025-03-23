@@ -60,43 +60,73 @@ namespace InteractionScripts
         void Start()
         {
             view = GetComponent<PhotonView>();
-            
-            burningSource.clip = burningSound;
-            boilingSource.clip = boilingSound;
-            steamSource.clip = steamSound;
-            
-            burningSource.loop = true;
-            boilingSource.loop = true;
-            steamSource.loop = true;
-            
-            burningSource.volume = 0.3f;
-            boilingSource.volume = 0.1f;
-            steamSource.volume = 0.1f;
-            
+
+            AudioSource[] allSources = GetComponents<AudioSource>();
+            if (allSources.Length >= 4)
+            {
+                burningSource = allSources[0];
+                boilingSource = allSources[1];
+                steamSource = allSources[2];
+                mainSource = allSources[3];
+            }
+            else
+            {
+                Debug.LogError("[ChemistryStation] Pas assez d'AudioSource sur l'objet !");
+            }
+
+            if (burningSource != null) {
+                burningSource.clip = burningSound;
+                burningSource.loop = true;
+                burningSource.volume = 0.3f;
+            }
+
+            if (boilingSource != null) {
+                boilingSource.clip = boilingSound;
+                boilingSource.loop = true;
+                boilingSource.volume = 0.1f;
+            }
+
+            if (steamSource != null) {
+                steamSource.clip = steamSound;
+                steamSource.loop = true;
+                steamSource.volume = 0.1f;
+            }
+
             ResetAllVisuals();
+            
+            if (Output_Explosion_Particles == null)
+            {
+                Output_Explosion_Particles = GameObject.Find("Output_Explosion_Particles");
+                if (Output_Explosion_Particles != null)
+                    Debug.LogWarning("[Alchemy] Output_Explosion_Particles assigné dynamiquement via Find.");
+                else
+                    Debug.LogError("[Alchemy] Output_Explosion_Particles introuvable dans la scène !");
+            }
         }
 
         private void ResetAllVisuals()
         {
-            Input1_LemonJuice.SetActive(false);
-            Input1_Bleach.SetActive(false);
-            Input1_LemonJuice_Particles.SetActive(false);
-            Input1_Bleach_Particles.SetActive(false);
-            Condenser_LemonJuice.SetActive(false);
-            Condenser_Bleach.SetActive(false);
-            Input2_RedWine.SetActive(false);
-            Input2_WD40.SetActive(false);
-            Input2_RedWine_Particles.SetActive(false);
-            Input2_WD40_Particles.SetActive(false);
-            Flame.SetActive(false);
-            Output_Solvent.SetActive(false);
-            Output_InertSolution.SetActive(false);
-            Output_ExplosionSolution.SetActive(false);
-            Output_Explosion_Particles.SetActive(false);
-            
-            burningSource.Stop();
-            boilingSource.Stop();
-            steamSource.Stop();
+            if (Input1_LemonJuice != null) Input1_LemonJuice.SetActive(false);
+            if (Input1_Bleach != null) Input1_Bleach.SetActive(false);
+            if (Input1_LemonJuice_Particles != null) Input1_LemonJuice_Particles.SetActive(false);
+            if (Input1_Bleach_Particles != null) Input1_Bleach_Particles.SetActive(false);
+            if (Condenser_LemonJuice != null) Condenser_LemonJuice.SetActive(false);
+            if (Condenser_Bleach != null) Condenser_Bleach.SetActive(false);
+            if (Input2_RedWine != null) Input2_RedWine.SetActive(false);
+            if (Input2_WD40 != null) Input2_WD40.SetActive(false);
+            if (Input2_RedWine_Particles != null) Input2_RedWine_Particles.SetActive(false);
+            if (Input2_WD40_Particles != null) Input2_WD40_Particles.SetActive(false);
+            if (Flame != null) Flame.SetActive(false);
+            if (Output_Solvent != null) Output_Solvent.SetActive(false);
+            if (Output_InertSolution != null) Output_InertSolution.SetActive(false);
+            if (Output_ExplosionSolution != null) Output_ExplosionSolution.SetActive(false);
+
+            if (isOutputFilled)
+            {
+                burningSource.Stop();
+                boilingSource.Stop();
+                steamSource.Stop();
+            }
         }
 
         public void InteractFlatBottomFlask(string solution, PlayerInventory inventory)
@@ -130,7 +160,7 @@ namespace InteractionScripts
 
         private IEnumerator ActivateCondenser(string solution)
         {
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(0.5f);
             if (solution == "Lemon juice") Condenser_LemonJuice.SetActive(true);
             else if (solution == "Bleach") Condenser_Bleach.SetActive(true);
         }
@@ -173,11 +203,12 @@ namespace InteractionScripts
         {
             boilingSource.Play();
             steamSource.Play();
-            yield return new WaitForSeconds(4f);
 
             if (currentBoilingSolution == "WD40") Input2_WD40_Particles.SetActive(true);
             else if (currentBoilingSolution == "Red wine") Input2_RedWine_Particles.SetActive(true);
 
+            yield return new WaitForSeconds(4f);
+            
             if (isFlatBottomFilled && !isOutputFilled)
             {
                 photonView.RPC("RPC_SetOutput", RpcTarget.AllBuffered, DetermineOutputSolution());
@@ -198,12 +229,38 @@ namespace InteractionScripts
         {
             isOutputFilled = true;
             currentOutputSolution = solution;
-            mainSource.PlayOneShot(outputSound, 0.6f);
+
+            if (mainSource == null)
+            {
+                Debug.LogError("[Alchemy] mainSource est NULL sur ce client !");
+            }
+
+            if (outputSound == null)
+            {
+                Debug.LogError("[Alchemy] outputSound est NULL !");
+            }
+
+            if (mainSource != null && outputSound != null)
+                mainSource.PlayOneShot(outputSound, 0.6f);
 
             if (solution == "Explosion")
             {
                 Output_ExplosionSolution.SetActive(true);
-                Output_Explosion_Particles.SetActive(true);
+
+                if (Output_Explosion_Particles == null)
+                {
+                    Debug.LogError("[Alchemy] Output_Explosion_Particles est NULL !");
+                    return;
+                }
+
+                Debug.Log("[Alchemy] Déclenchement des particules d’explosion...");
+
+                foreach (ParticleSystem ps in Output_Explosion_Particles.GetComponentsInChildren<ParticleSystem>(true))
+                {
+                    Debug.Log($"[Alchemy] Play() sur {ps.gameObject.name}");
+                    ps.Play(true);
+                }
+
                 mainSource.PlayOneShot(explosionSound, 1f);
             }
             else if (solution == "Inert Solution") Output_InertSolution.SetActive(true);

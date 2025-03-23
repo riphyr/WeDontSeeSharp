@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 1279881316028793989}
   - component: {fileID: 58951272995587465}
   - component: {fileID: 6653236446395225647}
+  - component: {fileID: -603025292717135796}
   m_Layer: 0
   m_Name: Wrench
   m_TagString: Untagged
@@ -222,7 +223,9 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 1
   observableSearch: 2
-  ObservedComponents: []
+  ObservedComponents:
+  - {fileID: 6653236446395225647}
+  - {fileID: 0}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -240,3 +243,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pickupSound: {fileID: 8300000, guid: eef6cfe5dde434a40a6a7fa7a385c470, type: 3}
   useSound: {fileID: 8300000, guid: 3c7959c533485814d94f9c0a3e74477e, type: 3}
+--- !u!114 &-603025292717135796
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8459339731610399928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1

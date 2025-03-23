@@ -1,45 +1,79 @@
 ﻿using UnityEngine;
 using Photon.Pun;
 using System.Collections;
-using System.Collections.Generic;
 
 namespace InteractionScripts
 {
     [RequireComponent(typeof(AudioSource))]
     [RequireComponent(typeof(PhotonView))]
-    public class EMFDetector : MonoBehaviourPun
+    public class EMFDetector : MonoBehaviourPun, IPunObservable
     {
         public Transform[] ledLights;
         public AudioClip pickupSound;
         public AudioClip beepSound;
         public float detectionRange = 15f;
-        
+
         public LayerMask blockLayers;
         public LayerMask wallLayers;
         public LayerMask doorLayers;
         public LayerMask thinObjectLayers;
-        public LayerMask ignoredLayers;
 
         private AudioSource audioSource;
         private PhotonView view;
         private Transform ownerTransform;
-        private bool isActive = false;
+
+        private Vector3 networkPosition;
+        private Quaternion networkRotation;
+
+        private bool isTaken = false;
         private int currentLevel = 0;
         private float nextBeepTime = 0f;
 
-        void Start()
+        private void Start()
         {
             view = GetComponent<PhotonView>();
             audioSource = GetComponent<AudioSource>();
             SetLEDLevel(0);
         }
 
+        public void AssignOwner(Photon.Realtime.Player player, Transform newOwnerTransform)
+        {
+            this.ownerTransform = newOwnerTransform;
+            photonView.TransferOwnership(player);
+
+            photonView.RPC("RPC_SetOwnerTransform", RpcTarget.OthersBuffered, player.ActorNumber);
+        }
+
+        [PunRPC]
+        private void RPC_SetOwnerTransform(int playerID)
+        {
+            Photon.Realtime.Player player = PhotonNetwork.CurrentRoom.GetPlayer(playerID);
+            if (player != null)
+            {
+                ownerTransform = player.TagObject as Transform;
+            }
+        }
+
+        public void ShowEMF(bool show)
+        {
+            isTaken = show;
+
+            if (!show)
+            {
+                photonView.RPC("DestroyForAll", RpcTarget.AllBuffered);
+            }
+        }
+
+        [PunRPC]
+        private void DestroyForAll()
+        {
+            Destroy(gameObject);
+        }
+
         public void PickupEMF(PlayerInventory inventory)
         {
             if (!view.IsMine)
-            {
                 view.TransferOwnership(PhotonNetwork.LocalPlayer);
-            }
 
             inventory.AddItem("EMFDetector");
             photonView.RPC("PlayPickupSound", RpcTarget.All);
@@ -57,184 +91,135 @@ namespace InteractionScripts
             yield return new WaitForSeconds(pickupSound.length);
             photonView.RPC("DestroyForAll", RpcTarget.AllBuffered);
         }
-        
-        [PunRPC]
-        private void DestroyForAll()
-        {
-            Destroy(gameObject);
-        }
 
-        public void ToggleEMF()
+        private void SetLEDLevel(int level)
         {
-            isActive = !isActive;
-
-            if (!isActive)
-            {
-                SetLEDLevel(0);
-            }
+            for (int i = 0; i < ledLights.Length; i++)
+                ledLights[i].gameObject.SetActive(i < level);
         }
 
         void Update()
         {
-            if (!isActive) return;
-
+			if (photonView.IsMine)
+            {
+                if (ownerTransform != null)
+                {
+                    transform.position = ownerTransform.position + ownerTransform.forward * 0.2f + ownerTransform.right * 0.1f + Vector3.up * 0.6f;
+                    transform.rotation = Quaternion.Euler(0f, ownerTransform.eulerAngles.y - 180f, 0f);
+                }
+            }
+            else
+            {
+                transform.position = Vector3.Lerp(transform.position, networkPosition, Time.deltaTime * 10f);
+                transform.rotation = Quaternion.Lerp(transform.rotation, networkRotation, Time.deltaTime * 10f);
+            }
+	
             int newLevel = DetectEntities();
-
             if (newLevel != currentLevel)
             {
-                currentLevel = newLevel;
-                view.RPC("RPC_SetLEDLevel", RpcTarget.All, currentLevel);
-                view.RPC("RPC_PlayEMFBeep", RpcTarget.All);
-            }
-
-            if (currentLevel == 5 && Time.time >= nextBeepTime)
-            {
-                nextBeepTime = Time.time + GetBeepFrequency(5);
-                view.RPC("RPC_PlayEMFBeep", RpcTarget.All);
-            }
+            	currentLevel = newLevel;
+				view.RPC("RPC_SetLEDLevel", RpcTarget.All, currentLevel);
+				view.RPC("RPC_PlayEMFBeep", RpcTarget.All);
+			}
+			if (currentLevel == 5 && Time.time >= nextBeepTime)
+			{
+				nextBeepTime = Time.time + GetBeepFrequency(5);
+				view.RPC("RPC_PlayEMFBeep", RpcTarget.All);
+			}
+           
         }
 
         private int DetectEntities()
         {
             Collider[] colliders = Physics.OverlapSphere(transform.position, detectionRange);
             int detectedLevel = 0;
-
-            foreach (Collider collider in colliders)
+            foreach (Collider col in colliders)
             {
-                if (collider.CompareTag("Ghost"))
+                if (col.CompareTag("Ghost"))
                 {
-                    float distance = Vector3.Distance(transform.position, collider.transform.position);
-                    float signalStrength = GetSignalStrength(collider.transform, distance);
-            
-                    if (signalStrength > 0)
+                    float dist = Vector3.Distance(transform.position, col.transform.position);
+                    float signal = GetSignalStrength(col.transform, dist);
+                    if (signal > 0)
                     {
-                        Debug.Log($"👻 Ghost detected at {distance}m with signal strength {signalStrength}");
-
-                        float rawLevel = 0f;
-                        if (distance < 3f) rawLevel = 5;
-                        else if (distance < 5f) rawLevel = 4;
-                        else if (distance < 7f) rawLevel = 3;
-                        else if (distance < 10f) rawLevel = 2;
-                        else if (distance < 15f) rawLevel = 1;
-
-                        float adjustedSignal = Mathf.Sqrt(signalStrength);
-                
-                        detectedLevel = Mathf.RoundToInt(rawLevel * adjustedSignal);
-                        detectedLevel = Mathf.Clamp(detectedLevel, 1, 5);
-
-                        Debug.Log($"🔧 Final EMF Level after signal reduction: {detectedLevel}");
+                        float rawLevel = dist switch
+                        {
+                            < 3f => 5,
+                            < 5f => 4,
+                            < 7f => 3,
+                            < 10f => 2,
+                            < 15f => 1,
+                            _ => 0
+                        };
+                        detectedLevel = Mathf.Clamp(Mathf.RoundToInt(rawLevel * Mathf.Sqrt(signal)), 1, 5);
                     }
                 }
             }
-
             return detectedLevel;
         }
 
         private float GetSignalStrength(Transform ghost, float distance)
         {
-            Vector3 direction = (ghost.position - transform.position).normalized;
-            Debug.DrawRay(transform.position, direction * distance, Color.cyan, 1.0f);
-
-            Vector3 currentPos = transform.position;
-            float signalStrength = 1.0f;
-            float remainingDistance = distance;
-            bool reachedGhost = false;
-
-            while (remainingDistance > 0)
+            Vector3 dir = (ghost.position - transform.position).normalized;
+            Vector3 current = transform.position;
+            float signal = 1.0f;
+            float remaining = distance;
+            while (remaining > 0)
             {
-                RaycastHit hit;
-                if (Physics.Raycast(currentPos, direction, out hit, remainingDistance))
+                if (Physics.Raycast(current, dir, out RaycastHit hit, remaining))
                 {
                     if (hit.transform == ghost)
-                    {
-                        reachedGhost = true;
-                        break;
-                    }
-
-                    if (((1 << hit.collider.gameObject.layer) & blockLayers) != 0)
-                    {
-                        Debug.Log($"❌ Signal bloqué par {hit.transform.name} !");
+                        return signal;
+                    int layer = hit.collider.gameObject.layer;
+                    if (((1 << layer) & blockLayers) != 0)
                         return 0f;
-                    }
-                    else if (((1 << hit.collider.gameObject.layer) & wallLayers) != 0)
-                    {
-                        Debug.Log($"⛔ Mur détecté ({hit.transform.name}) : signal réduit de 40%");
-                        signalStrength *= 0.6f;
-                    }
-                    else if (((1 << hit.collider.gameObject.layer) & doorLayers) != 0)
-                    {
-                        Debug.Log($"🚪 Porte détectée ({hit.transform.name}) : signal réduit de 10%");
-                        signalStrength *= 0.9f;
-                    }
-                    else if (((1 << hit.collider.gameObject.layer) & thinObjectLayers) != 0)
-                    {
-                        Debug.Log($"🪟 Objet fin détecté ({hit.transform.name}) : signal réduit de 1%");
-                        signalStrength *= 0.99f;
-                    }
-
-                    currentPos = hit.point + (direction * 0.1f);
-                    remainingDistance -= hit.distance;
+                    if (((1 << layer) & wallLayers) != 0)
+                        signal *= 0.6f;
+                    else if (((1 << layer) & doorLayers) != 0)
+                        signal *= 0.9f;
+                    else if (((1 << layer) & thinObjectLayers) != 0)
+                        signal *= 0.99f;
+                    current = hit.point + dir * 0.1f;
+                    remaining -= hit.distance;
                 }
-                else
-                {
-                    reachedGhost = true;
-                    break;
-                }
+                else break;
             }
-
-            return reachedGhost ? signalStrength : 0f;
+            return signal;
         }
 
         [PunRPC]
-        private void RPC_SetLEDLevel(int level)
-        {
-            SetLEDLevel(level);
-            Debug.Log($"💡 LEDs updated. New level: {level}");
-        }
-
-        private void SetLEDLevel(int level)
-        {
-            for (int i = 0; i < ledLights.Length; i++)
-            {
-                ledLights[i].gameObject.SetActive(i < level);
-            }
-        }
+        private void RPC_SetLEDLevel(int level) => SetLEDLevel(level);
 
         [PunRPC]
         private void RPC_PlayEMFBeep()
         {
-            if (isActive && beepSound != null)
-            {
-                audioSource.PlayOneShot(beepSound);
-            }
-        }
+			if (beepSound != null)
+			{
+            	audioSource.PlayOneShot(beepSound);
+        	}
+		}
 
-        private float GetBeepFrequency(int level)
+        private float GetBeepFrequency(int level) => level switch
         {
-            switch (level)
-            {
-                case 1: return 2.0f;
-                case 2: return 1.5f;
-                case 3: return 1.0f;
-                case 4: return 0.6f;
-                case 5: return 0.3f;
-                default: return 2.0f;
-            }
-        }
+            1 => 2f,
+            2 => 1.5f,
+            3 => 1f,
+            4 => 0.6f,
+            5 => 0.3f,
+            _ => 2f
+        };
 
-        void LateUpdate()
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
-            if (ownerTransform != null)
+            if (stream.IsWriting)
             {
-                transform.position = ownerTransform.position + ownerTransform.forward * 0.2f + ownerTransform.right * 0.1f + Vector3.up * 0.6f;
-                transform.rotation = Quaternion.Euler(0f, ownerTransform.eulerAngles.y - 180f, 0f);
+                stream.SendNext(transform.position);
+                stream.SendNext(transform.rotation);
             }
-        }
-        
-        public void AssignOwner(Photon.Realtime.Player player, Transform owner)
-        {
-            this.ownerTransform = owner;
-            photonView.TransferOwnership(player);
+            else
+            {
+                networkPosition = (Vector3)stream.ReceiveNext();
+                networkRotation = (Quaternion)stream.ReceiveNext();
+            }
         }
     }
 }

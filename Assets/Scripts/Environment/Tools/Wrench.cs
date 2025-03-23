@@ -6,10 +6,12 @@ namespace InteractionScripts
 {
     [RequireComponent(typeof(AudioSource))]
     [RequireComponent(typeof(PhotonView))]
-    public class Wrench : MonoBehaviourPun
+    public class Wrench : MonoBehaviourPun, IPunObservable
     {
         private Transform ownerTransform;
         private Camera playerCamera;
+        private Vector3 networkPosition;
+        private Quaternion networkRotation;
         
         private AudioSource audioSource;
         public AudioClip pickupSound;
@@ -54,18 +56,39 @@ namespace InteractionScripts
             Destroy(gameObject);
         }
         
-        public void AssignOwner(Photon.Realtime.Player player, Transform ownerTransform)
+        public void AssignOwner(Photon.Realtime.Player player, Transform newOwnerTransform)
         {
-            this.ownerTransform = ownerTransform;
+            this.ownerTransform = newOwnerTransform;
             photonView.TransferOwnership(player);
+
+            // Envoi la mise à jour du owner à tous les clients
+            photonView.RPC("RPC_SetOwnerTransform", RpcTarget.OthersBuffered, player.ActorNumber);
+        }
+
+        [PunRPC]
+        private void RPC_SetOwnerTransform(int playerID)
+        {
+            Photon.Realtime.Player player = PhotonNetwork.CurrentRoom.GetPlayer(playerID);
+            if (player != null)
+            {
+                ownerTransform = player.TagObject as Transform;
+            }
         }
         
         void Update()
         {
-            if (ownerTransform != null)
+            if (photonView.IsMine)
             {
-                transform.position = ownerTransform.position + ownerTransform.forward * 0.3f + ownerTransform.right * 0.1f + Vector3.up * 0.6f;
-                transform.rotation = Quaternion.Euler(0f, ownerTransform.eulerAngles.y, 0f);
+                if (ownerTransform != null)
+                {
+                    transform.position = ownerTransform.position + ownerTransform.forward * 0.3f + ownerTransform.right * 0.1f + Vector3.up * 0.6f;
+                    transform.rotation = Quaternion.Euler(0f, ownerTransform.eulerAngles.y, 0f);
+                }
+            }
+            else
+            {
+                transform.position = Vector3.Lerp(transform.position, networkPosition, Time.deltaTime * 10);
+                transform.rotation = Quaternion.Lerp(transform.rotation, networkRotation, Time.deltaTime * 10);
             }
         }
         
@@ -91,6 +114,7 @@ namespace InteractionScripts
             yield return new WaitForSeconds(useSound.length);
         }
         
+        // **Ajout d'une synchronisation correcte de la position et rotation**
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
             if (stream.IsWriting)
@@ -100,8 +124,8 @@ namespace InteractionScripts
             }
             else
             {
-                transform.position = (Vector3)stream.ReceiveNext();
-                transform.rotation = (Quaternion)stream.ReceiveNext();
+                networkPosition = (Vector3)stream.ReceiveNext();
+                networkRotation = (Quaternion)stream.ReceiveNext();
             }
         }
     }

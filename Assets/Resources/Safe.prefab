@@ -385,6 +385,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dialTransform: {fileID: 190971597259745539}
+  safeValve: {fileID: 1983552717172197024}
   clickSound: {fileID: 8300000, guid: 2bf8caa65449c4f49833ac5a86db5aa3, type: 3}
   correctCombination: 0a000000000000000a000000
   collider: {fileID: 5666137618810627223}
