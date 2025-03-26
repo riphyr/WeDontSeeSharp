@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Photon.Pun;
 using UnityEngine;
 
 public class CameraLookingAt : MonoBehaviour
@@ -123,10 +124,14 @@ public class CameraLookingAt : MonoBehaviour
                 if (Input.GetKeyDown(interactKey)) 
                     matchBox.PickupMatchBox(inventory);
             }
-            else
+            else if (hit.transform.TryGetComponent(out InteractionScripts.Card card))
             {
-                ShowInteractionText(false);
+                Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
+                ShowInteractionText(true, $"Ramasser la carte");
+                if (Input.GetKeyDown(interactKey)) 
+                    card.Collect();
             }
+
         }
         else
         {

@@ -18,7 +18,7 @@ public enum HandType
 public struct HandValue
 {
     public int Toto { get; set; }   //Le total que le jouer a pour savoir qui gagne en presence de plusieurs mains gagnantes
-    public int PlusGrand { get; set; }  //Plus grande carte dans le cas ou il n'y a pas de main gagnante ou autre
+    public static int PlusGrand { get; set; }  //Plus grande carte dans le cas ou il n'y a pas de main gagnante ou autre
 }
 
 class HandEvaluator : Card
@@ -81,7 +81,7 @@ class HandEvaluator : Card
             return HandType.TwoPairs;
         else if(Onepair())
             return HandType.OnePair;
-        HandValues.PlusGrand = ordreValeurs[Cards[4].rank]; //Probleme sur le cas ou il n'y a pour aucun joueur de cas de main gagnante, evaluer qui a la plus forte carte
+        //HandValues.PlusGrand = ordreValeurs[Cards[4].rank]; //Probleme sur le cas ou il n'y a pour aucun joueur de cas de main gagnante, evaluer qui a la plus forte carte
         return HandType.Nothing;
     }
 
@@ -111,13 +111,13 @@ class HandEvaluator : Card
         if (Cards[0].rank == Cards[1].rank && Cards[1].rank == Cards[2].rank && Cards[2].rank == Cards[3].rank)
         {
             HandValues.Toto = ordreValeurs[Cards[0].rank]*4;
-            HandValues.PlusGrand = ordreValeurs[Cards[4].rank];
+            //HandValues.PlusGrand = ordreValeurs[Cards[4].rank];
             return true;
         }
         else if (Cards[1].rank == Cards[2].rank && Cards[2].rank == Cards[3].rank && Cards[3].rank == Cards[4].rank)
         {
             HandValues.Toto = ordreValeurs[Cards[1].rank]*4;
-            HandValues.PlusGrand = ordreValeurs[Cards[0].rank];
+            //HandValues.PlusGrand = ordreValeurs[Cards[0].rank];
             return true;
         }
 
@@ -194,7 +194,7 @@ class HandEvaluator : Card
             (Cards[2].rank == Cards[3].rank && Cards[3].rank == Cards[4].rank))
         {
             HandValues.Toto = ordreValeurs[Cards[2].rank]*3;
-            HandValues.PlusGrand = ordreValeurs[Cards[4].rank];
+            //HandValues.PlusGrand = ordreValeurs[Cards[4].rank];
             return true;
         }
         return false;    
@@ -211,19 +211,19 @@ class HandEvaluator : Card
         if (Cards[0].rank == Cards[1].rank && Cards[2].rank == Cards[3].rank)
         {
             HandValues.Toto = (ordreValeurs[Cards[1].rank]*2) + (ordreValeurs[Cards[3].rank]*2);
-            HandValues.PlusGrand =  ordreValeurs[Cards[4].rank];
+            //HandValues.PlusGrand =  ordreValeurs[Cards[4].rank];
             return true;
         }
         else if ((Cards[0].rank == Cards[1].rank && Cards[3].rank == Cards[4].rank))
         {
             HandValues.Toto = (ordreValeurs[Cards[1].rank]*2) + (ordreValeurs[Cards[3].rank]*2);
-            HandValues.PlusGrand =  ordreValeurs[Cards[2].rank];
+            //HandValues.PlusGrand =  ordreValeurs[Cards[2].rank];
             return true;
         }
         else if ((Cards[1].rank == Cards[2].rank && Cards[3].rank == Cards[4].rank))
         {
             HandValues.Toto = (ordreValeurs[Cards[1].rank]*2) + (ordreValeurs[Cards[3].rank]*2);
-            HandValues.PlusGrand =  ordreValeurs[Cards[1].rank];
+            //HandValues.PlusGrand =  ordreValeurs[Cards[1].rank];
         }
 
         return false;
@@ -240,28 +240,28 @@ class HandEvaluator : Card
         if (Cards[0].rank == Cards[1].rank)
         {
             HandValues.Toto = ordreValeurs[Cards[0].rank]*2;
-            HandValues.PlusGrand =  ordreValeurs[Cards[4].rank];
+            //HandValues.PlusGrand =  ordreValeurs[Cards[4].rank];
             return true;
         }
 
         else if (Cards[1].rank == Cards[2].rank)
         {
             HandValues.Toto = ordreValeurs[Cards[1].rank]*2;
-            HandValues.PlusGrand =  ordreValeurs[Cards[4].rank];
+            //HandValues.PlusGrand =  ordreValeurs[Cards[4].rank];
             return true;
         }
 
         else if (Cards[2].rank == Cards[3].rank)
         {
             HandValues.Toto = ordreValeurs[Cards[2].rank]*2;
-            HandValues.PlusGrand =  ordreValeurs[Cards[4].rank]; 
+            //HandValues.PlusGrand =  ordreValeurs[Cards[4].rank]; 
             return true;
         }
 
         else if (Cards[3].rank == Cards[4].rank)
         {
             HandValues.Toto = ordreValeurs[Cards[3].rank]*2;
-            HandValues.PlusGrand =  ordreValeurs[Cards[2].rank]; 
+            //HandValues.PlusGrand =  ordreValeurs[Cards[2].rank]; 
             return true; 
         }
 

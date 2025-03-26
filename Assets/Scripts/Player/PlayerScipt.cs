@@ -10,8 +10,8 @@ using TMPro;
 public class PlayerScript : MonoBehaviour, IPunObservable
 {
 	[Header("NUMERICAL PARAMETERS")]
-	public float walkSpeed = 1.2f;				// Vitesse de marche
-	public float runSpeed = 2.0f;				// Vitesse de course
+	public float walkSpeed = 6f;				// Vitesse de marche
+	public float runSpeed = 4f;				// Vitesse de course
 	public float jumpSpeed = 5.0f;				// Vitesse de saut
 	public float gravity = 20.0f;				// Vitesse de chute
 

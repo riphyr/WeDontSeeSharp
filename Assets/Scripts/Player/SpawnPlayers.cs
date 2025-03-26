@@ -6,12 +6,15 @@ using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
 using PauseMenu;
+using Studio;
 
 public class SpawnPlayers : MonoBehaviourPunCallbacks
 {
     public GameObject playerPrefab;
     public string requiredSceneName = "GameScene";
     private bool playerSpawned = false;
+    public Consigne consigne;  // Référence à la classe Consigne
+
     
     private void Start()
     {
@@ -66,11 +69,12 @@ public class SpawnPlayers : MonoBehaviourPunCallbacks
     private void SpawnPlayer()
     {
         // Définition du spawnpoint
-        Vector3 Position = new Vector3(4, 4, 1);
+        Vector3 Position = new Vector3(22, 5, 8);
 
+        // Instanciation du prefab du joueur avec position et rotation
         // Instanciation du prefab du joueur et tag
         GameObject myPlayer = PhotonNetwork.Instantiate(playerPrefab.name, Position, Quaternion.identity);
-        
+       
         PhotonNetwork.LocalPlayer.TagObject = myPlayer;
 
         //Check pour la version de test
@@ -106,5 +110,10 @@ public class SpawnPlayers : MonoBehaviourPunCallbacks
         // Activation de l'affichage d'ouverture de porte
         GameObject interactionMenu = myPlayer.transform.Find("GUI").gameObject;
         interactionMenu.SetActive(true);
+
+        if (requiredSceneName == "Scene_02")
+        {
+            consigne.Text();
+        }
     }
 }

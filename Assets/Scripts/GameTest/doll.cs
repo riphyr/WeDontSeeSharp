@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 
-public class JeuPoupée : MonoBehaviour
+public class Doll : MonoBehaviour
 {
     public Text texteEtatJeu; // Texte UI pour afficher l'état du jeu
     public Text texteAction; // Texte UI pour donner l'instruction au joueur
