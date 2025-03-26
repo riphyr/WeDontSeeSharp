@@ -66,7 +66,7 @@ public class SpawnPlayers : MonoBehaviourPunCallbacks
     private void SpawnPlayer()
     {
         // Définition du spawnpoint
-        Vector3 Position = new Vector3(-49, 3, 44);
+        Vector3 Position = new Vector3(-35, 3, 44);
 
         // Instanciation du prefab du joueur et tag
         GameObject myPlayer = PhotonNetwork.Instantiate(playerPrefab.name, Position, Quaternion.identity);

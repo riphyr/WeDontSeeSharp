@@ -7173,12 +7173,12 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
-  m_renderer: {fileID: 1646032308307649314}
-  m_maskType: 0
   _SortingLayer: 0
   _SortingLayerID: 0
   _SortingOrder: 0
+  m_hasFontAssetChanged: 0
+  m_renderer: {fileID: 1646032308307649314}
+  m_maskType: 0
 --- !u!1 &2345103100106211704
 GameObject:
   m_ObjectHideFlags: 0
@@ -11173,12 +11173,12 @@ MonoBehaviour:
   m_margin: {x: 4.7793803, y: 0, z: 15.479746, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
-  m_renderer: {fileID: 8558690025668313261}
-  m_maskType: 0
   _SortingLayer: 0
   _SortingLayerID: 0
   _SortingOrder: 0
+  m_hasFontAssetChanged: 0
+  m_renderer: {fileID: 8558690025668313261}
+  m_maskType: 0
 --- !u!1 &4075378936506682377
 GameObject:
   m_ObjectHideFlags: 0
@@ -11615,7 +11615,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4247527032670436945}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: -11.5, y: 0.183, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -11623,7 +11623,7 @@ Transform:
   - {fileID: 174317594048474574}
   - {fileID: 8585938297682190701}
   m_Father: {fileID: 609118519753376461}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!33 &1657578617421631615
 MeshFilter:
   m_ObjectHideFlags: 0
