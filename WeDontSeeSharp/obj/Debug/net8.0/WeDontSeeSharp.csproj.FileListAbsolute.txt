@@ -1,0 +1,15 @@
+C:\Users\leo20\Desktop\WeDontSeeSharp\WeDontSeeSharp\bin\Debug\net8.0\WeDontSeeSharp.exe
+C:\Users\leo20\Desktop\WeDontSeeSharp\WeDontSeeSharp\bin\Debug\net8.0\WeDontSeeSharp.deps.json
+C:\Users\leo20\Desktop\WeDontSeeSharp\WeDontSeeSharp\bin\Debug\net8.0\WeDontSeeSharp.runtimeconfig.json
+C:\Users\leo20\Desktop\WeDontSeeSharp\WeDontSeeSharp\bin\Debug\net8.0\WeDontSeeSharp.dll
+C:\Users\leo20\Desktop\WeDontSeeSharp\WeDontSeeSharp\bin\Debug\net8.0\WeDontSeeSharp.pdb
+C:\Users\leo20\Desktop\WeDontSeeSharp\WeDontSeeSharp\obj\Debug\net8.0\WeDontSeeSharp.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\leo20\Desktop\WeDontSeeSharp\WeDontSeeSharp\obj\Debug\net8.0\WeDontSeeSharp.AssemblyInfoInputs.cache
+C:\Users\leo20\Desktop\WeDontSeeSharp\WeDontSeeSharp\obj\Debug\net8.0\WeDontSeeSharp.AssemblyInfo.cs
+C:\Users\leo20\Desktop\WeDontSeeSharp\WeDontSeeSharp\obj\Debug\net8.0\WeDontSeeSharp.csproj.CoreCompileInputs.cache
+C:\Users\leo20\Desktop\WeDontSeeSharp\WeDontSeeSharp\obj\Debug\net8.0\WeDontSeeSharp.sourcelink.json
+C:\Users\leo20\Desktop\WeDontSeeSharp\WeDontSeeSharp\obj\Debug\net8.0\WeDontSeeSharp.dll
+C:\Users\leo20\Desktop\WeDontSeeSharp\WeDontSeeSharp\obj\Debug\net8.0\refint\WeDontSeeSharp.dll
+C:\Users\leo20\Desktop\WeDontSeeSharp\WeDontSeeSharp\obj\Debug\net8.0\WeDontSeeSharp.pdb
+C:\Users\leo20\Desktop\WeDontSeeSharp\WeDontSeeSharp\obj\Debug\net8.0\WeDontSeeSharp.genruntimeconfig.cache
+C:\Users\leo20\Desktop\WeDontSeeSharp\WeDontSeeSharp\obj\Debug\net8.0\ref\WeDontSeeSharp.dll
