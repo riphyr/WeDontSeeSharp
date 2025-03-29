@@ -287,6 +287,7 @@ MonoBehaviour:
   lightSoundLighter: {fileID: 8300000, guid: b2ec31bea89c3b14598e32d393b18569, type: 3}
   lightSoundMatch: {fileID: 8300000, guid: 8386552eef8f33d4396cafeed7e10848, type: 3}
   timeToBurnOut: 10
+  candlesToAdd: 1
 --- !u!1 &8307355496935429966
 GameObject:
   m_ObjectHideFlags: 0

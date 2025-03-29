@@ -261,6 +261,37 @@ public class PlayerInventory : MonoBehaviourPun
     	}
 	}
 
+	public void SwitchToItemDirectly(string targetItem)
+    {
+        if (!photonView.IsMine) return;
+
+        if (inventoryKeys.Count == 0)
+        {
+            Debug.LogWarning("[Inventory] Aucun objet dans l'inventaire !");
+            return;
+        }
+
+        int targetIndex = inventoryKeys.IndexOf(targetItem);
+
+        if (targetIndex == -1)
+        {
+            Debug.LogWarning($"[Inventory] L'item '{targetItem}' n'existe pas dans l'inventaire.");
+            return;
+        }
+
+        string currentItem = GetSelectedItem();
+
+        if (!string.IsNullOrEmpty(currentItem) && playerUsing.IsItemEquipped(currentItem))
+        {
+            playerUsing.ForceUnequipItem(currentItem);
+        }
+
+        selectedItemIndex = targetIndex;
+
+        Debug.Log($"[Inventory] Passage direct à l'item '{targetItem}' (index {targetIndex})");
+
+        UpdateSelectedItemDisplay();
+    }
     
     public void UpdateActionText()
     {

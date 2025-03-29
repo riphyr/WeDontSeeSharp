@@ -24,7 +24,10 @@ public class InventorySlotUI : MonoBehaviour
             itemIcon.enabled = false;
         }
 
-        itemCountText.text = count.ToString();
+        if (itemName == "Flashlight" || itemName == "UVFlashlight")
+            itemCountText.text = $"{Mathf.FloorToInt(count)} %";
+        else
+            itemCountText.text = $"{Mathf.FloorToInt(count)}";
 
         gameObject.SetActive(true);
     }

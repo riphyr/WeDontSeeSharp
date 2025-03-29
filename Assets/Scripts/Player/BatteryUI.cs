@@ -12,6 +12,9 @@ public class BatteryUI : MonoBehaviour
 
     [Header("Paramètres")]
     public List<string> batteryItems = new List<string> { "Flashlight", "UVFlashlight" };
+    Color criticalBatteryColor = new Color(125f / 255f, 0f, 0f);
+    Color fullBatteryColor = new Color(0f, 118f / 255f, 0f);
+    Color mediumBatteryColor = new Color(152f / 255f, 148f / 255f, 56f / 255f);
 
     void Update()
     {
@@ -30,20 +33,32 @@ public class BatteryUI : MonoBehaviour
         else
             batteryPercent = inventory.GetItemCount(selectedItem);
 
-        if (batteryPercent <= 0f)
+        if (batteryPercent == 0f)
         {
             batterySlider.value = 100f;
-            fillImage.color = Color.red;
+            fillImage.color = criticalBatteryColor;
         }
-        else if (batteryPercent >= 100f)
+        else if (batteryPercent == 100f)
         {
             batterySlider.value = 100f;
-            fillImage.color = Color.green;
+            fillImage.color = fullBatteryColor;
+        }
+        else if (batteryPercent <= 25f)
+        {
+            batterySlider.value = batteryPercent;
+            float t = batteryPercent / 25f;
+            fillImage.color = Color.Lerp(criticalBatteryColor, mediumBatteryColor, t);
+        }
+        else if (batteryPercent >= 75f)
+        {
+            batterySlider.value = batteryPercent;
+            float t = (batteryPercent - 75f) / 25f;
+            fillImage.color = Color.Lerp(mediumBatteryColor, fullBatteryColor, t);
         }
         else
         {
             batterySlider.value = batteryPercent;
-            fillImage.color = Color.gray;
+            fillImage.color = mediumBatteryColor;
         }
     }
 

@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
 public class PlayerInventoryUI : MonoBehaviour
 {
@@ -15,9 +16,15 @@ public class PlayerInventoryUI : MonoBehaviour
     [SerializeField] private Button dropStackButton;
 	[SerializeField] private GameObject dropItemHighlightLine;
 	[SerializeField] private GameObject dropStackHighlightLine;
+	private Vector3 dropItemOriginalScale;
+	private Vector3 dropStackOriginalScale;
 
     [Header("Slots d'inventaire (visibles)")]
     [SerializeField] private List<InventorySlotUI> slotUIs;
+
+	[Header("Paramètres de double clique")]
+	[SerializeField] private float lastClickTime = 0f;
+	[SerializeField] private const float doubleClickThreshold = 0.25f;
 
     [Header("Slider de pagination")]
     [SerializeField] private Slider inventorySlider;
@@ -38,8 +45,19 @@ public class PlayerInventoryUI : MonoBehaviour
     {
         HideInventory();
 
-        if (dropItemButton)  dropItemButton.onClick.AddListener(OnDropItem);
-        if (dropStackButton) dropStackButton.onClick.AddListener(OnDropStack);
+        if (dropItemButton)
+		{
+			dropItemButton.onClick.AddListener(OnDropItem);
+			dropItemOriginalScale = dropItemButton.transform.localScale;
+			AddButtonScaleEvents(dropItemButton, dropItemOriginalScale);
+		}
+        if (dropStackButton) 
+		{
+			dropStackButton.onClick.AddListener(OnDropStack);
+			dropStackOriginalScale = dropStackButton.transform.localScale;
+			AddButtonScaleEvents(dropStackButton, dropStackOriginalScale);
+		}
+
 
         if (inventorySlider)
         {
@@ -162,9 +180,17 @@ public class PlayerInventoryUI : MonoBehaviour
 
     public void OnSlotClicked(string itemName)
     {
+		float timeSinceLastClick = Time.time - lastClickTime;
+    	lastClickTime = Time.time;
+
 		selectedItemName = itemName;
         if (informationText)
             informationText.text = $"Objet : {itemName}\nQuantité : {playerInventory.GetItemCount(itemName)}";
+
+		if (timeSinceLastClick <= doubleClickThreshold)
+    	{
+        	playerInventory.SwitchToItemDirectly(itemName);
+    	}
     }
 
     public void OnSlotHoverEnter(int slotIndex)
@@ -201,6 +227,34 @@ public class PlayerInventoryUI : MonoBehaviour
     	{
         	Debug.LogWarning("Aucun item sélectionné ou référence à PlayerUsing manquante !");
     	}
+    }
+
+	private void AddButtonScaleEvents(Button button, Vector3 originalScale)
+    {
+        EventTrigger trigger = button.gameObject.GetComponent<EventTrigger>();
+        if (trigger == null)
+            trigger = button.gameObject.AddComponent<EventTrigger>();
+
+        EventTrigger.Entry pointerDownEntry = new EventTrigger.Entry
+        {
+            eventID = EventTriggerType.PointerDown
+        };
+        pointerDownEntry.callback.AddListener((data) =>
+        {
+            button.transform.localScale = originalScale * 0.95f;
+        });
+
+        EventTrigger.Entry pointerUpEntry = new EventTrigger.Entry
+        {
+            eventID = EventTriggerType.PointerUp
+        };
+        pointerUpEntry.callback.AddListener((data) =>
+        {
+            button.transform.localScale = originalScale;
+        });
+
+        trigger.triggers.Add(pointerDownEntry);
+        trigger.triggers.Add(pointerUpEntry);
     }
 
 	public void RefreshUI()
