@@ -10,6 +10,7 @@ namespace InteractionScripts
     {
         public AudioClip pickupSound, lightSoundLighter, lightSoundMatch;
         public float timeToBurnOut = 30f;
+        public int candlesToAdd = 1;
         
         private AudioSource audioSource;
         private PhotonView view;
@@ -43,7 +44,7 @@ namespace InteractionScripts
                 view.TransferOwnership(PhotonNetwork.LocalPlayer);
             }
 
-            inventory.AddItem("Candle", 1);
+            inventory.AddItem("Candle", candlesToAdd);
             photonView.RPC("PlayPickupSound", RpcTarget.All);
         }
 

@@ -20,6 +20,19 @@ public class PlayerInventory : MonoBehaviourPun
     private Dictionary<string, Sprite> itemSprites = new Dictionary<string, Sprite>();
     private List<string> inventoryKeys = new List<string>();
     private int selectedItemIndex = -1;
+    private readonly HashSet<string> slotItems = new HashSet<string>
+    {
+        "Match",
+        "Candle",
+        "Flashlight",
+        "UVFlashlight",
+        "Wrench",
+        "Crowbar",
+        "Magnetophone",
+        "EMFDetector",
+        "CDDisk"
+    };
+
 
     void Start()
     {
@@ -52,22 +65,23 @@ public class PlayerInventory : MonoBehaviourPun
     {
         return inventory.ContainsKey(itemName) ? inventory[itemName] : 0;
     }
-
+    
     public void AddItem(string itemName, float amount = 1f)
     {
-        if (amount < 0) return;
-
-        if (inventory.ContainsKey(itemName))
+        if (amount <= 0) return;
+    
+        if (!inventory.ContainsKey(itemName))
         {
-            inventory[itemName] += amount;
-        }
-        else
-        {
-            inventory[itemName] = amount;
-            inventoryKeys.Add(itemName);
+            inventory[itemName] = 0;
+            if (slotItems.Contains(itemName))
+            {
+                inventoryKeys.Add(itemName);
+            }
         }
 
-        if (selectedItemIndex == -1)
+        inventory[itemName] += amount;
+
+        if (selectedItemIndex == -1 && inventoryKeys.Count > 0)
         {
             selectedItemIndex = 0;
         }
@@ -85,10 +99,29 @@ public class PlayerInventory : MonoBehaviourPun
         }
 
         inventory[itemName] -= amount;
+
         if (inventory[itemName] <= 0)
         {
             inventory.Remove(itemName);
-            inventoryKeys.Remove(itemName);
+        
+            int removedIndex = inventoryKeys.IndexOf(itemName);
+            if (removedIndex >= 0)
+            {
+                inventoryKeys.RemoveAt(removedIndex);
+                if (removedIndex == selectedItemIndex)
+                {
+                    if (inventoryKeys.Count == 0) selectedItemIndex = -1;
+                    else if (removedIndex >= inventoryKeys.Count)
+                        selectedItemIndex = inventoryKeys.Count - 1;
+                    else
+                        selectedItemIndex = removedIndex;
+                }
+                else if (removedIndex < selectedItemIndex)
+                {
+                    selectedItemIndex--;
+                }
+            }
+        
             Debug.Log($"{amount} x {itemName} retiré de l'inventaire.");
         }
 
@@ -124,9 +157,7 @@ public class PlayerInventory : MonoBehaviourPun
     
     public void SwitchToNextItem()
     {
-        Debug.Log("In sitch next1");
-        if (!photonView.IsMine) return;  // S'assure que seul le joueur local peut exécuter cette action
-        Debug.Log("In sitch next2");
+        if (!photonView.IsMine) return;
         if (inventoryKeys.Count == 0)
         {
             Debug.LogWarning("Aucun objet dans l'inventaire !");
@@ -146,7 +177,7 @@ public class PlayerInventory : MonoBehaviourPun
 
     public void SwitchToPreviousItem()
     {
-        if (!photonView.IsMine) return;  // S'assure que seul le joueur local peut exécuter cette action
+        if (!photonView.IsMine) return;
 
         if (inventoryKeys.Count == 0)
         {
@@ -208,6 +239,28 @@ public class PlayerInventory : MonoBehaviourPun
             inventory.Add(itemName, amount);
         }
     }
+
+	public List<string> GetAllInventoryKeys()
+	{
+    	return new List<string>(inventory.Keys);
+	}
+
+	public Sprite GetSprite(string itemName)
+	{
+    	return itemSprites.TryGetValue(itemName, out Sprite sprite) ? sprite : null;
+	}
+
+	public void ForceSelectItem(string itemName)
+	{
+    	int index = GetAllInventoryKeys().IndexOf(itemName);
+    	if (index != -1)
+    	{
+        	typeof(PlayerInventory)
+            	.GetField("selectedItemIndex", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+            	?.SetValue(this, index);
+    	}
+	}
+
     
     public void UpdateActionText()
     {

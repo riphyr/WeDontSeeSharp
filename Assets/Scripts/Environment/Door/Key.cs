@@ -48,6 +48,8 @@ namespace InteractionScripts
             }
 
             inventory.AddItem(keyName, 1);
+            Collider col = GetComponent<Collider>();
+            if (col != null) col.enabled = false;
             photonView.RPC("PlayPickupSound", RpcTarget.All);
         }
 

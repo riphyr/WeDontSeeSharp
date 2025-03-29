@@ -18,6 +18,7 @@ public class PlayerScript : MonoBehaviour, IPunObservable
 	[Header("STAMINA VALORS")]
     public float playerStamina = 100.0f;
     private float _maxStamina = 100.0f;
+    public Slider staminaSlider;
 
     [Header("STAMINA MODIFIERS")]
 	private bool canRun = true;
@@ -62,6 +63,13 @@ public class PlayerScript : MonoBehaviour, IPunObservable
 		// Blocage et disparition du curseur
 		Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        
+        //Setup de la barre de stamina
+        if (staminaSlider != null)
+        {
+	        staminaSlider.maxValue = _maxStamina;
+	        staminaSlider.value = playerStamina;
+        }
     }
 
     void Update()
@@ -78,6 +86,12 @@ public class PlayerScript : MonoBehaviour, IPunObservable
 	        else // Sinon Update des paramètres de pause
 	        {
 		        UdpateSensitivityCamera();
+	        }
+	        
+	        //Update de la barre visuelle de stamina
+	        if (staminaSlider != null)
+	        {
+		        staminaSlider.value = playerStamina;
 	        }
 
 	        animator.SetBool("isRunning", false);

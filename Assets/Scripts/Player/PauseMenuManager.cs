@@ -77,6 +77,7 @@ namespace PauseMenu{
 		public GameObject reloadtext;
 		public GameObject droptext;
 		public GameObject pausetext;
+		public GameObject inventorytext;
 
 		
 		//Sliders
@@ -141,6 +142,7 @@ namespace PauseMenu{
 			keyBindingTexts["Reload"] = reloadtext.GetComponent<TMP_Text>();
 			keyBindingTexts["Drop"] = droptext.GetComponent<TMP_Text>();
 			keyBindingTexts["Pause"] = pausetext.GetComponent<TMP_Text>();
+			keyBindingTexts["Inventory"] = inventorytext.GetComponent<TMP_Text>();
 
 			LoadKeyBindings();
 		}
@@ -568,7 +570,8 @@ namespace PauseMenu{
 	            { "SecondaryInteraction", KeyCode.F },
 	            { "Reload", KeyCode.R },
 	            { "Drop", KeyCode.T },
-	            { "Pause", KeyCode.Escape }
+	            { "Pause", KeyCode.Escape },
+	            { "Inventory", KeyCode.I }
             };
 
             foreach (var action in defaultBindings.Keys)

@@ -7,6 +7,7 @@ public class PlayerUsing : MonoBehaviourPun
 {
     [Header("Prefabs")]
     public GameObject matchPrefab;
+	public GameObject matchBoxPrefab;
     public GameObject candlePrefab;
     public GameObject flashlightPrefab;
     public GameObject UVFlashlightPrefab;
@@ -144,7 +145,7 @@ public class PlayerUsing : MonoBehaviourPun
 
         if (string.IsNullOrEmpty(selectedItem))
         {
-            Debug.Log("Aucun objet sélectionné !");
+            Debug.LogWarning("[DropSelectedItem] Aucun objet sélectionné ! Assure-toi que 'selectedItemIndex' est bien défini.");
             return;
         }
 
@@ -222,14 +223,11 @@ public class PlayerUsing : MonoBehaviourPun
         }
     }
 
-	private void DropSelectedItem()
+	private void DropSelectedItem(bool stack = false, string selectedItem = "")
     {
-        string selectedItem = inventory.GetSelectedItem();
-
-        if (string.IsNullOrEmpty(selectedItem))
+		if (string.IsNullOrEmpty(selectedItem))
         {
-            Debug.Log("Aucun objet sélectionné !");
-            return;
+            selectedItem = inventory.GetSelectedItem();
         }
 
         GameObject itemPrefab = selectedItem switch
@@ -247,6 +245,8 @@ public class PlayerUsing : MonoBehaviourPun
             "Magnetophone" => magnetophonePrefab,
             "Battery" => batteryPrefab,
             "Crowbar" => crowbarPrefab,
+			"Match" => matchBoxPrefab,
+			"Candle" => candlePrefab,
             _ => null
         };
 
@@ -262,40 +262,38 @@ public class PlayerUsing : MonoBehaviourPun
         Quaternion dropRotation = Quaternion.identity;
         GameObject droppedItem = null;
 
-        // Cas particuliers avec batterie (retirer AVANT le spawn pour transmettre la bonne valeur)
-        if (selectedItem == "Flashlight")
-        {
-            float batteryLevel = inventory.GetItemCount(selectedItem);
-            inventory.RemoveItem(selectedItem, batteryLevel);
+		float amount = 1f;
 
-            object[] instantiationData = new object[] { batteryLevel };
+        if (stack || selectedItem == "Flashlight" || selectedItem == "UVFlashlight")
+            amount = inventory.GetItemCount(selectedItem);
+        else if (selectedItem == "Battery")
+            amount = 100f;
+
+        if (amount <= 0f)
+            return;
+
+        // Cas particuliers avec batterie (retirer AVANT le spawn pour transmettre la bonne valeur)
+        if (selectedItem == "Flashlight" || selectedItem == "UVFlashlight")
+        {
+            object[] instantiationData = new object[] { amount };
+            inventory.RemoveItem(selectedItem, amount);
+
             droppedItem = PhotonNetwork.Instantiate(itemPrefab.name, dropPosition, dropRotation, 0, instantiationData);
 
-            var flashlight = droppedItem.GetComponent<InteractionScripts.Flashlight>();
-            if (flashlight != null)
+            if (selectedItem == "Flashlight" && droppedItem.TryGetComponent(out InteractionScripts.Flashlight flashlight))
             {
                 flashlight.AssignOwner(photonView.Owner, playerBody);
-                flashlight.SetCurrentBattery(batteryLevel);
-                droppedItem.GetComponent<PhotonView>().RPC("SyncBattery", RpcTarget.AllBuffered, batteryLevel);
-                droppedItem.GetComponent<PhotonView>().RPC("EnablePhysicsRPC", RpcTarget.AllBuffered);
+                flashlight.SetCurrentBattery(amount);
+                droppedItem.GetComponent<PhotonView>().RPC("SyncBattery", RpcTarget.AllBuffered, amount);
             }
-        }
-        else if (selectedItem == "UVFlashlight")
-        {
-            float batteryLevel = inventory.GetItemCount(selectedItem);
-            inventory.RemoveItem(selectedItem, batteryLevel);
-
-            object[] instantiationData = new object[] { batteryLevel };
-            droppedItem = PhotonNetwork.Instantiate(itemPrefab.name, dropPosition, dropRotation, 0, instantiationData);
-
-            var uvFlashlight = droppedItem.GetComponent<InteractionScripts.UVFlashlight>();
-            if (uvFlashlight != null)
+            else if (selectedItem == "UVFlashlight" && droppedItem.TryGetComponent(out InteractionScripts.UVFlashlight uvFlashlight))
             {
                 uvFlashlight.AssignOwner(photonView.Owner, playerBody);
-                uvFlashlight.SetCurrentBattery(batteryLevel);
-                droppedItem.GetComponent<PhotonView>().RPC("SyncBattery", RpcTarget.AllBuffered, batteryLevel);
-                droppedItem.GetComponent<PhotonView>().RPC("EnablePhysicsRPC", RpcTarget.AllBuffered);
+                uvFlashlight.SetCurrentBattery(amount);
+                droppedItem.GetComponent<PhotonView>().RPC("SyncBattery", RpcTarget.AllBuffered, amount);
             }
+
+            droppedItem.GetComponent<PhotonView>().RPC("EnablePhysicsRPC", RpcTarget.AllBuffered);
         }
         else
         {
@@ -304,24 +302,30 @@ public class PlayerUsing : MonoBehaviourPun
 
             switch (selectedItem)
             {
+				case "Match":
+    				droppedItem.GetComponent<InteractionScripts.MatchBox>().matchesToAdd = Mathf.FloorToInt(amount);
+					droppedItem.transform.localScale = Vector3.one * 0.21f;
+    				break;
                 case string key when key.Contains("Key"):
                     droppedItem.GetComponent<InteractionScripts.Key>()?.DropKey();
                     break;
+				case "Candle":
+					droppedItem.GetComponent<InteractionScripts.Candle>().candlesToAdd  = Mathf.FloorToInt(amount);
+                	break;
                 case "Lighter":
                     droppedItem.GetComponent<InteractionScripts.Lighter>()?.DropLighter();
                     break;
                 case "Battery":
+					droppedItem.GetComponent<InteractionScripts.Battery>().batteryCharge = amount;
                     droppedItem.GetComponent<InteractionScripts.Battery>()?.DropBattery();
-                    inventory.RemoveItem(selectedItem, 100);
-                    break;
-                default:
-                    inventory.RemoveItem(selectedItem, 1);
                     break;
             }
 
+			inventory.RemoveItem(selectedItem, amount);
+
             // Ajout du Rigidbody
             Rigidbody rb = droppedItem.GetComponent<Rigidbody>();
-            if (rb == null)
+            if (rb == null && selectedItem != "Battery")
             {
                 rb = droppedItem.AddComponent<Rigidbody>();
             }
@@ -352,6 +356,11 @@ public class PlayerUsing : MonoBehaviourPun
         {
             col.enabled = true;
         }
+    }
+
+    public void DropItemByName(string itemName, bool stack)
+    {
+        DropSelectedItem(stack, itemName);
     }
 
 	private void UpdateItemPlacement()
@@ -602,6 +611,11 @@ public class PlayerUsing : MonoBehaviourPun
             flashlightScript.RechargeBattery(inventory);
         }
     }
+
+	public InteractionScripts.Flashlight GetEquippedFlashlight()
+	{
+    	return flashlightScript;
+	}
     
     //Gestion lampe UV
     [PunRPC]
@@ -648,6 +662,11 @@ public class PlayerUsing : MonoBehaviourPun
             UVFlashlightScript.RechargeBattery(inventory);
         }
     }
+
+	public InteractionScripts.UVFlashlight GetEquippedUVFlashlight()
+	{
+    	return UVFlashlightScript;
+	}
     
     // Gestion wrench
     [PunRPC]

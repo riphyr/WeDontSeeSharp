@@ -72,12 +72,14 @@ namespace InteractionScripts
         }
 
         [PunRPC]
-        private void RPC_EnablePhysics()
+        public void RPC_EnablePhysics()
         {
-            isDropped = true;
-
+            Rigidbody rb = GetComponent<Rigidbody>();
             if (rb == null)
-                rb = gameObject.AddComponent<Rigidbody>();
+            {
+                Debug.LogWarning("Battery: Rigidbody manquant !");
+                return;
+            }
 
             rb.isKinematic = false;
             rb.useGravity = true;

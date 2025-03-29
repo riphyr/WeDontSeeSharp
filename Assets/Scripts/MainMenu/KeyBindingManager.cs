@@ -25,6 +25,7 @@ namespace MainMenu{
         public GameObject reloadtext;
         public GameObject droptext;
         public GameObject pausetext;
+        public GameObject inventorytext;
 
         private Dictionary<string, KeyCode> keyBindings = new Dictionary<string, KeyCode>();
         private Dictionary<string, TMP_Text> keyBindingTexts = new Dictionary<string, TMP_Text>();
@@ -48,6 +49,7 @@ namespace MainMenu{
             keyBindingTexts["Reload"] = reloadtext.GetComponent<TMP_Text>();
             keyBindingTexts["Drop"] = droptext.GetComponent<TMP_Text>();
             keyBindingTexts["Pause"] = pausetext.GetComponent<TMP_Text>();
+            keyBindingTexts["Inventory"] = inventorytext.GetComponent<TMP_Text>();
 
             LoadKeyBindings();
         }
@@ -111,7 +113,8 @@ namespace MainMenu{
                 { "SecondaryInteraction", KeyCode.F },
                 { "Reload", KeyCode.R },
                 { "Drop", KeyCode.T },
-                { "Pause", KeyCode.Escape }
+                { "Pause", KeyCode.Escape },
+                { "Inventory", KeyCode.I }
             };
 
             foreach (var action in defaultBindings.Keys)

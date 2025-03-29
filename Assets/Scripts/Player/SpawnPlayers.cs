@@ -88,16 +88,19 @@ public class SpawnPlayers : MonoBehaviourPunCallbacks
         PlayerInventory playerInventory = player.GetComponent<PlayerInventory>();
         PlayerUsing playerUsing = player.GetComponent<PlayerUsing>();
         PauseMenuManager pauseMenuManager = player.GetComponent<PauseMenuManager>();
+        PlayerInventoryUI playerInventoryUI = player.GetComponent<PlayerInventoryUI>();
 
         if (playerScript == null) Debug.LogError("🚨 PlayerScript manquant sur Player !");
         if (cameraLookingAt == null) Debug.LogError("🚨 CameraLookingAt manquant sur Player !");
         if (playerInventory == null) Debug.LogError("🚨 PlayerInventory manquant sur Player !");
+        if (playerInventoryUI == null) Debug.LogError("🚨 PlayerInventoryUI manquant sur Player !");
         if (playerUsing == null) Debug.LogError("🚨 PlayerUsing manquant sur Player !");
         if (pauseMenuManager == null) Debug.LogError("🚨 PauseMenuManager manquant sur Player !");
 
         playerScript.enabled = true;
         cameraLookingAt.enabled = true;
         playerInventory.enabled = true;
+        playerInventoryUI.enabled = true;
         playerUsing.enabled = true;
         pauseMenuManager.enabled = true;
 

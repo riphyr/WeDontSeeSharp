@@ -221,6 +221,16 @@ namespace InteractionScripts
             audioSource.PlayOneShot(switchSound);
             yield return new WaitForSeconds(switchSound.length);
         }
+        
+        public float GetCurrentBattery()
+        {
+            return currentBattery;
+        }
+        
+        public bool IsEquipped()
+        {
+            return isEquipped;
+        }
 
 		[PunRPC]
 		public void EnablePhysicsRPC()
