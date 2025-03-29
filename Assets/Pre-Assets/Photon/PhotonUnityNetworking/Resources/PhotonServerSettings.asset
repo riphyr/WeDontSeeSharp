@@ -51,6 +51,64 @@ MonoBehaviour:
   - DestroyForAll
   - DestroyMatch_RPC
   - UseMatch
+  - SyncEquipState
+  - SyncFlashlight
+  - UseFlashlight
+  - SyncMicLoudness
+  - SyncSpeechCommand
+  - UpdateCandlePosition_RPC
+  - AssignOwner_RPC
+  - ToggleDrawer_RPC
+  - SyncEquipFlashlight
+  - SyncFlashlightState
+  - SyncFlashlightTransform
+  - SetColliderState
+  - SyncUVFlashlightState
+  - SyncUVFlashlightTransform
+  - UseUVFlashlight
+  - SetUVIntensity_RPC
+  - UseWrench
+  - PlayUseSound
+  - RPC_ActivateLever
+  - RPC_ToggleBox
+  - RPC_ToggleButton
+  - RPC_DestroyScrew
+  - RPC_StartRemoving
+  - RPC_HandleRecognition
+  - RPC_PlayBeep
+  - UseMagnetophone
+  - RPC_PlayEMFBeep
+  - RPC_SetLEDLevel
+  - UseEMFDetector
+  - RPC_SwitchCamera
+  - UseDisk
+  - RPC_CloseCDReader
+  - RPC_InsertCD
+  - RPC_PowerOnSystem
+  - RPC_PlayStartupSound
+  - RPC_PowerOnScreen
+  - FailUnlock
+  - SyncRotation
+  - Unlock
+  - UnlockSafe
+  - RPC_OpenDoor
+  - RPC_ResetCombination
+  - SyncBattery
+  - UseCrowbar
+  - RPC_InteractBoilingFlask
+  - RPC_InteractBunsenBurner
+  - RPC_InteractFlatBottomFlask
+  - RPC_ResetStation
+  - RPC_SetOutput
+  - RPC_SetOwnerTransform
+  - ForceSync
+  - RPC_EnablePhysics
+  - RPC_SyncPosition
+  - EnablePhysicsRPC
+  - DisableItemColliderRPC
+  - RPC_RotateDial
+  - RPC_SetUnlocked
+  - RPC_TryUnlock
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

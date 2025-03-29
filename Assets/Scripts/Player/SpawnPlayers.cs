@@ -50,7 +50,7 @@ public class SpawnPlayers : MonoBehaviourPunCallbacks
             IsOpen = true     // La Room peut être rejointe
         };
 
-        PhotonNetwork.JoinOrCreateRoom("DefaultRoom", roomOptions, TypedLobby.Default);
+        PhotonNetwork.JoinOrCreateRoom("a", roomOptions, TypedLobby.Default);
     }
 
     public override void OnJoinedRoom()
@@ -82,22 +82,27 @@ public class SpawnPlayers : MonoBehaviourPunCallbacks
         
         // Activation des scripts de mouvement et d'interactions
         GameObject player = myPlayer.transform.Find("Player").gameObject;
+        PlayerScript.LocalPlayerTransform = player.transform;
         PlayerScript playerScript = player.GetComponent<PlayerScript>();
         CameraLookingAt cameraLookingAt = player.GetComponent<CameraLookingAt>();
-        PlaceCandle placeCandle = player.GetComponent<PlaceCandle>();
         PlayerInventory playerInventory = player.GetComponent<PlayerInventory>();
         PlayerUsing playerUsing = player.GetComponent<PlayerUsing>();
+        PauseMenuManager pauseMenuManager = player.GetComponent<PauseMenuManager>();
+        PlayerInventoryUI playerInventoryUI = player.GetComponent<PlayerInventoryUI>();
+
+        if (playerScript == null) Debug.LogError("🚨 PlayerScript manquant sur Player !");
+        if (cameraLookingAt == null) Debug.LogError("🚨 CameraLookingAt manquant sur Player !");
+        if (playerInventory == null) Debug.LogError("🚨 PlayerInventory manquant sur Player !");
+        if (playerInventoryUI == null) Debug.LogError("🚨 PlayerInventoryUI manquant sur Player !");
+        if (playerUsing == null) Debug.LogError("🚨 PlayerUsing manquant sur Player !");
+        if (pauseMenuManager == null) Debug.LogError("🚨 PauseMenuManager manquant sur Player !");
 
         playerScript.enabled = true;
         cameraLookingAt.enabled = true;
         playerInventory.enabled = true;
-        placeCandle.enabled = true;
+        playerInventoryUI.enabled = true;
         playerUsing.enabled = true;
-
-        // Activation du menu de pause
-        GameObject pauseMenu = myPlayer.transform.Find("Pause_Menu").gameObject;
-        PauseMenuManager pauseMenuScript = pauseMenu.GetComponent<PauseMenuManager>();
-        pauseMenuScript.enabled = true;
+        pauseMenuManager.enabled = true;
 
         // Activation de la caméra individuelle
         GameObject mainCamera = player.transform.Find("Main Camera").gameObject;

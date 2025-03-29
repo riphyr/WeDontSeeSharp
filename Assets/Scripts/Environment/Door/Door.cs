@@ -47,18 +47,20 @@ namespace InteractionScripts
 
         public void ToggleDoor()
         {
-            if (view.IsMine)
+            if (!view.IsMine)
             {
-                if (doorType != DoorType.Normal && (HasActiveLock<LockKey>() || HasActiveLock<PadLock>()))
-                {
-                    asource.PlayOneShot(blockedDoorSound, 1.0f);
-                    return;
-                }
-
-                open = !open;
-                asource.clip = open ? openDoor : closeDoor;
-                asource.Play();
+                view.TransferOwnership(PhotonNetwork.LocalPlayer);
             }
+            
+            if (doorType != DoorType.Normal && (HasActiveLock<LockKey>() || HasActiveLock<PadLock>()))
+            {
+                asource.PlayOneShot(blockedDoorSound, 1.0f);
+                return;
+            }
+
+            open = !open;
+            asource.clip = open ? openDoor : closeDoor;
+            asource.Play();
         }
 
         private bool HasActiveLock<T>() where T : MonoBehaviour

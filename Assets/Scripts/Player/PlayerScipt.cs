@@ -18,6 +18,7 @@ public class PlayerScript : MonoBehaviour, IPunObservable
 	[Header("STAMINA VALORS")]
     public float playerStamina = 100.0f;
     private float _maxStamina = 100.0f;
+    public Slider staminaSlider;
 
     [Header("STAMINA MODIFIERS")]
 	private bool canRun = true;
@@ -34,10 +35,7 @@ public class PlayerScript : MonoBehaviour, IPunObservable
 	public Camera playerCamera;					// GameObject relié à la caméra
 	public GameObject character;				// GameObject relié au prefab du joueur
 	public Animator animator;					// Controller pour les animations
-
-	[Header("MENUS")]
-	public GameObject pauseObject;				// Menu de pause
-
+	
 	// Synchronisation des animations
     private float animatorSides;
     private float animatorFrontBack;
@@ -49,6 +47,7 @@ public class PlayerScript : MonoBehaviour, IPunObservable
 	private bool canMove = true;				// Booléen de blocage du joueur (à utiliser sous certains cas)
 
 	CharacterController characterController;
+	public static Transform LocalPlayerTransform;
     Vector3 moveDirection = Vector3.zero;
 
     void Start()
@@ -65,7 +64,12 @@ public class PlayerScript : MonoBehaviour, IPunObservable
 		Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         
-        pauseObject.SetActive(false);
+        //Setup de la barre de stamina
+        if (staminaSlider != null)
+        {
+	        staminaSlider.maxValue = _maxStamina;
+	        staminaSlider.value = playerStamina;
+        }
     }
 
     void Update()
@@ -83,8 +87,12 @@ public class PlayerScript : MonoBehaviour, IPunObservable
 	        {
 		        UdpateSensitivityCamera();
 	        }
-
-	        CheckPauseActivation(); // Activation ou désactivation du menu pause
+	        
+	        //Update de la barre visuelle de stamina
+	        if (staminaSlider != null)
+	        {
+		        staminaSlider.value = playerStamina;
+	        }
 
 	        animator.SetBool("isRunning", false);
 	        animator.SetBool("isJumping", false);
@@ -125,25 +133,6 @@ public class PlayerScript : MonoBehaviour, IPunObservable
 			animator.SetBool("isJumping", animatorIsJumping);
         }
     }
-
-	private void CheckPauseActivation()
-	{
-		if (Input.GetKey(GetKeyCodeFromString(PlayerPrefs.GetString("Pause", "None"))))
-	    {
-		    pauseObject.SetActive(true);
-		    Cursor.lockState = CursorLockMode.None;
-			Cursor.visible = true;
-	    }
-
-		if (Cursor.lockState == CursorLockMode.None && Cursor.visible)
-	    {
-			pauseObject.SetActive(true);
-	    }
-	    else
-	    {
-			pauseObject.SetActive(false);
-	    }
-	}
 	
 	// Update des sensibilités de rotation camera
 	private void UdpateSensitivityCamera()

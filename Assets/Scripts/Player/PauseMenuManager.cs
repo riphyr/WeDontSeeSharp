@@ -18,7 +18,6 @@ namespace PauseMenu{
         public GameObject saveMenu;				// Panel SAVE
 
         [Header("PANELS")]
-        public GameObject PanelMain;			// Canva MAIN
         public GameObject PanelGame;			// Panel GAME
         public GameObject PanelControls;		// Panel CONTROLS
         public GameObject PanelVideo;			// Panel VIDEO
@@ -60,6 +59,7 @@ namespace PauseMenu{
 		
 		[Header("PANEL KEYBINDINGS")]
 		public GameObject keyConfirmationPanel;
+		public GameObject keyConfirmationBackground;
         
 		[Header("KEY NAMES")]
 		public GameObject forwardtext;
@@ -72,8 +72,12 @@ namespace PauseMenu{
 		public GameObject previousinventorytext;
 		public GameObject maptext;
 		public GameObject usetext;
-		public GameObject interacttext;
+		public GameObject primaryInteractionText;
+		public GameObject secondaryInteractionText;
+		public GameObject reloadtext;
+		public GameObject droptext;
 		public GameObject pausetext;
+		public GameObject inventorytext;
 
 		
 		//Sliders
@@ -85,12 +89,15 @@ namespace PauseMenu{
 		private Dictionary<string, TMP_Text> keyBindingTexts = new Dictionary<string, TMP_Text>();
 
 		private string currentKeyBinding; 
+		private bool isPaused = false;
 
 		void Start(){
+			pauseObject.SetActive(false);
+			isPaused = false;
+			
 			settingsCanva.SetActive(false);
 			exitMenu.SetActive(false);
-			mainCanva.SetActive(true);
-			pauseObject.SetActive(true);
+			mainCanva.SetActive(false);
 			saveMenu.SetActive(false);
 			
 			// Vérification des sliders
@@ -130,8 +137,12 @@ namespace PauseMenu{
 			keyBindingTexts["Previous"] = previousinventorytext.GetComponent<TMP_Text>();
 			keyBindingTexts["Map"] = maptext.GetComponent<TMP_Text>();
 			keyBindingTexts["Use"] = usetext.GetComponent<TMP_Text>();
-			keyBindingTexts["Interact"] = interacttext.GetComponent<TMP_Text>();
+			keyBindingTexts["PrimaryInteraction"] = primaryInteractionText.GetComponent<TMP_Text>();
+			keyBindingTexts["SecondaryInteraction"] = secondaryInteractionText.GetComponent<TMP_Text>();
+			keyBindingTexts["Reload"] = reloadtext.GetComponent<TMP_Text>();
+			keyBindingTexts["Drop"] = droptext.GetComponent<TMP_Text>();
 			keyBindingTexts["Pause"] = pausetext.GetComponent<TMP_Text>();
+			keyBindingTexts["Inventory"] = inventorytext.GetComponent<TMP_Text>();
 
 			LoadKeyBindings();
 		}
@@ -153,9 +164,36 @@ namespace PauseMenu{
 						SaveKeyBindings();
 						UpdateKeyBindingText(currentKeyBinding, keyCode);
 						keyConfirmationPanel.SetActive(false);
+						keyConfirmationBackground.SetActive(false);
 						currentKeyBinding = null;
 						break;
 					}
+				}
+				if (currentKeyBinding == null)
+					return;
+			}
+
+			if (Input.GetKeyDown(KeyCode.Escape))
+			{
+				Debug.Log("[PAUSE MENU MANAGER] Escape Pressed");
+				if (isPaused)
+				{
+					Debug.Log("[PAUSE MENU MANAGER] It is currently paused");
+					if (settingsCanva.activeSelf && !keyConfirmationPanel.activeSelf)
+					{
+						Debug.Log("[PAUSE MENU MANAGER] Return button");
+						ReturnButton();
+					}
+					else if (mainCanva.activeSelf)
+					{
+						Debug.Log("[PAUSE MENU MANAGER] Resume button");
+						ResumeButton();
+					}
+				}
+				else
+				{
+					Debug.Log("[PAUSE MENU MANAGER] Is not already paused");
+					PauseGame();
 				}
 			}
 		}
@@ -171,10 +209,28 @@ namespace PauseMenu{
 			saveMenu.SetActive(true);
 		}
 		
-		public void ResumeButton(){
+		public void ResumeButton()
+		{
+			isPaused = false;
 			pauseObject.SetActive(false);
+
 			Cursor.lockState = CursorLockMode.Locked;
-        	Cursor.visible = false;
+			Cursor.visible = false;
+		}
+		
+		private void PauseGame()
+		{
+			Debug.Log("[PAUSE MENU MANAGER] PAUSE METHOD");
+			isPaused = true;
+			pauseObject.SetActive(true);
+
+			mainCanva.SetActive(true);
+			settingsCanva.SetActive(false);
+			exitMenu.SetActive(false);
+			saveMenu.SetActive(false);
+
+			Cursor.lockState = CursorLockMode.None;
+			Cursor.visible = true;
 		}
 
 		public void LoadScene(string scene)
@@ -476,11 +532,13 @@ namespace PauseMenu{
         {
             currentKeyBinding = keyBindingName;
             keyConfirmationPanel.SetActive(true);
+            keyConfirmationBackground.SetActive(true);
         }
         
         public void CancelButton()
         {
             keyConfirmationPanel.SetActive(false);
+            keyConfirmationBackground.SetActive(false);
             currentKeyBinding = null;
         }
 
@@ -498,18 +556,22 @@ namespace PauseMenu{
         {
             Dictionary<string, KeyCode> defaultBindings = new Dictionary<string, KeyCode>
             {
-                { "Forward", KeyCode.W },
-                { "Backward", KeyCode.S },
-                { "Left", KeyCode.A },
-                { "Right", KeyCode.D },
-                { "Jump", KeyCode.Space },
-                { "Sprint", KeyCode.LeftShift },
-                { "Next", KeyCode.RightArrow },
-                { "Previous", KeyCode.LeftArrow },
-                { "Map", KeyCode.M },
-                { "Use", KeyCode.Q },
-                { "Interact", KeyCode.E },
-                { "Pause", KeyCode.Escape }
+	            { "Forward", KeyCode.Z },
+	            { "Backward", KeyCode.S },
+	            { "Left", KeyCode.Q },
+	            { "Right", KeyCode.D },
+	            { "Jump", KeyCode.Space },
+	            { "Sprint", KeyCode.LeftShift },
+	            { "Next", KeyCode.RightArrow },
+	            { "Previous", KeyCode.LeftArrow },
+	            { "Map", KeyCode.M },
+	            { "Use", KeyCode.A },
+	            { "PrimaryInteraction", KeyCode.E },
+	            { "SecondaryInteraction", KeyCode.F },
+	            { "Reload", KeyCode.R },
+	            { "Drop", KeyCode.T },
+	            { "Pause", KeyCode.Escape },
+	            { "Inventory", KeyCode.I }
             };
 
             foreach (var action in defaultBindings.Keys)
@@ -530,6 +592,10 @@ namespace PauseMenu{
             PlayerPrefs.Save();
         }
 
+        public Dictionary<string, KeyCode> GetKeyBindings()
+        {
+	        return keyBindings;
+        }
 
         private void UpdateKeyBindingText(string action, KeyCode keyCode)
         {

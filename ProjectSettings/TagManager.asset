@@ -3,7 +3,12 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Ghost
+  - FlatBottomFlask
+  - BoilingFlask
+  - BunsenBurner
+  - OutputFlask
   layers:
   - Default
   - TransparentFX
@@ -11,12 +16,12 @@ TagManager:
   - PadLock
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - UVObject
+  - Player
+  - Wall
+  - Door
+  - BlockRaycast
+  - ThinObject
   - 
   - 
   - 
