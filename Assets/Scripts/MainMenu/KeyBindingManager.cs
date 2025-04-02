@@ -26,6 +26,7 @@ namespace MainMenu{
         public GameObject droptext;
         public GameObject pausetext;
         public GameObject inventorytext;
+        public GameObject journaltext;
 
         private Dictionary<string, KeyCode> keyBindings = new Dictionary<string, KeyCode>();
         private Dictionary<string, TMP_Text> keyBindingTexts = new Dictionary<string, TMP_Text>();
@@ -50,6 +51,7 @@ namespace MainMenu{
             keyBindingTexts["Drop"] = droptext.GetComponent<TMP_Text>();
             keyBindingTexts["Pause"] = pausetext.GetComponent<TMP_Text>();
             keyBindingTexts["Inventory"] = inventorytext.GetComponent<TMP_Text>();
+            keyBindingTexts["Journal"] = journaltext.GetComponent<TMP_Text>();
 
             LoadKeyBindings();
         }
@@ -114,7 +116,8 @@ namespace MainMenu{
                 { "Reload", KeyCode.R },
                 { "Drop", KeyCode.T },
                 { "Pause", KeyCode.Escape },
-                { "Inventory", KeyCode.I }
+                { "Inventory", KeyCode.I },
+                { "Journal", KeyCode.J }
             };
 
             foreach (var action in defaultBindings.Keys)

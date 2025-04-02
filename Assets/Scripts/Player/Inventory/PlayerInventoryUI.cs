@@ -30,6 +30,7 @@ public class PlayerInventoryUI : MonoBehaviour
     [SerializeField] private Slider inventorySlider;
 
 	[Header("Menus à désactiver")]
+	[SerializeField] private PlayerJournalUI playerJournalUI;
 	[SerializeField] private PlayerScript playerScript;
 	[SerializeField] private PauseMenu.PauseMenuManager pauseMenuManager;
 	[SerializeField] private PlayerUsing playerUsing;
@@ -101,6 +102,8 @@ public class PlayerInventoryUI : MonoBehaviour
         if (inventoryPanel) 
 			inventoryPanel.SetActive(true);
 
+		if (playerJournalUI) 
+			playerJournalUI.enabled = false;
 		if (playerScript) 
 			playerScript.enabled = false;
     	if (pauseMenuManager) 
@@ -125,6 +128,8 @@ public class PlayerInventoryUI : MonoBehaviour
         if (inventoryPanel) 
             inventoryPanel.SetActive(false);
 	
+		if (playerJournalUI) 
+			playerJournalUI.enabled = true;
 		if (playerScript) 
 			playerScript.enabled = true;
     	if (pauseMenuManager) 

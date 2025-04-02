@@ -22,6 +22,10 @@ public class PlayerUsing : MonoBehaviourPun
 	public GameObject lighterPrefab;
 	public GameObject batteryPrefab;
     public GameObject crowbarPrefab;
+    public GameObject lemonJuicePrefab;
+    public GameObject redWinePrefab;
+    public GameObject wd40Prefab;
+    public GameObject bleachPrefab;
 
     [Header("Player")]
     private PlayerInventory inventory;
@@ -247,6 +251,10 @@ public class PlayerUsing : MonoBehaviourPun
             "Crowbar" => crowbarPrefab,
 			"Match" => matchBoxPrefab,
 			"Candle" => candlePrefab,
+            "Lemon juice" => lemonJuicePrefab,
+            "Red wine" => redWinePrefab,
+            "Bleach" => bleachPrefab,
+            "WD40" => wd40Prefab,
             _ => null
         };
 
