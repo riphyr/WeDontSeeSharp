@@ -32,8 +32,8 @@ public class CameraLookingAt : MonoBehaviour
             { typeof(InteractionScripts.Door), hit => HandleDoor(hit) },
             { typeof(InteractionScripts.Window), hit => HandleWindow(hit) },
             { typeof(InteractionScripts.Switch), hit => HandleSwitch(hit) },
-            { typeof(InteractionScripts.Drawer), hit => HandleDrawer(hit) },
             { typeof(InteractionScripts.Wardrobe), hit => HandleWardrobe(hit) },
+            { typeof(InteractionScripts.Closet), hit => HandleCloset(hit) },
             { typeof(InteractionScripts.Key), hit => HandleKey(hit) },
             { typeof(InteractionScripts.Candle), hit => HandleCandle(hit) },
             { typeof(InteractionScripts.Lighter), hit => HandleLighter(hit) },
@@ -56,7 +56,9 @@ public class CameraLookingAt : MonoBehaviour
 			{ typeof(InteractionScripts.SafeValve), hit => HandleSafeValve(hit) },
             { typeof(InteractionScripts.ScreenInteraction), hit => HandleScreen(hit) },
             { typeof(InteractionScripts.ChemistryStation), hit => HandleChemistryStation(hit) },
-            { typeof(InteractionScripts.Item), hit => HandleItem(hit) }
+            { typeof(InteractionScripts.Item), hit => HandleItem(hit) },
+            { typeof(InteractionScripts.LoreItem), hit => HandleLoreItem(hit) },
+            { typeof(InteractionScripts.Drawer), hit => HandleDrawer(hit) },
         };
     }
 
@@ -179,6 +181,12 @@ public class CameraLookingAt : MonoBehaviour
     {
         ShowInteractionText(true, hit.transform.GetComponent<InteractionScripts.Wardrobe>().IsOpen() ? "Close the wardrobe" : "Open the wardrobe");
         if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.Wardrobe>().ToggleWardrobe();
+    }
+    
+    private void HandleCloset(RaycastHit hit)
+    {
+        ShowInteractionText(true, hit.transform.GetComponent<InteractionScripts.Closet>().IsOpen() ? "Close the closet" : "Open the closet");
+        if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.Closet>().ToggleCloset();
     }
 
     private void HandleKey(RaycastHit hit)
@@ -433,5 +441,13 @@ public class CameraLookingAt : MonoBehaviour
         
         ShowInteractionText(true, $"Pick up the {item.GetItemName()}");
         if (Input.GetKeyDown(primaryInteractionKey)) item.Pickup(inventory);
+    }
+    
+    private void HandleLoreItem(RaycastHit hit)
+    {
+        var loreItem = hit.transform.GetComponent<InteractionScripts.LoreItem>();
+        
+        ShowInteractionText(true, $"Pick up the {loreItem.GetItemName()}");
+        if (Input.GetKeyDown(primaryInteractionKey)) loreItem.Pickup(inventory);
     }
 }

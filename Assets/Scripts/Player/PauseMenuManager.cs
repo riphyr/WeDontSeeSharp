@@ -90,6 +90,7 @@ namespace PauseMenu{
 
 		private string currentKeyBinding; 
 		private bool isPaused = false;
+		private static bool blockNextEscape = false;
 
 		void Start(){
 			pauseObject.SetActive(false);
@@ -174,29 +175,31 @@ namespace PauseMenu{
 					return;
 			}
 
+			if (blockNextEscape)
+			{
+				blockNextEscape = false;
+				return;
+			}
+
 			if (Input.GetKeyDown(KeyCode.Escape))
 			{
-				Debug.Log("[PAUSE MENU MANAGER] Escape Pressed");
 				if (isPaused)
 				{
-					Debug.Log("[PAUSE MENU MANAGER] It is currently paused");
 					if (settingsCanva.activeSelf && !keyConfirmationPanel.activeSelf)
-					{
-						Debug.Log("[PAUSE MENU MANAGER] Return button");
 						ReturnButton();
-					}
 					else if (mainCanva.activeSelf)
-					{
-						Debug.Log("[PAUSE MENU MANAGER] Resume button");
 						ResumeButton();
-					}
 				}
 				else
 				{
-					Debug.Log("[PAUSE MENU MANAGER] Is not already paused");
 					PauseGame();
 				}
 			}
+		}
+
+		public static void BlockNextEscapePress()
+		{
+			blockNextEscape = true;
 		}
 
 		public void UpdateVolume()

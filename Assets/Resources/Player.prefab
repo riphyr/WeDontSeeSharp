@@ -26789,7 +26789,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4588425936279967846
 RectTransform:
   m_ObjectHideFlags: 0
@@ -26802,7 +26802,6 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 808999761362063716}
   - {fileID: 5736277658920014766}
   - {fileID: 2731567786990283593}
   - {fileID: 7323155301910013938}
@@ -26836,7 +26835,6 @@ MonoBehaviour:
   buttonPrefab: {fileID: 5937050717344172708, guid: 4f39d7ca3d2eea641a12f324b8e98415, type: 3}
   contentParent: {fileID: 4878297036989205172}
   hoverSound: {fileID: 3106190916826996887}
-  loreDatabase: {fileID: 11400000, guid: 21935d7dbb807484d9779dc9fb96e195, type: 2}
   contentEntrance: {fileID: 2092512698614925877}
 --- !u!114 &5057629942931083294
 MonoBehaviour:
@@ -34323,56 +34321,6 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
---- !u!1 &8046058534127626809
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 808999761362063716}
-  - component: {fileID: 7824691749901196955}
-  m_Layer: 7
-  m_Name: LoreManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &808999761362063716
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8046058534127626809}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 4588425936279967846}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &7824691749901196955
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8046058534127626809}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21b28b6c3b064c01848b7b1e59700b68, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  loreDatabase: {fileID: 11400000, guid: 21935d7dbb807484d9779dc9fb96e195, type: 2}
-  buttonGenerator: {fileID: 4320900680907834066}
 --- !u!1 &8051652508946488888
 GameObject:
   m_ObjectHideFlags: 0

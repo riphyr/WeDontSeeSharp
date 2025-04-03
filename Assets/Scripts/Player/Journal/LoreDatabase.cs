@@ -4,7 +4,6 @@
 public class LoreDatabase : ScriptableObject
 {
     public LoreEntry[] loreEntries;
-	public ListButtonGenerator listButtonGenerator;
 
     public void MarkAsDiscovered(string itemName)
     {
@@ -14,8 +13,10 @@ public class LoreDatabase : ScriptableObject
             {
                 entry.isDiscovered = true;
 
-                if (listButtonGenerator != null)
-                    listButtonGenerator.RefreshButtons();
+                // 🔄 Rafraîchir tous les boutons actifs dans la scène
+                var allGenerators = GameObject.FindObjectsOfType<ListButtonGenerator>();
+                foreach (var gen in allGenerators)
+                    gen.RefreshButtons();
 
                 break;
             }
@@ -31,4 +32,16 @@ public class LoreDatabase : ScriptableObject
         }
         return false;
     }
+    
+    #if UNITY_EDITOR
+    [UnityEditor.InitializeOnEnterPlayMode]
+    static void OnEnterPlaymodeResetData()
+    {
+        var db = Resources.Load<LoreDatabase>("LoreDatabase");
+        foreach (var entry in db.loreEntries)
+        {
+            entry.isDiscovered = false; // Reset automatique de tout
+        }
+    }
+    #endif
 }

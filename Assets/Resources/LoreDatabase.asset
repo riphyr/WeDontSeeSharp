@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: LoreDatabase
   m_EditorClassIdentifier: 
   loreEntries:
-  - itemName: Papier journal
+  - itemName: Newspaper
     prefab: {fileID: 434746681103268103, guid: 9f19c0fa2d19d164d9a332538e67280d, type: 3}
     loreText: Lorem ipsum gottum pisum vallium...
     isDiscovered: 0
-  listButtonGenerator: {fileID: 0}

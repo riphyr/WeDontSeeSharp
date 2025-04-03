@@ -23,6 +23,7 @@ namespace InteractionScripts
         {
             audioSource = GetComponent<AudioSource>();
             view = GetComponent<PhotonView>();
+            view.OwnershipTransfer = OwnershipOption.Takeover;
         }
         
         public void Pickup(PlayerInventory inventory)

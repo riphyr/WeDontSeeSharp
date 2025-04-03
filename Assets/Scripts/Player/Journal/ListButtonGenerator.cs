@@ -14,7 +14,7 @@ public class ListButtonGenerator : MonoBehaviour
     public AudioSource hoverSound;
 
     [Header("Liste d'éléments")]
-    public LoreDatabase loreDatabase;
+    private LoreDatabase loreDatabase;
 	public ContentEntrance contentEntrance;
 
     
@@ -22,7 +22,16 @@ public class ListButtonGenerator : MonoBehaviour
 
     void Start()
     {
+	    loreDatabase = Resources.Load<LoreDatabase>("LoreDatabase");
         GenerateButtons();
+    }
+    
+    private void OnEnable()
+    {
+	    if (loreDatabase == null)
+		    loreDatabase = Resources.Load<LoreDatabase>("LoreDatabase");
+
+	    RefreshButtons();
     }
 
     void GenerateButtons()
