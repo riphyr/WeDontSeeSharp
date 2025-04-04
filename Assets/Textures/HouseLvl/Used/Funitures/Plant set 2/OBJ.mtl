@@ -1,0 +1,85 @@
+# 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
+# File Created: 20.10.2023 14:06:39
+
+newmtl Material__4
+	Ns 45.000000
+	Ni 1.500000
+	d 1.000000
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0.588000 0.588000 0.588000
+	Kd 0.588000 0.588000 0.588000
+	Ks 0.630000 0.630000 0.630000
+	Ke 0.000000 0.000000 0.000000
+	map_Ka map\Diffuse.jpg
+	map_Kd map\Diffuse.jpg
+	map_Ks map\Gloss.jpg
+
+newmtl Material__5
+	Ns 45.000000
+	Ni 1.500000
+	d 1.000000
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0.588000 0.588000 0.588000
+	Kd 0.588000 0.588000 0.588000
+	Ks 0.540000 0.540000 0.540000
+	Ke 0.000000 0.000000 0.000000
+	map_Ka map\Ground_Albedo.jpg
+	map_Kd map\Ground_Albedo.jpg
+	map_Ks map\Ground_Gloss.jpg
+	map_bump map\Ground_Normal.jpg
+	bump map\Ground_Normal.jpg
+
+newmtl Material__7
+	Ns 45.000000
+	Ni 1.500000
+	d 1.000000
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0.588000 0.588000 0.588000
+	Kd 0.588000 0.588000 0.588000
+	Ks 0.630000 0.630000 0.630000
+	Ke 0.000000 0.000000 0.000000
+	map_Ka map\Bird_Of_ParadiseBird_Branch01.jpeg
+	map_Kd map\Bird_Of_ParadiseBird_Branch01.jpeg
+	map_Ks map\Bird_Of_ParadiseBird_Branch01_Gloss.jpeg
+	map_Ke map\Bird_Of_ParadiseBird_Branch01.jpeg
+	map_bump map\Bird_Of_ParadiseBird_Branch01_Normal.jpeg
+	bump map\Bird_Of_ParadiseBird_Branch01_Normal.jpeg
+
+newmtl Material__8
+	Ns 45.000000
+	Ni 1.500000
+	d 1.000000
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0.588000 0.588000 0.588000
+	Kd 0.588000 0.588000 0.588000
+	Ks 0.720000 0.720000 0.720000
+	Ke 0.000000 0.000000 0.000000
+	map_Ka map\Bird_Of_ParadiseBird_Leaf01.jpeg
+	map_Kd map\Bird_Of_ParadiseBird_Leaf01.jpeg
+	map_Ks map\Bird_Of_ParadiseBird_Leaf_Gloss.jpeg
+	map_Ke map\Bird_Of_ParadiseBird_Leaf01.jpeg
+	map_d map\Bird_Of_ParadiseBird_Leaf_Opacity.jpeg
+	map_bump map\Bird_Of_ParadiseBird_Leaf_Normal.jpeg
+	bump map\Bird_Of_ParadiseBird_Leaf_Normal.jpeg
+
+newmtl Marble_White_Standard
+	Ns 45.000000
+	Ni 1.500000
+	d 1.000000
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0.588000 0.588000 0.588000
+	Kd 0.588000 0.588000 0.588000
+	Ks 0.720000 0.720000 0.720000
+	Ke 0.000000 0.000000 0.000000
+	map_Ka map\Mission_Olive_Tree_Version4_Vase.jpg
+	map_Kd map\Mission_Olive_Tree_Version4_Vase.jpg
