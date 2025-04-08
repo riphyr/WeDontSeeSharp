@@ -53,12 +53,11 @@ namespace InteractionScripts
         {
             if (isViewingScreen)
             {
-                if (Input.GetKeyDown(GetKeyCodeFromString(PlayerPrefs.GetString("Pause"))))
+                if (Input.GetKeyDown(KeyCode.Escape))
                 {
                     ExitScreenMode();
                 }
-
-                if (Input.GetKeyDown(GetKeyCodeFromString(PlayerPrefs.GetString("PrimaryInteraction"))))
+                else if (Input.GetKeyDown(GetKeyCodeFromString(PlayerPrefs.GetString("PrimaryInteraction"))))
                 {
                     keyboardCameraSwitcher.NextCamera();
                 }
@@ -103,6 +102,7 @@ namespace InteractionScripts
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
 
+            PauseMenu.PauseMenuManager.BlockNextEscapePress();
             StartCoroutine(ExitWithDelay());
         }
         

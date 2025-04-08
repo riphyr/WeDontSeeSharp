@@ -78,7 +78,7 @@ namespace PauseMenu{
 		public GameObject droptext;
 		public GameObject pausetext;
 		public GameObject inventorytext;
-
+		public GameObject journaltext;
 		
 		//Sliders
 		private float sliderValue = 0.0f;
@@ -90,6 +90,7 @@ namespace PauseMenu{
 
 		private string currentKeyBinding; 
 		private bool isPaused = false;
+		private static bool blockNextEscape = false;
 
 		void Start(){
 			pauseObject.SetActive(false);
@@ -143,6 +144,7 @@ namespace PauseMenu{
 			keyBindingTexts["Drop"] = droptext.GetComponent<TMP_Text>();
 			keyBindingTexts["Pause"] = pausetext.GetComponent<TMP_Text>();
 			keyBindingTexts["Inventory"] = inventorytext.GetComponent<TMP_Text>();
+			keyBindingTexts["Journal"] = journaltext.GetComponent<TMP_Text>();
 
 			LoadKeyBindings();
 		}
@@ -173,29 +175,31 @@ namespace PauseMenu{
 					return;
 			}
 
+			if (blockNextEscape)
+			{
+				blockNextEscape = false;
+				return;
+			}
+
 			if (Input.GetKeyDown(KeyCode.Escape))
 			{
-				Debug.Log("[PAUSE MENU MANAGER] Escape Pressed");
 				if (isPaused)
 				{
-					Debug.Log("[PAUSE MENU MANAGER] It is currently paused");
 					if (settingsCanva.activeSelf && !keyConfirmationPanel.activeSelf)
-					{
-						Debug.Log("[PAUSE MENU MANAGER] Return button");
 						ReturnButton();
-					}
 					else if (mainCanva.activeSelf)
-					{
-						Debug.Log("[PAUSE MENU MANAGER] Resume button");
 						ResumeButton();
-					}
 				}
 				else
 				{
-					Debug.Log("[PAUSE MENU MANAGER] Is not already paused");
 					PauseGame();
 				}
 			}
+		}
+
+		public static void BlockNextEscapePress()
+		{
+			blockNextEscape = true;
 		}
 
 		public void UpdateVolume()
@@ -571,7 +575,8 @@ namespace PauseMenu{
 	            { "Reload", KeyCode.R },
 	            { "Drop", KeyCode.T },
 	            { "Pause", KeyCode.Escape },
-	            { "Inventory", KeyCode.I }
+	            { "Inventory", KeyCode.I },
+	            { "Journal", KeyCode.J }
             };
 
             foreach (var action in defaultBindings.Keys)

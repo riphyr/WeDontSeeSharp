@@ -12,7 +12,7 @@ namespace InteractionScripts
 
         [Header("Paramètres de rotation")]
         public bool isLeftDoor = true;
-        private float rotationAngle = 90f;
+        public float rotationAngle = 90f;
         private float speed = 2.0f;
 
         private Quaternion closedRotation;

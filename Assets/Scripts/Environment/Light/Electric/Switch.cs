@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
@@ -8,6 +8,7 @@ namespace InteractionScripts
     [RequireComponent(typeof(PhotonView))]
     public class Switch : MonoBehaviourPun, IPunObservable
     {
+        [SerializeField] private List<GameObject> lightTargets;
         private bool isOn = false;
         public AudioSource audioSource;
         public AudioClip switchSound;
@@ -17,8 +18,9 @@ namespace InteractionScripts
         {
             audioSource = GetComponent<AudioSource>();
             view = GetComponent<PhotonView>();
+            view.OwnershipTransfer = OwnershipOption.Takeover;
 
-            UpdateChildrenState();
+            UpdateLightTargets();
         }
 
         public void ToggleSwitch()
@@ -31,22 +33,27 @@ namespace InteractionScripts
             ActivateSwitch();
         }
 
-
         private void ActivateSwitch()
         {
             isOn = !isOn;
             audioSource.PlayOneShot(switchSound);
-            UpdateChildrenState();
+            UpdateLightTargets();
         }
 
-        private void UpdateChildrenState()
+        private void UpdateLightTargets()
         {
-            foreach (Transform child in transform)
+            foreach (GameObject target in lightTargets)
             {
-                child.gameObject.SetActive(isOn);
+                if (target == null) continue;
+
+                Light[] lights = target.GetComponentsInChildren<Light>(true);
+                foreach (Light light in lights)
+                {
+                    light.enabled = isOn;
+                }
             }
         }
-        
+
         public bool IsOn()
         {
             return isOn;
@@ -65,7 +72,7 @@ namespace InteractionScripts
 
                 if (isOn != previousState)
                 {
-                    UpdateChildrenState();
+                    UpdateLightTargets();
                 }
             }
         }
