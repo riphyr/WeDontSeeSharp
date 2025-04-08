@@ -28,6 +28,7 @@ namespace Studio
         {
             yield return new WaitForSeconds(delay);  // Attendre 10 secondes
             instructionText.text = "";  // Masquer le texte explicatif
+            instructionText.gameObject.SetActive(false);
         }
 
         // Coroutine pour gérer le compte à rebours

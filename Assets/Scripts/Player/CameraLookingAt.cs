@@ -128,8 +128,20 @@ public class CameraLookingAt : MonoBehaviour
             {
                 Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
                 ShowInteractionText(true, $"Ramasser la carte");
-                if (Input.GetKeyDown(interactKey)) 
+                if (Input.GetKeyDown(interactKey))
+                {
                     card.Collect();
+                }
+            }
+            else if (hit.transform.TryGetComponent(out InteractionScripts.CardDeposit cardDeposit))
+            {
+                Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
+                ShowInteractionText(true, $"Deposit the cards");
+                if (Input.GetKeyDown(interactKey))
+                {
+                    cardDeposit.Deposit();
+                }
+                
             }
 
         }
@@ -155,6 +167,7 @@ public class CameraLookingAt : MonoBehaviour
                 else
                 {
                     interactionText.GetComponent<TMPro.TextMeshProUGUI>().text = $"{message1} [{interactKey}]";
+                    Debug.Log($"{message1} [{interactKey}]");
                 }
             }
         }
