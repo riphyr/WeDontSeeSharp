@@ -7,6 +7,7 @@ public class CameraLookingAt : MonoBehaviour
     [Header("Paramètres d'interaction")]
     public float interactionDistance = 2.5f;
     public GameObject interactionText;
+    public GameObject player;
 
     private Camera playerCamera;
     private PlayerInventory inventory;
@@ -124,15 +125,15 @@ public class CameraLookingAt : MonoBehaviour
                 if (Input.GetKeyDown(interactKey)) 
                     matchBox.PickupMatchBox(inventory);
             }
-            else if (hit.transform.TryGetComponent(out InteractionScripts.Card card))
+            else if (hit.transform.TryGetComponent(out InteractionScripts.ChairInteraction chairInteraction))
             {
                 Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
-                ShowInteractionText(true, $"Ramasser la carte");
+                ShowInteractionText(true, $"S'asseoir");
                 if (Input.GetKeyDown(interactKey))
                 {
-                    card.Collect();
+                    chairInteraction.SitDown(player);
                 }
-            }
+            }/*
             else if (hit.transform.TryGetComponent(out InteractionScripts.CardDeposit cardDeposit))
             {
                 Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
@@ -142,7 +143,7 @@ public class CameraLookingAt : MonoBehaviour
                     cardDeposit.Deposit();
                 }
                 
-            }
+            }*/
 
         }
         else

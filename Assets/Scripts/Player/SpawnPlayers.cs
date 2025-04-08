@@ -6,14 +6,14 @@ using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
 using PauseMenu;
-using Studio;
+//using Studio;
 
 public class SpawnPlayers : MonoBehaviourPunCallbacks
 {
     public GameObject playerPrefab;
     public string requiredSceneName = "GameScene";
     private bool playerSpawned = false;
-    public Consigne consigne;  // Référence à la classe Consigne
+    //public Consigne consigne;  // Référence à la classe Consigne
 
     
     private void Start()
@@ -111,9 +111,9 @@ public class SpawnPlayers : MonoBehaviourPunCallbacks
         GameObject interactionMenu = myPlayer.transform.Find("GUI").gameObject;
         interactionMenu.SetActive(true);
 
-        if (requiredSceneName == "Scene_02")
-        {
-            consigne.Text();
-        }
+        //if (requiredSceneName == "Scene_02")
+        //{
+           // consigne.Text();
+        //}
     }
 }

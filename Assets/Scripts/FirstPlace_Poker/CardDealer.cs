@@ -102,9 +102,7 @@ public class CardDealer : MonoBehaviourPun
         {
             n--;
             int k = rng.Next(n + 1);
-            int temp = list[k];
-            list[k] = list[n];
-            list[n] = temp;
+            (list[k], list[n]) = (list[n], list[k]);
         }
     }
 

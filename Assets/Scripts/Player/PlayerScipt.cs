@@ -37,6 +37,7 @@ public class PlayerScript : MonoBehaviour, IPunObservable
 
 	[Header("MENUS")]
 	public GameObject pauseObject;				// Menu de pause
+	public bool showPanelOnCursor = true;
 
 	// Synchronisation des animations
     private float animatorSides;
@@ -135,7 +136,7 @@ public class PlayerScript : MonoBehaviour, IPunObservable
 			Cursor.visible = true;
 	    }
 
-		if (Cursor.lockState == CursorLockMode.None && Cursor.visible)
+		if (Cursor.lockState == CursorLockMode.None && Cursor.visible && showPanelOnCursor)
 	    {
 			pauseObject.SetActive(true);
 	    }
