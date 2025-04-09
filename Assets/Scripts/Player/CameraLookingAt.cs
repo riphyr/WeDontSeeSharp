@@ -133,16 +133,6 @@ public class CameraLookingAt : MonoBehaviour
                     card.Collect();
                 }
             }
-            else if (hit.transform.TryGetComponent(out InteractionScripts.CardDeposit cardDeposit))
-            {
-                Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
-                ShowInteractionText(true, $"Deposit the cards");
-                if (Input.GetKeyDown(interactKey))
-                {
-                    cardDeposit.Deposit();
-                }
-                
-            }
 
         }
         else

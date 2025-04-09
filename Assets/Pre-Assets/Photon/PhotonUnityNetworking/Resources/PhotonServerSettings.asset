@@ -58,6 +58,8 @@ MonoBehaviour:
   - ShowDepositedCards
   - DestroyCard
   - RequestDestroyCard
+  - SpawnCardOnTable
+  - ShowWinMessage
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

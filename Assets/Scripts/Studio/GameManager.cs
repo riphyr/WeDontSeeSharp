@@ -11,11 +11,12 @@ public class GameManager : MonoBehaviourPunCallbacks
     public int totalCardsToCollect = 42;
     private int cardsCollected = 0;
     private bool isGameOver = false;
+    public List<string> cards = new List<string>();
 
     private Dictionary<int, List<string>> playerInventories = new Dictionary<int, List<string>>();
 
-    [Header("Affichage des Cartes Déposées")]
-    public static List<CardData> collectedCards = new List<CardData>(); 
+    //[Header("Affichage des Cartes Déposées")]
+    //public static List<CardData> collectedCards = new List<CardData>(); 
     //public Transform cardDisplayArea; // Zone où les cartes seront affichées
     //public GameObject cardPrefab; // Prefab du modèle de carte
 
@@ -44,6 +45,11 @@ public class GameManager : MonoBehaviourPunCallbacks
         if (!isGameOver)
         {
             UpdateTimerUI();
+        }
+        if (cardsCollected >= totalCardsToCollect)
+        {
+            photonView.RPC("GameOverRPC", RpcTarget.AllBuffered);
+            ShowVictoryMessage(); // Ajouté ici
         }
     }
 
@@ -74,6 +80,8 @@ public class GameManager : MonoBehaviourPunCallbacks
         int seconds = Mathf.FloorToInt(timer % 60);
         //timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
     }
+   
+
 
     // ========= INVENTAIRE ET COLLECTE DE CARTES =========
 
@@ -86,6 +94,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             playerInventories[playerID] = new List<string>();
         }
+        cards.Add(cardName);
         playerInventories[playerID].Add(cardName);
         Debug.Log(playerInventories[playerID].Count);
         photonView.RPC("IncrementCardCount", RpcTarget.AllBuffered, playerID, cardName);
@@ -111,4 +120,28 @@ public class GameManager : MonoBehaviourPunCallbacks
         isGameOver = true;
         Debug.Log("Jeu terminé !");
     }
+    public int GetPlayerCardCount()
+    {
+        int playerID = PhotonNetwork.LocalPlayer.ActorNumber;
+        if (playerInventories.ContainsKey(playerID))
+            return playerInventories[playerID].Count;
+        return 0;
+    }
+    void ShowVictoryMessage()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            photonView.RPC("ShowWinMessage", RpcTarget.All);
+        }
+    }
+
+    [PunRPC]
+    void ShowWinMessage()
+    {
+        // Tu peux créer un objet texte dans ton UI pour afficher ça
+        Debug.Log("🎉 Félicitations ! Toutes les cartes ont été récupérées !");
+        // Active un TextMeshPro si tu veux l'afficher à l'écran
+    }
+
+
 }

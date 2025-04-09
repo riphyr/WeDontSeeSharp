@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿/*using UnityEngine;
 using System.Collections.Generic;
 
 public class CardPickup : MonoBehaviour
@@ -48,4 +48,4 @@ public class CardData
         this.name = name;
         this.material = material;
     }
-}
+}*/
