@@ -8,7 +8,16 @@ namespace InteractionScripts
     [RequireComponent(typeof(PhotonView))]
     public class Switch : MonoBehaviourPun, IPunObservable
     {
-        [SerializeField] private List<GameObject> lightTargets;
+        [System.Serializable]
+        public class LightElement
+        {
+            public GameObject targetObject;
+            public Material emissiveMaterial;
+            public GameObject visualIndicator;
+        }
+
+        [SerializeField] private List<LightElement> lightElements;
+
         private bool isOn = false;
         public AudioSource audioSource;
         public AudioClip switchSound;
@@ -42,22 +51,36 @@ namespace InteractionScripts
 
         private void UpdateLightTargets()
         {
-            foreach (GameObject target in lightTargets)
+            foreach (var element in lightElements)
             {
-                if (target == null) continue;
-
-                Light[] lights = target.GetComponentsInChildren<Light>(true);
-                foreach (Light light in lights)
+                if (element.targetObject != null)
                 {
-                    light.enabled = isOn;
+                    Light[] lights = element.targetObject.GetComponentsInChildren<Light>(true);
+                    foreach (Light light in lights)
+                    {
+                        light.enabled = isOn;
+                    }
+                }
+
+                if (element.emissiveMaterial != null)
+                {
+                    if (isOn)
+                        element.emissiveMaterial.EnableKeyword("_EMISSION");
+                    else
+                        element.emissiveMaterial.DisableKeyword("_EMISSION");
+
+                    Color current = element.emissiveMaterial.GetColor("_EmissionColor");
+                    element.emissiveMaterial.SetColor("_EmissionColor", current);
+                }
+
+                if (element.visualIndicator != null)
+                {
+                    element.visualIndicator.SetActive(isOn);
                 }
             }
         }
 
-        public bool IsOn()
-        {
-            return isOn;
-        }
+        public bool IsOn() => isOn;
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {

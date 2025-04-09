@@ -21,21 +21,48 @@ namespace InteractionScripts
         private GameObject oldCandle;
         private GameObject candleLightNew;
         private GameObject candleLightOld;
+        
+        private Material newCandleMaterialInstance;
+        private Material oldCandleMaterialInstance;
+        private Renderer newCandleRenderer;
+        private Renderer oldCandleRenderer;
+
 
         void Start()
         {
             audioSource = GetComponent<AudioSource>();
             view = GetComponent<PhotonView>();
-            
+
             newCandle = transform.Find("NewCandle")?.gameObject;
             oldCandle = transform.Find("OldCandle")?.gameObject;
             candleLightNew = newCandle?.transform.Find("Candlelight")?.gameObject;
             candleLightOld = oldCandle?.transform.Find("Candlelight")?.gameObject;
-            
-            oldCandle.SetActive(false);
-            candleLightOld.SetActive(false);
-            candleLightNew.SetActive(false);
+
+            newCandleRenderer = newCandle?.GetComponentInChildren<Renderer>();
+            oldCandleRenderer = oldCandle?.GetComponentInChildren<Renderer>();
+
+            if (newCandleRenderer != null)
+            {
+                Material baseMat = newCandleRenderer.sharedMaterial;
+                newCandleMaterialInstance = new Material(baseMat);
+                newCandleRenderer.material = newCandleMaterialInstance;
+                DisableEmission(newCandleMaterialInstance);
+            }
+
+            if (oldCandleRenderer != null)
+            {
+                Material baseMat = oldCandleRenderer.sharedMaterial;
+                oldCandleMaterialInstance = new Material(baseMat);
+                oldCandleRenderer.material = oldCandleMaterialInstance;
+                DisableEmission(oldCandleMaterialInstance);
+            }
+
+            newCandle?.SetActive(true);
+            candleLightNew?.SetActive(false);
+            oldCandle?.SetActive(false);
+            candleLightOld?.SetActive(false);
         }
+
 
         public void PickupCandle(PlayerInventory inventory)
         {
@@ -94,6 +121,8 @@ namespace InteractionScripts
             oldCandle.SetActive(false);
             candleLightNew.SetActive(true);
             StartCoroutine(BurnOutTimer());
+            
+            EnableEmission(newCandleMaterialInstance);
         }
 
         private IEnumerator BurnOutTimer()
@@ -109,6 +138,21 @@ namespace InteractionScripts
             oldCandle.SetActive(true);
             candleLightOld.SetActive(true);
             candleLightNew.SetActive(false);
+            
+            EnableEmission(oldCandleMaterialInstance);
+            DisableEmission(newCandleMaterialInstance);
+        }
+        
+        private void EnableEmission(Material mat)
+        {
+            if (mat == null) return;
+            mat.EnableKeyword("_EMISSION");
+        }
+
+        private void DisableEmission(Material mat)
+        {
+            if (mat == null) return;
+            mat.DisableKeyword("_EMISSION");
         }
         
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
