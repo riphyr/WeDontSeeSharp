@@ -8,10 +8,10 @@ namespace InteractionScripts
     {
         public string cardName; // Nom de la carte
         //public static List<CardData> collectedCards = new List<CardData>();
-        public Material cardMaterial;
-        public GameObject cardPrefab; // Prefab de la carte à instancier sur la table
-        public Transform tablePosition; // Position où les cartes seront déposées
-        public List<string> cards = new List<string>();
+        //public Material cardMaterial;
+        //public GameObject cardPrefab; // Prefab de la carte à instancier sur la table
+        //public Transform tablePosition; // Position où les cartes seront déposées
+        //public List<string> cardsName = new List<string>();
         private bool isNearTable = false;
 
         void Start()

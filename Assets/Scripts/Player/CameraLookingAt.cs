@@ -39,9 +39,11 @@ public class CameraLookingAt : MonoBehaviour
     {
         Ray ray = playerCamera.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f));
         RaycastHit hit;
+        Debug.Log("gettttt in");
 
         if (Physics.Raycast(ray, out hit, interactionDistance))
         {
+            Debug.Log(hit.collider.gameObject.name);
             Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.red);
 
             if (hit.transform.TryGetComponent(out InteractionScripts.Door door))
@@ -80,6 +82,7 @@ public class CameraLookingAt : MonoBehaviour
                 if (Input.GetKeyDown(interactKey)) 
                     lightSwitch.ToggleSwitch();
             }
+           
             else if (hit.transform.TryGetComponent(out InteractionScripts.Drawer drawer))
             {
                 Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue);
@@ -133,7 +136,16 @@ public class CameraLookingAt : MonoBehaviour
                     card.Collect();
                 }
             }
+            else if (hit.transform.TryGetComponent(out DepositTable table))
+            {
+                Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.green);
+                ShowInteractionText(true, $"Déposer les cartes");
 
+                if (Input.GetKeyDown(interactKey))
+                {
+                    table.DepositCards();
+                }
+            }
         }
         else
         {

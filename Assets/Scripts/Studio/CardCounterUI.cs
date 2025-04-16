@@ -11,7 +11,7 @@ public class CardCounterUI : MonoBehaviour
         {
             int count = GameManager.instance.GetPlayerCardCount();
             int total = GameManager.instance.totalCardsToCollect;
-            cardCounterText.text = $"Cartes : {count} / {total}";
+            cardCounterText.text = $"Cards collected : {count} / {total}";
         }
     }
 }

@@ -142,6 +142,30 @@ public class GameManager : MonoBehaviourPunCallbacks
         Debug.Log("🎉 Félicitations ! Toutes les cartes ont été récupérées !");
         // Active un TextMeshPro si tu veux l'afficher à l'écran
     }
+    [SerializeField] private List<GameObject> allCardPrefabs; // Assigne-les dans l'inspector
+
+    public List<string> GetInventory(int playerID)
+    {
+        if (playerInventories.TryGetValue(playerID, out List<string> inventory))
+        {
+            return new List<string>(inventory); // retourne une copie
+        }
+        return new List<string>();
+    }
+
+    public void ClearInventory(int playerID)
+    {
+        if (playerInventories.ContainsKey(playerID))
+        {
+            playerInventories[playerID].Clear();
+        }
+    }
+
+    public GameObject GetCardPrefabByName(string cardName)
+    {
+        return allCardPrefabs.Find(card => card.name == cardName);
+    }
+
 
 
 }
