@@ -20,4 +20,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/labyrinthe.unity
     guid: e2aeb3de6858a32dbbac54f917b5db89
+  - enabled: 1
+    path: Assets/Scenes/travail.unity
+    guid: fa1eae5c2c61994fa82239ddc3ba9813
+  - enabled: 1
+    path: Assets/Scenes/HouseLvl.unity
+    guid: f2f808dcb5c63a2469afff3c21343f7b
   m_configObjects: {}
