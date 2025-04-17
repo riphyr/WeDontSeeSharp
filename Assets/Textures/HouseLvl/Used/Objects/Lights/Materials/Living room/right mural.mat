@@ -11,8 +11,7 @@ Material:
   m_Shader: {fileID: 4800000, guid: d45b9b71872a0bf4fb133c84e43106af, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords:
-  - _EMISSION
+  m_ValidKeywords: []
   m_InvalidKeywords:
   - _DISABLE_SSR_TRANSPARENT
   - _NORMALMAP_TANGENT_SPACE
