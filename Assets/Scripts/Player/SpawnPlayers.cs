@@ -24,7 +24,11 @@ public class SpawnPlayers : MonoBehaviourPunCallbacks
             }
         }
 
-        SpawnPlayer();
+        else if (PhotonNetwork.InRoom && !playerSpawned)
+        {
+            SpawnPlayer();
+            playerSpawned = true;
+        }
     }
     
     public override void OnConnectedToMaster()
