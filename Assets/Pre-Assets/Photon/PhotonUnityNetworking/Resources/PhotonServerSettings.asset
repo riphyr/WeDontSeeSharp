@@ -110,6 +110,15 @@ MonoBehaviour:
   - RPC_SetUnlocked
   - RPC_TryUnlock
   - MarkAsDiscoveredForAll
+  - EndGame
+  - SendPlayerToStart
+  - StartNewCountdown
+  - StorePlayerPositions
+  - UpdateCountdownText
+  - PlayerLost
+  - PlayerWon
+  - SetGameMaster
+  - SyncLightState
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

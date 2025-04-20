@@ -12,6 +12,8 @@ public class SpawnPlayers : MonoBehaviourPunCallbacks
     public GameObject playerPrefab;
     public string requiredSceneName = "GameScene";
     private bool playerSpawned = false;
+
+    public Transform Pos;
     
     private void Start()
     {
@@ -66,7 +68,7 @@ public class SpawnPlayers : MonoBehaviourPunCallbacks
     private void SpawnPlayer()
     {
         // Définition du spawnpoint
-        Vector3 Position = new Vector3(4, 4, 1);
+        Vector3 Position = Pos.position;
 
         // Instanciation du prefab du joueur et tag
         GameObject myPlayer = PhotonNetwork.Instantiate(playerPrefab.name, Position, Quaternion.identity);

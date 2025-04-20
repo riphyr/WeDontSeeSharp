@@ -1,148 +1,274 @@
 using UnityEngine;
 using Photon.Pun;
-using Photon.Realtime;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine.UI;
 using TMPro;
 
-public class RedLightGreenLight : MonoBehaviourPunCallbacks
+public class RedLightGreenLightGame : MonoBehaviourPunCallbacks
 {
-    [Header("Game Parameters")]
-    public float minCountdownTime = 3f;
-    public float maxCountdownTime = 10f;
-    public float rotationSpeed = 90f;
-    public float winDistance = 1f;
-    public float startPositionThreshold = 0.2f;
+    [Header("Game Settings")]
+    public GameObject gameMasterPrefab; // Préfab du meneur de jeu
+    public List<Transform> possibleSpawnPoints; // Positions possibles du meneur
+    public float maxDistanceToWin = 3f; // Distance maximale pour gagner
+    public float gameDuration = 60f; // Durée totale du jeu en secondes
+    public float minTimeBetweenStates = 1f; // Temps minimum entre changements
+    public float maxTimeBetweenStates = 5f; // Temps maximum entre changements
+    public float startDelay = 5f; // Délai avant le début du jeu
+    public string loseSceneName = "Hub"; // Nom de la scène de défaite
 
-    [Header("References")]
-    public Transform gameMaster;
-    public TextMeshProUGUI countdownText;
-    public Transform[] startPositions;
+    [Header("UI References")]
+    public TMP_Text countdownText; // Texte pour le compte à rebours
+    public TMP_Text gameStateText; // Texte pour l'état du jeu (Red/Green Light)
+    public TMP_Text instructionsText; // Texte pour les instructions
+    public Canvas Lights;
+    public Image Red;
+    public Image Green;
 
-    private bool isCounting = false;
-    private bool playersCanMove = false;
-    private float currentCountdown;
-    private Coroutine countdownCoroutine;
-    private Vector3[] playerPositions;
+    [Header("Game State")]
+    public bool isGreenLight = false;
+    public bool gameIsActive = false;
+    public bool gameStarting = false;
+    private Transform currentGameMaster;
+
+    private float gameTimer;
+    private float startTimer;
+    private List<Photon.Realtime.Player> playersInGame = new List<Photon.Realtime.Player>();
 
     private void Start()
     {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            playerPositions = new Vector3[PhotonNetwork.CurrentRoom.PlayerCount];
-            StartNewCountdown();
-        }
+        if (gameStateText != null) gameStateText.text = "";
+        if (Lights != null) Lights.enabled = false;
+        // Start Game
+        StartGameCountdown();
     }
 
-    private void Update()
+    // Start initial the CountDown
+    public void StartGameCountdown()
     {
-        if (!PhotonNetwork.IsMasterClient) return;
+        if (gameStarting || gameIsActive) return;
+
+        gameStarting = true;
+        startTimer = startDelay;
+
+        // Show initials instructions
+        if (instructionsText != null)
+        {
+            instructionsText.text = "Beware it will start soon ! Search the Doll when it's GREEN LIGHT, but FREEZE when it's RED LIGHT!";
+        }
+        StartCoroutine(StartCountdownCoroutine());
+    }
+
+    private IEnumerator StartCountdownCoroutine()
+    {
+        while (startTimer > 0)
+        {
+            startTimer -= Time.deltaTime;
+
+            // Update the textCountDown
+            if (countdownText != null)
+            {
+                countdownText.text = $"Game starts in: {Mathf.CeilToInt(startTimer)}";
+            }
+
+            yield return null;
+        }
+
+        // Update the game after the countDown
+        StartGame();
+    }
+
+    private void StartGame()
+    {
         
-        if (!playersCanMove)
-        {
-            gameMaster.Rotate(Vector3.up, rotationSpeed * Time.deltaTime);
-        }
+        gameStarting = false;
+        gameIsActive = true;
+        gameTimer = gameDuration;
 
-        if (!playersCanMove && isCounting)
-        {
-            CheckMovingPlayers();
-        }
+        // Hide the countDown and the instructions
+        if (countdownText != null) countdownText.text = "";
+        if (instructionsText != null) instructionsText.text = "";
 
-        CheckWinningPlayers();
+        // Spawn of the game master (Doll)
+        SpawnGameMaster();
+        if (Lights != null) Lights.enabled = true;
+
+        // Start coroutines
+        StartCoroutine(GameTimerCoroutine());
+        StartCoroutine(LightSwitchCoroutine());
     }
 
-    [PunRPC]
-    public void StartNewCountdown()
+    private void SpawnGameMaster()
     {
-        if (countdownCoroutine != null)
+        try
         {
-            StopCoroutine(countdownCoroutine);
-        }
-
-        currentCountdown = Random.Range(minCountdownTime, maxCountdownTime);
-        countdownCoroutine = StartCoroutine(CountdownRoutine());
-    }
-
-    private IEnumerator CountdownRoutine()
-    {
-        isCounting = true;
-        playersCanMove = true;
-        photonView.RPC("UpdateCountdownText", RpcTarget.All, "1, 2, 3... MOVE!");
-
-        yield return new WaitForSeconds(currentCountdown);
-
-        isCounting = false;
-        playersCanMove = false;
-        photonView.RPC("UpdateCountdownText", RpcTarget.All, "SOLEIL!");
-        photonView.RPC("StorePlayerPositions", RpcTarget.All);
-
-        yield return new WaitForSeconds(2f);
-
-        if (PhotonNetwork.IsMasterClient)
-        {
-            StartNewCountdown();
-        }
-    }
-
-    [PunRPC]
-    private void UpdateCountdownText(string text)
-    {
-        countdownText.text = text;
-    }
-
-    [PunRPC]
-    private void StorePlayerPositions()
-    {
-        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-        for (int i = 0; i < players.Length; i++)
-        {
-            if (players[i].GetPhotonView().IsMine)
+            if (!PhotonNetwork.IsMasterClient)
             {
-                playerPositions[i] = players[i].transform.position;
+                Debug.Log("Not master client, won't spawn game master");
+                return;
+            }
+
+            if (gameMasterPrefab == null)
+            {
+                Debug.LogError("Game Master Prefab is not assigned!");
+                return;
+            }
+
+            if (possibleSpawnPoints == null || possibleSpawnPoints.Count == 0)
+            {
+                Debug.LogError("No spawn points available for Game Master");
+                return;
+            }
+
+            Transform spawnPoint = possibleSpawnPoints[Random.Range(0, possibleSpawnPoints.Count)];
+            GameObject master = PhotonNetwork.Instantiate(gameMasterPrefab.name, spawnPoint.position, spawnPoint.rotation);
+            
+            currentGameMaster = master.transform;
+            photonView.RPC("SetGameMaster", RpcTarget.Others, master.GetComponent<PhotonView>().ViewID);
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"Error spawning Game Master: {e.Message}");
+        }
+    }
+
+    [PunRPC]
+    private void SetGameMaster(int viewID)
+    {
+        PhotonView view = PhotonView.Find(viewID);
+        if (view != null)
+        {
+            currentGameMaster = view.transform;
+        }
+    }
+
+    private IEnumerator GameTimerCoroutine()
+    {
+        while (gameTimer > 0 && gameIsActive)
+        {
+            gameTimer -= Time.deltaTime;
+
+            // Update Timer
+            if (countdownText != null)
+            {
+                countdownText.text = $"Time remaining: {Mathf.FloorToInt(gameTimer)}";
+            }
+
+            // Check player's distance
+            CheckPlayersDistance();
+
+            yield return null;
+        }
+
+        // End the game when the timer reach 0
+        EndGame();
+    }
+
+    private IEnumerator LightSwitchCoroutine()
+    {
+        // Wait before the first changement
+        yield return new WaitForSeconds(1f);
+
+        while (gameIsActive)
+        {
+            // Change the light
+            isGreenLight = !isGreenLight;
+            if (!isGreenLight) Green.enabled = false;
+            else Green.enabled = true;
+
+            // Synchronise clients state
+            //photonView.RPC("SyncLightState", RpcTarget.All, isGreenLight);
+
+            // Wait a random time for the light changement
+            float waitTime = Random.Range(minTimeBetweenStates, maxTimeBetweenStates);
+            yield return new WaitForSeconds(waitTime);
+        }
+    }
+
+    [PunRPC]
+    private void SyncLightState(bool state)
+    {
+        isGreenLight = state;
+        
+        // Update UI
+        if (gameStateText != null)
+        {
+            gameStateText.text = isGreenLight ? "GREEN LIGHT - RUN!" : "RED LIGHT - FREEZE!";
+            gameStateText.color = isGreenLight ? Color.green : Color.red;
+        }
+
+        Debug.Log(isGreenLight ? "GREEN LIGHT!" : "RED LIGHT!");
+    }
+
+    private void CheckPlayersDistance() // Corriger
+    {
+        if (!PhotonNetwork.IsMasterClient || currentGameMaster == null) return;
+
+        foreach (var player in PhotonNetwork.PlayerList)
+        {
+            GameObject playerObj = (GameObject)player.TagObject;
+            if (playerObj == null) continue;
+
+            float distance = Vector3.Distance(playerObj.transform.position, currentGameMaster.position);
+
+            if (distance <= maxDistanceToWin)
+            {
+                // One player won
+                photonView.RPC("PlayerWon", player);
+            }
+            else if (!isGreenLight && IsPlayerMoving(playerObj))
+            {
+                // One player move when the light is red
+                gameStateText.text = "T'es guez";
+                photonView.RPC("PlayerLost", player);
             }
         }
     }
 
-    private void CheckMovingPlayers()
+    private bool IsPlayerMoving(GameObject player)  // Corriger
     {
-        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-        for (int i = 0; i < players.Length; i++)
+        Rigidbody rb = player.GetComponent<Rigidbody>();
+        if (rb != null && rb.velocity.magnitude > 0.1f)
         {
-            if (Vector3.Distance(players[i].transform.position, playerPositions[i]) > startPositionThreshold)
-            {
-                photonView.RPC("SendPlayerToStart", players[i].GetPhotonView().Owner, i % startPositions.Length);
-                break;
-            }
+            return true;
         }
+        return false;
     }
 
     [PunRPC]
-    private void SendPlayerToStart(int startIndex)
+    private void PlayerWon()
     {
-        transform.position = startPositions[startIndex].position;
-    }
-
-    private void CheckWinningPlayers()
-    {
-        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-        foreach (GameObject player in players)
-        {
-            if (Vector3.Distance(player.transform.position, gameMaster.position) < winDistance)
-            {
-                photonView.RPC("EndGame", RpcTarget.All, player.GetPhotonView().Owner.NickName + " a gagné!");
-                break;
-            }
-        }
+        Debug.Log("You won the game!");
+        // Load victory scene
     }
 
     [PunRPC]
-    private void EndGame(string message)
+    private void PlayerLost()
     {
-        countdownText.text = message;
-        enabled = false;
+        Debug.Log("You lost! Returning to " + loseSceneName);
+        // Just a debug message
+        // Later : PhotonNetwork.LoadLevel(loseSceneName);
     }
 
-    public bool CanPlayerMove()
+    private void EndGame()
     {
-        return playersCanMove;
+        gameIsActive = false;
+        StopAllCoroutines();
+        Lights.enabled = false;
+
+        Debug.Log("Game ended!");
+
+        if (countdownText != null) countdownText.text = "";
+        // Update UI
+        if (gameStateText != null)
+        {
+            gameStateText.text = "GAME OVER";
+        }
+
+        // Destroy the game master
+        if (currentGameMaster != null && PhotonNetwork.IsMasterClient)
+        {
+            PhotonNetwork.Destroy(currentGameMaster.gameObject);
+        }
     }
 }
