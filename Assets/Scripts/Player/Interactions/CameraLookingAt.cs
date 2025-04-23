@@ -14,6 +14,7 @@ public class CameraLookingAt : MonoBehaviour
 	private PlayerUsing playerUsing;
     private KeyCode primaryInteractionKey;
     private KeyCode secondaryInteractionKey;
+    private int mask;
 
     private Dictionary<Type, Action<RaycastHit>> interactionHandlers;
 
@@ -22,7 +23,10 @@ public class CameraLookingAt : MonoBehaviour
         inventory = GetComponent<PlayerInventory>();
         playerCamera = GetComponentInChildren<Camera>();
 		playerUsing = GetComponent<PlayerUsing>();
-
+        
+        int ignoreLayer = LayerMask.GetMask("AvoidRaycast");
+        mask = ~ignoreLayer;
+        
         LoadInteractionKey();
 
         interactionHandlers = new Dictionary<Type, Action<RaycastHit>>()
@@ -92,7 +96,7 @@ public class CameraLookingAt : MonoBehaviour
 
         Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.blue, 0.1f);
 
-        if (Physics.Raycast(ray, out hit, interactionDistance))
+        if (Physics.Raycast(ray, out hit, interactionDistance, mask))
         {
             GameObject targetObject = hit.transform.gameObject;
             var foundComponent = false;
@@ -167,7 +171,7 @@ public class CameraLookingAt : MonoBehaviour
 
     private void HandleSwitch(RaycastHit hit)
     {
-        ShowInteractionText(true, hit.transform.GetComponent<InteractionScripts.Switch>().IsOn() ? "Turn off the switch" : "Turn on the switch");
+        ShowInteractionText(true, hit.transform.GetComponent<InteractionScripts.Switch>().IsOn() ? "Turn off the light" : "Turn on the light");
         if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.Switch>().ToggleSwitch();
     }    
 

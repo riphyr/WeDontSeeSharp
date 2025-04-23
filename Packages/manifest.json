@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.siccity.gltfutility": "https://github.com/Siccity/GLTFUtility.git",
     "com.unity.collab-proxy": "2.4.4",
     "com.unity.editorcoroutines": "1.0.0",
     "com.unity.ext.nunit": "1.0.6",

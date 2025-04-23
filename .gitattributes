@@ -1,0 +1,4 @@
+uploads_files_3138007_Bedroom.fbx filter=lfs diff=lfs merge=lfs -text
+bed.glb filter=lfs diff=lfs merge=lfs -text
+wardrobe.glb filter=lfs diff=lfs merge=lfs -text
+Bookshelve.glb filter=lfs diff=lfs merge=lfs -text

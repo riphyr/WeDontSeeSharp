@@ -13,6 +13,9 @@ namespace InteractionScripts
         [Header("Type de porte")]
         public DoorType doorType = DoorType.Normal;
 
+        [Header("Light blocker")]
+        public GameObject lightBlocker;
+
         private bool open;
         private float smooth = 1.0f;
         private float DoorOpenAngle = -90.0f;
@@ -29,18 +32,19 @@ namespace InteractionScripts
         {
             asource = GetComponent<AudioSource>();
             view = GetComponent<PhotonView>();
+            UpdateLightBlocker();
         }
 
         void Update()
         {
             if (open)
             {
-                var target = Quaternion.Euler (0, DoorOpenAngle, 0);
+                var target = Quaternion.Euler(0, DoorOpenAngle, 0);
                 transform.localRotation = Quaternion.Slerp(transform.localRotation, target, Time.deltaTime * 5 * smooth);
             }
             else
             {
-                var target1= Quaternion.Euler (0, DoorCloseAngle, 0);
+                var target1 = Quaternion.Euler(0, DoorCloseAngle, 0);
                 transform.localRotation = Quaternion.Slerp(transform.localRotation, target1, Time.deltaTime * 5 * smooth);
             }
         }
@@ -51,7 +55,7 @@ namespace InteractionScripts
             {
                 view.TransferOwnership(PhotonNetwork.LocalPlayer);
             }
-            
+
             if (doorType != DoorType.Normal && (HasActiveLock<LockKey>() || HasActiveLock<PadLock>()))
             {
                 asource.PlayOneShot(blockedDoorSound, 1.0f);
@@ -61,6 +65,16 @@ namespace InteractionScripts
             open = !open;
             asource.clip = open ? openDoor : closeDoor;
             asource.Play();
+
+            UpdateLightBlocker();
+        }
+
+        private void UpdateLightBlocker()
+        {
+            if (lightBlocker != null)
+            {
+                lightBlocker.SetActive(!open);
+            }
         }
 
         private bool HasActiveLock<T>() where T : MonoBehaviour
@@ -83,9 +97,10 @@ namespace InteractionScripts
             else
             {
                 open = (bool)stream.ReceiveNext();
+                UpdateLightBlocker();
             }
         }
-        
+
         void OnValidate()
         {
             if (doorType == DoorType.Normal)
