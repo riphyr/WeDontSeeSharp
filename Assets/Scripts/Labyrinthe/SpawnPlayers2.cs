@@ -12,7 +12,7 @@ public class SpawnPlayers2 : MonoBehaviour
     private void Start()
     {
         // Définition du spawnpoint
-        Vector3 Position = new Vector3(-50, 3, 26);
+        Vector3 Position = new Vector3(-50, 4, 26);
         // Instanciation du prefab du joueur
         GameObject myPlayer = (GameObject) PhotonNetwork.Instantiate(playerPrefab.name, Position, Quaternion.identity);
         

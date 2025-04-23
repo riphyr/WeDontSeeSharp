@@ -69,7 +69,16 @@ public class EnemyAI : MonoBehaviour
 
     void TeleportPlayer()
     {
-        Debug.Log("Joueur attrapé. Téléportation vers la scène : " + sceneToLoad);
+        Debug.Log("Joueur attrapé. Téléportation...");
+
+        // 🔇 Arrêter la musique via MusicManager
+        MusicManager musicManager = FindObjectOfType<MusicManager>();
+        if (musicManager != null)
+        {
+            musicManager.StopMusic(); // ← On va créer cette fonction juste après
+        }
+
         SceneManager.LoadScene(sceneToLoad);
     }
+
 }

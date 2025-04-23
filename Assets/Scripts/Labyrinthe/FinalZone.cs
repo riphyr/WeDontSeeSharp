@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class ZoneTeleporte : MonoBehaviour
+public class FinalZone : MonoBehaviour
 {
     public string sceneToLoad = "NomDeLaScene"; // Remplace par le nom réel de ta scène
 
