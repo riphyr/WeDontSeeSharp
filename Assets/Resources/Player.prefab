@@ -9514,6 +9514,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 609118519753376461}
+  - component: {fileID: 605957252133327104}
+  - component: {fileID: 7802470724232678549}
   m_Layer: 7
   m_Name: Player
   m_TagString: PlayerCollider
@@ -9539,6 +9541,33 @@ Transform:
   - {fileID: 5498624389150893735}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &605957252133327104
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1965416421609774399}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7433113314c447b83fda20c7446e504, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  teleportDestination: {x: -50, y: 3.68, z: -37}
+--- !u!114 &7802470724232678549
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1965416421609774399}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 211e3b32ef0d067f4832af8c1cd5b176, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyTag: Enemy
+  behindDistance: 4
 --- !u!1 &1994562450184479794
 GameObject:
   m_ObjectHideFlags: 0
