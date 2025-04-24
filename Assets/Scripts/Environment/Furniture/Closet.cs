@@ -19,7 +19,7 @@ namespace InteractionScripts
         private Quaternion openRotation;
 
         [Header("Audio")]
-        public AudioSource audioSource;
+        private AudioSource audioSource;
         public AudioClip closetOpen, closetClose;
         private PhotonView view;
 
@@ -27,6 +27,7 @@ namespace InteractionScripts
         {
             audioSource = GetComponent<AudioSource>();
             view = GetComponent<PhotonView>();
+            view.OwnershipTransfer = OwnershipOption.Takeover;
 
             float angle = isLeftDoor ? rotationAngle : -rotationAngle;
             closedRotation = transform.localRotation;

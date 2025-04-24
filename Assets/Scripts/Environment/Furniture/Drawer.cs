@@ -12,13 +12,14 @@ namespace InteractionScripts
 
         [Header("Déplacement du tiroir")]
         public float moveX = 0f;
+        public float moveY = 0f;
         public float moveZ = 0f;
         private float speed = 2.0f;
 
         private Vector3 closedPosition;
         private Vector3 openPosition;
 
-        public AudioSource audioSource;
+        private AudioSource audioSource;
         public AudioClip drawerOpen, drawerClose;
         private PhotonView view;
 
@@ -26,9 +27,10 @@ namespace InteractionScripts
         {
             audioSource = GetComponent<AudioSource>();
             view = GetComponent<PhotonView>();
+            view.OwnershipTransfer = OwnershipOption.Takeover;
 
             closedPosition = transform.localPosition;
-            openPosition = closedPosition + new Vector3(moveX, 0, moveZ);
+            openPosition = closedPosition + new Vector3(moveX, moveY, moveZ);
         }
 
         public void ToggleDrawer()
