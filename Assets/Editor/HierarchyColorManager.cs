@@ -2,7 +2,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 public class HierarchyColorManager : EditorWindow
 {
@@ -14,16 +13,17 @@ public class HierarchyColorManager : EditorWindow
 
     private static string hiddenColorFilter = null;
     public static string HiddenFilter => hiddenColorFilter;
+	private List<(GameObject obj, string color)> cachedColoredObjects = new List<(GameObject, string)>();
 
-    [MenuItem("Tools/Hierarchy Color Manager")]
+    [MenuItem("Tools/Color Manager")]
     public static void OpenWindow()
     {
-        GetWindow<HierarchyColorManager>("Hierarchy Color Manager");
+        GetWindow<HierarchyColorManager>("Color Manager");
     }
 
     private void OnGUI()
     {
-        GUILayout.Label("🎨 Colored GameObjects in Scene", EditorStyles.boldLabel);
+        GUILayout.Label("Colored GameObjects in Scene", EditorStyles.boldLabel);
 
         EditorGUILayout.BeginHorizontal();
         searchQuery = EditorGUILayout.TextField("Search", searchQuery);
@@ -32,29 +32,16 @@ public class HierarchyColorManager : EditorWindow
 
         scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
 
-        GameObject[] allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
-        var coloredObjects = new List<(GameObject obj, string color)>();
-
-        foreach (GameObject obj in allObjects)
-        {
-            if (obj.hideFlags != HideFlags.None || EditorUtility.IsPersistent(obj))
-                continue;
-
-            string key = $"HierarchyColor_{obj.GetInstanceID()}";
-            string colorName = EditorPrefs.GetString(key, "None");
-
-            if (colorName != "None" && obj.name.ToLower().Contains(searchQuery.ToLower()))
-            {
-                coloredObjects.Add((obj, colorName));
-            }
-        }
+        var filteredObjects = cachedColoredObjects
+            .Where(e => e.obj != null && e.obj.name.ToLower().Contains(searchQuery.ToLower()))
+            .ToList();
 
         if (sortMode == "Name")
-            coloredObjects = coloredObjects.OrderBy(e => e.obj.name).ToList();
+            filteredObjects = filteredObjects.OrderBy(e => e.obj.name).ToList();
         else
-            coloredObjects = coloredObjects.OrderBy(e => e.color).ThenBy(e => e.obj.name).ToList();
+            filteredObjects = filteredObjects.OrderBy(e => e.color).ThenBy(e => e.obj.name).ToList();
 
-        foreach (var (obj, colorName) in coloredObjects)
+        foreach (var (obj, colorName) in filteredObjects)
         {
             EditorGUILayout.BeginHorizontal();
 
@@ -64,7 +51,7 @@ public class HierarchyColorManager : EditorWindow
 
             GUILayout.Label(obj.name, GUILayout.Width(180));
 
-            if (GUILayout.Button("🎯 Focus", GUILayout.Width(60)))
+            if (GUILayout.Button("Focus", GUILayout.Width(60)))
             {
                 Selection.activeGameObject = obj;
                 EditorGUIUtility.PingObject(obj);
@@ -75,8 +62,8 @@ public class HierarchyColorManager : EditorWindow
             string newColor = colorOptions[selectedIndex];
             if (newColor != colorName)
             {
-                string key = $"HierarchyColor_{obj.GetInstanceID()}";
-                EditorPrefs.SetString(key, newColor);
+                HierarchyColorDatabase.Instance.SetColor(obj, newColor);
+                RefreshCache();
                 Repaint();
                 EditorApplication.RepaintHierarchyWindow();
             }
@@ -87,7 +74,7 @@ public class HierarchyColorManager : EditorWindow
         EditorGUILayout.EndScrollView();
 
         GUILayout.Space(10);
-        GUILayout.Label("📂 Expand by Color", EditorStyles.boldLabel);
+        GUILayout.Label("Expand by Color", EditorStyles.boldLabel);
         EditorGUILayout.BeginHorizontal();
         foreach (var color in colorOptions)
         {
@@ -100,7 +87,7 @@ public class HierarchyColorManager : EditorWindow
         EditorGUILayout.EndHorizontal();
 
         GUILayout.Space(10);
-        GUILayout.Label("👁 Show Only by Color", EditorStyles.boldLabel);
+        GUILayout.Label("Show Only by Color", EditorStyles.boldLabel);
         EditorGUILayout.BeginHorizontal();
         foreach (var color in colorOptions)
         {
@@ -114,16 +101,16 @@ public class HierarchyColorManager : EditorWindow
 
         if (!string.IsNullOrEmpty(hiddenColorFilter))
         {
-            if (GUILayout.Button("🔁 Show All"))
+            if (GUILayout.Button("Show All"))
             {
                 hiddenColorFilter = null;
-                UnityEditor.SceneVisibilityManager.instance.ShowAll();
+                SceneVisibilityManager.instance.ShowAll();
                 EditorApplication.RepaintHierarchyWindow();
             }
         }
 
         GUILayout.Space(10);
-        GUILayout.Label("🧹 Tools", EditorStyles.boldLabel);
+        GUILayout.Label("Tools", EditorStyles.boldLabel);
 
         if (GUILayout.Button("Clear All Color Tags"))
         {
@@ -131,11 +118,8 @@ public class HierarchyColorManager : EditorWindow
                 "This will remove ALL hierarchy color tags from ALL objects in the scene.\nAre you sure?",
                 "Yes, clear everything", "Cancel"))
             {
-                foreach (var (obj, _) in coloredObjects)
-                {
-                    EditorPrefs.DeleteKey($"HierarchyColor_{obj.GetInstanceID()}");
-                }
-
+                HierarchyColorDatabase.Instance.ClearAll();
+                RefreshCache();
                 Repaint();
                 EditorApplication.RepaintHierarchyWindow();
             }
@@ -146,46 +130,38 @@ public class HierarchyColorManager : EditorWindow
     {
         HierarchyColorFilter.ShowColor(colorTag);
     }
-    
+
     static void ShowOnlyObjectsWithColor(string color)
     {
-        var visibilityManager = UnityEditor.SceneVisibilityManager.instance;
+        var visibilityManager = SceneVisibilityManager.instance;
         visibilityManager.ShowAll();
 
         GameObject[] allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
         HashSet<GameObject> keepVisible = new HashSet<GameObject>();
 
-        foreach (GameObject obj in allObjects)
+        foreach (var (obj, col) in HierarchyColorDatabase.Instance.GetAllColoredObjects())
         {
-            if (obj.hideFlags != HideFlags.None || EditorUtility.IsPersistent(obj))
-                continue;
+            if (obj.hideFlags != HideFlags.None || EditorUtility.IsPersistent(obj)) continue;
+            if (col != color) continue;
 
-            string key = $"HierarchyColor_{obj.GetInstanceID()}";
-            string colorName = EditorPrefs.GetString(key, "None");
+            keepVisible.Add(obj);
 
-            if (colorName == color)
+            Transform parent = obj.transform.parent;
+            while (parent != null)
             {
-                keepVisible.Add(obj);
+                keepVisible.Add(parent.gameObject);
+                parent = parent.parent;
+            }
 
-                Transform parent = obj.transform.parent;
-                while (parent != null)
-                {
-                    keepVisible.Add(parent.gameObject);
-                    parent = parent.parent;
-                }
-
-                foreach (Transform child in obj.GetComponentsInChildren<Transform>(true))
-                {
-                    keepVisible.Add(child.gameObject);
-                }
+            foreach (Transform child in obj.GetComponentsInChildren<Transform>(true))
+            {
+                keepVisible.Add(child.gameObject);
             }
         }
 
         foreach (GameObject obj in allObjects)
         {
-            if (obj.hideFlags != HideFlags.None || EditorUtility.IsPersistent(obj))
-                continue;
-
+            if (obj.hideFlags != HideFlags.None || EditorUtility.IsPersistent(obj)) continue;
             if (!keepVisible.Contains(obj))
             {
                 visibilityManager.Hide(obj, false);
@@ -194,6 +170,18 @@ public class HierarchyColorManager : EditorWindow
 
         hiddenColorFilter = color;
     }
+
+	private void OnEnable()
+	{
+    	RefreshCache();
+	}
+
+	private void RefreshCache()
+	{
+    	cachedColoredObjects = HierarchyColorDatabase.Instance.GetAllColoredObjects()
+        	.Where(e => e.obj != null)
+        	.ToList();
+	}
 
     static Color GetColor(string name)
     {

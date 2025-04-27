@@ -1,0 +1,139 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6fb70eb3b3a49648e9aed9ae19428b9, type: 3}
+  m_Name: HierarchyColorDatabase
+  m_EditorClassIdentifier: 
+  colorEntries:
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-952160540-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-1101936807-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-1892128944-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-1574255956-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-532174140-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-1304199457-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-883258578-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-760264076-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-1991692149-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-88285027-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-2060837523-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-1160505598-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-202538906-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-1116795014-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-229350657-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-277005119-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-573022651-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-1941271403-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-742762362-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-130748158-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-1231710794-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-440201204-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-2009293534-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-1646306638-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-579267503-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-922192990-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-1200994009-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-379503049-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-599093373-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-1139501082-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-392182270-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-1997550162-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-2142147157-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-1738382850-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-1906635974-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-131123714-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-208129175-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-125910679-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-1364588645-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-1347729559-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-1820958857-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-1954865415-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-1978095437-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-413672690-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-1989062728-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-674135369-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-1154770815-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-805479409-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-162380177-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-659502626-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-1298633931-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-1983924662-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-699691743-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-906729788-0
+    color: Yellow
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-5361230298684187512-139880548
+    color: Red
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-2656537266844150909-949252198
+    color: Purple
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-7789549459219107891-463467551
+    color: Purple
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-8724710229381932266-869985361
+    color: Purple
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-4030072869651942562-1772990915
+    color: Purple
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-8459339731610399928-1838241784
+    color: Purple
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-8407040421861943938-629663754
+    color: Red
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-3645341313212875708-1953993178
+    color: Red

@@ -12,14 +12,7 @@ public static class HierarchyColorFilter
         EditorApplication.hierarchyWindowItemOnGUI += OnHierarchyGUI;
     }
 
-    static void OnHierarchyGUI(int instanceID, Rect selectionRect)
-    {
-        GameObject obj = EditorUtility.InstanceIDToObject(instanceID) as GameObject;
-        if (obj == null) return;
-
-        string key = $"HierarchyColor_{instanceID}";
-        string colorName = EditorPrefs.GetString(key, "None");
-    }
+    static void OnHierarchyGUI(int instanceID, Rect selectionRect) { }
 
     private static string FilterColor = "None";
 
@@ -46,25 +39,20 @@ public static class HierarchyColorFilter
 
     static void ExpandFilteredObjects(string colorTag)
     {
-        GameObject[] allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
         List<int> expandedIDs = new List<int>();
         List<GameObject> toHighlight = new List<GameObject>();
 
-        foreach (GameObject obj in allObjects)
+        foreach (var (obj, color) in HierarchyColorDatabase.Instance.GetAllColoredObjects())
         {
-            if (EditorUtility.IsPersistent(obj) || obj.hideFlags != HideFlags.None)
-                continue;
+            if (obj == null || color != colorTag) continue;
 
-            string key = $"HierarchyColor_{obj.GetInstanceID()}";
-            if (EditorPrefs.GetString(key, "None") == colorTag)
+            toHighlight.Add(obj);
+
+            Transform current = obj.transform;
+            while (current != null)
             {
-                toHighlight.Add(obj);
-                Transform current = obj.transform;
-                while (current != null)
-                {
-                    expandedIDs.Add(current.gameObject.GetInstanceID());
-                    current = current.parent;
-                }
+                expandedIDs.Add(current.gameObject.GetInstanceID());
+                current = current.parent;
             }
         }
 
@@ -95,4 +83,4 @@ public static class HierarchyColorFilter
         var windowType = typeof(EditorWindow).Assembly.GetType("UnityEditor.SceneHierarchyWindow");
         return EditorWindow.GetWindow(windowType);
     }
-} 
+}
