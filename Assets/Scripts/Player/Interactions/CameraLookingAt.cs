@@ -150,11 +150,17 @@ public class CameraLookingAt : MonoBehaviour
         ShowInteractionText(true, hit.transform.GetComponent<InteractionScripts.Door>().IsOpen() ? "Close the door" : "Open the door");
         if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.Door>().ToggleDoor();
     }
-
+    
     private void HandleLockKey(RaycastHit hit)
     {
-        ShowInteractionText(true, "Unlock the door");
-        if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.LockKey>().AttemptUnlock();
+        var lockKey = hit.transform.GetComponent<InteractionScripts.LockKey>();
+
+        string rawName = lockKey.requiredKeyName;
+        string roomName = rawName.Replace(" key", "", System.StringComparison.OrdinalIgnoreCase).ToLowerInvariant();
+
+        ShowInteractionText(true, $"Unlock the {roomName}");
+
+        if (Input.GetKeyDown(primaryInteractionKey)) lockKey.AttemptUnlock();
     }
 
     private void HandlePadLock(RaycastHit hit)
@@ -195,8 +201,12 @@ public class CameraLookingAt : MonoBehaviour
 
     private void HandleKey(RaycastHit hit)
     {
-        ShowInteractionText(true, "Pick up the key");
-        if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.Key>().PickupKey(inventory);
+        var key = hit.transform.GetComponent<InteractionScripts.Key>();
+
+        string keyDisplayName = key.keyName.Replace(" key", "", System.StringComparison.OrdinalIgnoreCase).ToLowerInvariant();
+        ShowInteractionText(true, $"Pick up the {keyDisplayName} key");
+
+        if (Input.GetKeyDown(primaryInteractionKey)) key.PickupKey(inventory);
     }
 
     private void HandleCandle(RaycastHit hit)

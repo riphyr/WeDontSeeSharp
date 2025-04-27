@@ -124,6 +124,15 @@ public class HierarchyColorManager : EditorWindow
                 EditorApplication.RepaintHierarchyWindow();
             }
         }
+
+		GUILayout.Space(10);
+		GUILayout.Label("Cache", EditorStyles.boldLabel);
+
+		if (GUILayout.Button("Refresh List"))
+		{
+    		RefreshCache();
+    		Repaint();
+		}
     }
 
     static void ExpandAllColor(string colorTag)
