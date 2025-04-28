@@ -15,23 +15,16 @@ EditorBuildSettings:
     path: Assets/Scenes/Lobby.unity
     guid: cf9e994a65c18764b865bb6bd73aa8ba
   - enabled: 1
-<<<<<<< HEAD
+
     path: Assets/Scenes/HouseLvl.unity
     guid: f2f808dcb5c63a2469afff3c21343f7b
   - enabled: 1
-    path: Assets/Scenes/labyrinthe.unity
-    guid: e2aeb3de6858a32dbbac54f917b5db89
-=======
-    path: Assets/Scenes/GameTest.unity
-    guid: 6415f2e9390e7e44e832558b4ece3cd0
-  - enabled: 1
+ 
+   
     path: Assets/Scenes/labyrinthe.unity
     guid: e2aeb3de6858a32dbbac54f917b5db89
   - enabled: 1
     path: Assets/Scenes/travail.unity
     guid: fa1eae5c2c61994fa82239ddc3ba9813
   - enabled: 1
-    path: Assets/Scenes/HouseLvl.unity
-    guid: f2f808dcb5c63a2469afff3c21343f7b
->>>>>>> emmarucay-patch-1
   m_configObjects: {}
