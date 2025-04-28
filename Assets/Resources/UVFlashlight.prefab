@@ -287,7 +287,7 @@ MonoBehaviour:
   Group: 0
   prefixField: -1
   Synchronization: 3
-  OwnershipTransfer: 0
+  OwnershipTransfer: 1
   observableSearch: 2
   ObservedComponents:
   - {fileID: 6722757363304981096}
@@ -307,11 +307,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxBattery: 100
-  drain: 10
+  drain: 1
   pickupSound: {fileID: 8300000, guid: d109c89ab3448174aa5cb38a8f5a2b78, type: 3}
   switchSound: {fileID: 8300000, guid: 7f5f90f44d2d67a498e8b9e6919a3c4c, type: 3}
-  uvRange: 15
-  uvConeRadius: 0.5
+  uvRange: 5
+  uvConeRadius: 0.2
   uvLayerMask:
     serializedVersion: 2
     m_Bits: 64

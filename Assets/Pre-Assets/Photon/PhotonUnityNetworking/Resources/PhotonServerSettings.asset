@@ -110,6 +110,10 @@ MonoBehaviour:
   - RPC_SetUnlocked
   - RPC_TryUnlock
   - MarkAsDiscoveredForAll
+  - SetUVReveal_RPC
+  - PaintAtWorldPosition_RPC
+  - SetUVHit
+  - RPC_RevealMaterial
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

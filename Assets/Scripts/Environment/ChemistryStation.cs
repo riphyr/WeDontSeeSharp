@@ -272,7 +272,8 @@ namespace InteractionScripts
             if (!isOutputFilled) return;
 
             mainSource.PlayOneShot(pickupSound, 0.6f);
-            inventory.AddItem(currentOutputSolution);
+            if (currentOutputSolution != "Explosion")
+                inventory.AddItem(currentOutputSolution);
             photonView.RPC("RPC_ResetStation", RpcTarget.AllBuffered);
         }
 

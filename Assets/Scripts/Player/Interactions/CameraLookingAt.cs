@@ -63,6 +63,8 @@ public class CameraLookingAt : MonoBehaviour
             { typeof(InteractionScripts.Item), hit => HandleItem(hit) },
             { typeof(InteractionScripts.LoreItem), hit => HandleLoreItem(hit) },
             { typeof(InteractionScripts.Drawer), hit => HandleDrawer(hit) },
+            { typeof(InteractionScripts.DissolvableNote), hit => HandleDissolvableNote(hit) },
+            { typeof(InteractionScripts.FridgeDoor), hit => HandleFridge(hit) },
         };
     }
 
@@ -464,4 +466,35 @@ public class CameraLookingAt : MonoBehaviour
         ShowInteractionText(true, $"Pick up the {loreItem.GetItemName()}");
         if (Input.GetKeyDown(primaryInteractionKey)) loreItem.Pickup(inventory);
     }
+    
+    private void HandleDissolvableNote(RaycastHit hit)
+    {
+        var note = hit.transform.GetComponent<InteractionScripts.DissolvableNote>();
+
+        if (!note.IsRevealed)
+        {
+            ShowInteractionText(true, "Apply solvent");
+            if (Input.GetKeyDown(primaryInteractionKey))
+            {
+                note.TryReveal(inventory);
+            }
+        }
+        else
+        {
+            ShowInteractionText(false);
+        }
+    }
+    
+    private void HandleFridge(RaycastHit hit)
+    {
+        var fridge = hit.transform.GetComponent<InteractionScripts.FridgeDoor>();
+
+        ShowInteractionText(true, fridge.IsOpen() ? "Close the fridge door" : "Open the fridge door");
+    
+        if (Input.GetKeyDown(primaryInteractionKey))
+        {
+            fridge.ToggleFridge();
+        }
+    }
+
 }
