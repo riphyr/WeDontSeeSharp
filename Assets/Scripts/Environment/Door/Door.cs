@@ -13,12 +13,11 @@ namespace InteractionScripts
         [Header("Type de porte")]
         public DoorType doorType = DoorType.Normal;
 
-<<<<<<< HEAD
+
         [Header("Light blocker")]
         public GameObject lightBlocker;
 
-=======
->>>>>>> emmarucay-patch-1
+
         private bool open;
         private float smooth = 1.0f;
         private float DoorOpenAngle = -90.0f;
@@ -35,37 +34,30 @@ namespace InteractionScripts
         {
             asource = GetComponent<AudioSource>();
             view = GetComponent<PhotonView>();
-<<<<<<< HEAD
+
             UpdateLightBlocker();
-=======
->>>>>>> emmarucay-patch-1
+
         }
 
         void Update()
         {
             if (open)
             {
-<<<<<<< HEAD
                 var target = Quaternion.Euler(0, DoorOpenAngle, 0);
-=======
-                var target = Quaternion.Euler (0, DoorOpenAngle, 0);
->>>>>>> emmarucay-patch-1
+
                 transform.localRotation = Quaternion.Slerp(transform.localRotation, target, Time.deltaTime * 5 * smooth);
             }
             else
             {
-<<<<<<< HEAD
+
                 var target1 = Quaternion.Euler(0, DoorCloseAngle, 0);
-=======
-                var target1= Quaternion.Euler (0, DoorCloseAngle, 0);
->>>>>>> emmarucay-patch-1
+
                 transform.localRotation = Quaternion.Slerp(transform.localRotation, target1, Time.deltaTime * 5 * smooth);
             }
         }
 
         public void ToggleDoor()
         {
-<<<<<<< HEAD
             if (!view.IsMine)
             {
                 view.TransferOwnership(PhotonNetwork.LocalPlayer);
@@ -89,19 +81,6 @@ namespace InteractionScripts
             if (lightBlocker != null)
             {
                 lightBlocker.SetActive(!open);
-=======
-            if (view.IsMine)
-            {
-                if (doorType != DoorType.Normal && (HasActiveLock<LockKey>() || HasActiveLock<PadLock>()))
-                {
-                    asource.PlayOneShot(blockedDoorSound, 1.0f);
-                    return;
-                }
-
-                open = !open;
-                asource.clip = open ? openDoor : closeDoor;
-                asource.Play();
->>>>>>> emmarucay-patch-1
             }
         }
 
@@ -125,16 +104,12 @@ namespace InteractionScripts
             else
             {
                 open = (bool)stream.ReceiveNext();
-<<<<<<< HEAD
+
                 UpdateLightBlocker();
             }
         }
 
-=======
-            }
-        }
-        
->>>>>>> emmarucay-patch-1
+
         void OnValidate()
         {
             if (doorType == DoorType.Normal)

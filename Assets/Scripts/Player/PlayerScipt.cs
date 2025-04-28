@@ -17,11 +17,9 @@ public class PlayerScript : MonoBehaviour, IPunObservable
 
 	[Header("STAMINA VALORS")]
     public float playerStamina = 100.0f;
-    private float _maxStamina = 100.0f;
-<<<<<<< HEAD
+
     public Slider staminaSlider;
-=======
->>>>>>> emmarucay-patch-1
+
 
     [Header("STAMINA MODIFIERS")]
 	private bool canRun = true;
@@ -38,14 +36,7 @@ public class PlayerScript : MonoBehaviour, IPunObservable
 	public Camera playerCamera;					// GameObject relié à la caméra
 	public GameObject character;				// GameObject relié au prefab du joueur
 	public Animator animator;					// Controller pour les animations
-<<<<<<< HEAD
-	
-=======
 
-	[Header("MENUS")]
-	public GameObject pauseObject;				// Menu de pause
-
->>>>>>> emmarucay-patch-1
 	// Synchronisation des animations
     private float animatorSides;
     private float animatorFrontBack;
@@ -57,10 +48,9 @@ public class PlayerScript : MonoBehaviour, IPunObservable
 	private bool canMove = true;				// Booléen de blocage du joueur (à utiliser sous certains cas)
 
 	CharacterController characterController;
-<<<<<<< HEAD
+
 	public static Transform LocalPlayerTransform;
-=======
->>>>>>> emmarucay-patch-1
+
     Vector3 moveDirection = Vector3.zero;
 
     void Start()
@@ -77,16 +67,14 @@ public class PlayerScript : MonoBehaviour, IPunObservable
 		Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         
-<<<<<<< HEAD
+
         //Setup de la barre de stamina
         if (staminaSlider != null)
         {
 	        staminaSlider.maxValue = _maxStamina;
 	        staminaSlider.value = playerStamina;
         }
-=======
-        pauseObject.SetActive(false);
->>>>>>> emmarucay-patch-1
+
     }
 
     void Update()
@@ -104,17 +92,14 @@ public class PlayerScript : MonoBehaviour, IPunObservable
 	        {
 		        UdpateSensitivityCamera();
 	        }
-<<<<<<< HEAD
+
 	        
 	        //Update de la barre visuelle de stamina
 	        if (staminaSlider != null)
 	        {
 		        staminaSlider.value = playerStamina;
 	        }
-=======
 
-	        CheckPauseActivation(); // Activation ou désactivation du menu pause
->>>>>>> emmarucay-patch-1
 
 	        animator.SetBool("isRunning", false);
 	        animator.SetBool("isJumping", false);
@@ -155,28 +140,7 @@ public class PlayerScript : MonoBehaviour, IPunObservable
 			animator.SetBool("isJumping", animatorIsJumping);
         }
     }
-<<<<<<< HEAD
-=======
 
-	private void CheckPauseActivation()
-	{
-		if (Input.GetKey(GetKeyCodeFromString(PlayerPrefs.GetString("Pause", "None"))))
-	    {
-		    pauseObject.SetActive(true);
-		    Cursor.lockState = CursorLockMode.None;
-			Cursor.visible = true;
-	    }
-
-		if (Cursor.lockState == CursorLockMode.None && Cursor.visible)
-	    {
-			pauseObject.SetActive(true);
-	    }
-	    else
-	    {
-			pauseObject.SetActive(false);
-	    }
-	}
->>>>>>> emmarucay-patch-1
 	
 	// Update des sensibilités de rotation camera
 	private void UdpateSensitivityCamera()

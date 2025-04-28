@@ -24,10 +24,9 @@ namespace InteractionScripts
         public Camera padLockCamera;
         private PlayerScript playerScript;
         private CameraLookingAt cameraLookingAt;
-<<<<<<< HEAD
+
         private PlayerUsing playerUsing;
-=======
->>>>>>> emmarucay-patch-1
+
         private GameObject gui;
         private PhotonView view;
 
@@ -68,10 +67,9 @@ namespace InteractionScripts
                 playerCamera = playerTransform.Find("Main Camera")?.GetComponent<Camera>();
                 playerScript = playerTransform.GetComponent<PlayerScript>();
                 cameraLookingAt = playerTransform.GetComponent<CameraLookingAt>();
-<<<<<<< HEAD
+
                 playerUsing = playerTransform.GetComponent<PlayerUsing>();
-=======
->>>>>>> emmarucay-patch-1
+
             }
             
             gui = localPlayer.transform.Find("GUI")?.gameObject;
@@ -98,11 +96,9 @@ namespace InteractionScripts
         {
             if (!view.IsMine)
             {
-<<<<<<< HEAD
+
                 view.TransferOwnership(PhotonNetwork.LocalPlayer);
-=======
-                photonView.RequestOwnership();
->>>>>>> emmarucay-patch-1
+
             }
 
             playerCamera.gameObject.SetActive(false);
@@ -110,10 +106,9 @@ namespace InteractionScripts
 
             playerScript.enabled = false;
             cameraLookingAt.enabled = false;
-<<<<<<< HEAD
+
             playerUsing.enabled = false;
-=======
->>>>>>> emmarucay-patch-1
+
             gui.SetActive(false);
             
             Cursor.lockState = CursorLockMode.None;
@@ -130,10 +125,9 @@ namespace InteractionScripts
             
             playerScript.enabled = true;
             cameraLookingAt.enabled = true;
-<<<<<<< HEAD
+
             playerUsing.enabled = true;
-=======
->>>>>>> emmarucay-patch-1
+
             gui.SetActive(true);
         }
         
@@ -142,11 +136,9 @@ namespace InteractionScripts
             Ray ray = padLockCamera.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
-<<<<<<< HEAD
+
             if (Physics.Raycast(ray, out hit, 3, LayerMask.GetMask("PadLock")))
-=======
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("PadLock")))
->>>>>>> emmarucay-patch-1
+
             {
                 if (hit.transform == WheelOne) 
                 {
@@ -199,14 +191,13 @@ namespace InteractionScripts
 
             if (currentCombination == correctCode)
             {
-<<<<<<< HEAD
+
                 if (!view.IsMine)
                 {
                     view.TransferOwnership(PhotonNetwork.LocalPlayer);
                 }
                 
-=======
->>>>>>> emmarucay-patch-1
+
                 StartCoroutine(UnlockPadLock());
             }
         }

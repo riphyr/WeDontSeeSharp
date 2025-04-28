@@ -25,11 +25,7 @@ namespace InteractionScripts
         {
             if (!view.IsMine)
             {
-<<<<<<< HEAD
                 view.TransferOwnership(PhotonNetwork.LocalPlayer);
-=======
-                view.RequestOwnership();
->>>>>>> emmarucay-patch-1
             }
 
             PlayerInventory inventory = FindLocalPlayerInventory();
