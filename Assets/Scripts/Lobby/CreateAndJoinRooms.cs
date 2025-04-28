@@ -24,7 +24,11 @@ public class CreateAndJoinRooms : MonoBehaviourPunCallbacks
 
     public override void OnJoinedRoom()
     {
+<<<<<<< HEAD
         PhotonNetwork.LoadLevel("Labyrinthe");
+=======
+        PhotonNetwork.LoadLevel("labyrinthe");
+>>>>>>> emmarucay-patch-1
     }
     
     public override void OnJoinRoomFailed(short returnCode, string message)

@@ -1,12 +1,19 @@
 ﻿using UnityEngine;
 using Photon.Pun;
+<<<<<<< HEAD
 using System.Collections;
+=======
+>>>>>>> emmarucay-patch-1
 
 namespace InteractionScripts
 {
     [RequireComponent(typeof(AudioSource))]
     [RequireComponent(typeof(PhotonView))]
+<<<<<<< HEAD
     public class Key : MonoBehaviourPun, IPunObservable
+=======
+    public class Key : MonoBehaviourPun
+>>>>>>> emmarucay-patch-1
     {
         [Header("Paramètres de la clé")]
         public string keyName = "DefaultKey";
@@ -14,16 +21,22 @@ namespace InteractionScripts
         [Header("Audio")] 
         public AudioSource audioSource;
         public AudioClip keyPickupSound;
+<<<<<<< HEAD
 
         private PhotonView view;
         private Vector3 networkPosition;
         private Quaternion networkRotation;
         private bool isDropped = false;
+=======
+        
+        private PhotonView view;
+>>>>>>> emmarucay-patch-1
 
         void Start()
         {
             audioSource = GetComponent<AudioSource>();
             view = GetComponent<PhotonView>();
+<<<<<<< HEAD
 
             if (photonView.IsMine)
             {
@@ -110,5 +123,37 @@ namespace InteractionScripts
                 isDropped = (bool)stream.ReceiveNext();
             }
         }
+=======
+        }
+        
+        public void PickupKey(PlayerInventory inventory)
+        {
+            if (view.IsMine)
+            {
+                inventory.AddItem(keyName, 1);
+                audioSource.PlayOneShot(keyPickupSound, 1.0f);
+                view.RPC("DisableKeyForAll", RpcTarget.AllBuffered);
+            }
+            else
+            {
+                view.RequestOwnership();
+            }
+        }
+
+        [PunRPC]
+        private void DisableKeyForAll()
+        {
+            if (transform.childCount > 0)
+            {
+                transform.GetChild(0).gameObject.SetActive(false);
+            }
+
+            if (TryGetComponent<BoxCollider>(out BoxCollider collider))
+            {
+                collider.enabled = false;
+            }
+
+        }
+>>>>>>> emmarucay-patch-1
     }
 }

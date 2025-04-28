@@ -19545,7 +19545,11 @@ Transform:
   m_GameObject: {fileID: 1609272450}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0.0013230889, w: 0.9999991}
+<<<<<<< HEAD
   m_LocalPosition: {x: 78.9, y: 11.1, z: 0.4}
+=======
+  m_LocalPosition: {x: -0.9, y: 11.3, z: 0.4}
+>>>>>>> emmarucay-patch-1
   m_LocalScale: {x: 111.15686, y: 1, z: 94.48253}
   m_ConstrainProportionsScale: 0
   m_Children: []

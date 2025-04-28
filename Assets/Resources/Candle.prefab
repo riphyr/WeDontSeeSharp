@@ -264,10 +264,16 @@ MonoBehaviour:
   Group: 0
   prefixField: -1
   Synchronization: 3
+<<<<<<< HEAD
   OwnershipTransfer: 1
   observableSearch: 2
   ObservedComponents:
   - {fileID: 4835041035663951838}
+=======
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+>>>>>>> emmarucay-patch-1
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -287,7 +293,10 @@ MonoBehaviour:
   lightSoundLighter: {fileID: 8300000, guid: b2ec31bea89c3b14598e32d393b18569, type: 3}
   lightSoundMatch: {fileID: 8300000, guid: 8386552eef8f33d4396cafeed7e10848, type: 3}
   timeToBurnOut: 10
+<<<<<<< HEAD
   candlesToAdd: 1
+=======
+>>>>>>> emmarucay-patch-1
 --- !u!1 &8307355496935429966
 GameObject:
   m_ObjectHideFlags: 0

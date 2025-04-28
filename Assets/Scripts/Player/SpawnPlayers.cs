@@ -24,11 +24,15 @@ public class SpawnPlayers : MonoBehaviourPunCallbacks
             }
         }
 
+<<<<<<< HEAD
         else if (PhotonNetwork.InRoom && !playerSpawned)
         {
             SpawnPlayer();
             playerSpawned = true;
         }
+=======
+        SpawnPlayer();
+>>>>>>> emmarucay-patch-1
     }
     
     public override void OnConnectedToMaster()
@@ -54,7 +58,11 @@ public class SpawnPlayers : MonoBehaviourPunCallbacks
             IsOpen = true     // La Room peut être rejointe
         };
 
+<<<<<<< HEAD
         PhotonNetwork.JoinOrCreateRoom("a", roomOptions, TypedLobby.Default);
+=======
+        PhotonNetwork.JoinOrCreateRoom("DefaultRoom", roomOptions, TypedLobby.Default);
+>>>>>>> emmarucay-patch-1
     }
 
     public override void OnJoinedRoom()
@@ -70,7 +78,11 @@ public class SpawnPlayers : MonoBehaviourPunCallbacks
     private void SpawnPlayer()
     {
         // Définition du spawnpoint
+<<<<<<< HEAD
         Vector3 Position = new Vector3(4, 4, 1);
+=======
+        Vector3 Position = new Vector3(-35, 3, 44);
+>>>>>>> emmarucay-patch-1
 
         // Instanciation du prefab du joueur et tag
         GameObject myPlayer = PhotonNetwork.Instantiate(playerPrefab.name, Position, Quaternion.identity);
@@ -86,6 +98,7 @@ public class SpawnPlayers : MonoBehaviourPunCallbacks
         
         // Activation des scripts de mouvement et d'interactions
         GameObject player = myPlayer.transform.Find("Player").gameObject;
+<<<<<<< HEAD
         PlayerScript.LocalPlayerTransform = player.transform;
         PlayerScript playerScript = player.GetComponent<PlayerScript>();
         CameraLookingAt cameraLookingAt = player.GetComponent<CameraLookingAt>();
@@ -102,14 +115,31 @@ public class SpawnPlayers : MonoBehaviourPunCallbacks
         if (playerJournalUI == null) Debug.LogError("🚨 PlayerJournalUI manquant sur Player !");
         if (playerUsing == null) Debug.LogError("🚨 PlayerUsing manquant sur Player !");
         if (pauseMenuManager == null) Debug.LogError("🚨 PauseMenuManager manquant sur Player !");
+=======
+        PlayerScript playerScript = player.GetComponent<PlayerScript>();
+        CameraLookingAt cameraLookingAt = player.GetComponent<CameraLookingAt>();
+        PlaceCandle placeCandle = player.GetComponent<PlaceCandle>();
+        PlayerInventory playerInventory = player.GetComponent<PlayerInventory>();
+        PlayerUsing playerUsing = player.GetComponent<PlayerUsing>();
+>>>>>>> emmarucay-patch-1
 
         playerScript.enabled = true;
         cameraLookingAt.enabled = true;
         playerInventory.enabled = true;
+<<<<<<< HEAD
         playerInventoryUI.enabled = true;
         playerJournalUI.enabled = true;
         playerUsing.enabled = true;
         pauseMenuManager.enabled = true;
+=======
+        placeCandle.enabled = true;
+        playerUsing.enabled = true;
+
+        // Activation du menu de pause
+        GameObject pauseMenu = myPlayer.transform.Find("Pause_Menu").gameObject;
+        PauseMenuManager pauseMenuScript = pauseMenu.GetComponent<PauseMenuManager>();
+        pauseMenuScript.enabled = true;
+>>>>>>> emmarucay-patch-1
 
         // Activation de la caméra individuelle
         GameObject mainCamera = player.transform.Find("Main Camera").gameObject;

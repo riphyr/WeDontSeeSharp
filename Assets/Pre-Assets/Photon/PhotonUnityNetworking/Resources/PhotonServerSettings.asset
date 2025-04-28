@@ -39,6 +39,7 @@ MonoBehaviour:
   - DestroySpaceship
   - Fire
   - RespawnSpaceship
+<<<<<<< HEAD
   - DisableKeyForAll
   - UnlockLockForAll
   - DisableLockForAll
@@ -110,6 +111,19 @@ MonoBehaviour:
   - RPC_SetUnlocked
   - RPC_TryUnlock
   - MarkAsDiscoveredForAll
+=======
+  - BurntCandle
+  - DestroyForAll
+  - DestroyMatch_RPC
+  - DisableForAll
+  - DisableKeyForAll
+  - DisableLockForAll
+  - DisablePadLockForAll
+  - PlayPickupSound
+  - PlayUnlockSoundAndDisable
+  - SetCandleLit
+  - UseMatch
+>>>>>>> emmarucay-patch-1
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

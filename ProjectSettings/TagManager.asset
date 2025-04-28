@@ -10,6 +10,7 @@ TagManager:
   - BunsenBurner
   - OutputFlask
   - PlayerCollider
+  - Enemy
   layers:
   - Default
   - TransparentFX

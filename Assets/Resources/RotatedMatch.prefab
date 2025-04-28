@@ -147,7 +147,11 @@ MonoBehaviour:
   Group: 0
   prefixField: -1
   Synchronization: 3
+<<<<<<< HEAD
   OwnershipTransfer: 1
+=======
+  OwnershipTransfer: 0
+>>>>>>> emmarucay-patch-1
   observableSearch: 2
   ObservedComponents:
   - {fileID: 2406273010084567580}
@@ -176,6 +180,7 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7715472772072834441}
     m_Modifications:
+<<<<<<< HEAD
     - target: {fileID: -8809372221843615757, guid: d4b8980a468b1364fa8d559bda83157a, type: 3}
       propertyPath: m_Interpolate
       value: 0
@@ -184,6 +189,8 @@ PrefabInstance:
       propertyPath: m_CollisionDetection
       value: 0
       objectReference: {fileID: 0}
+=======
+>>>>>>> emmarucay-patch-1
     - target: {fileID: 1849648782634002154, guid: d4b8980a468b1364fa8d559bda83157a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
