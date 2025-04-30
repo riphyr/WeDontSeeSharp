@@ -3,6 +3,7 @@ using UnityEngine.AI;
 using System.Collections;
 using System.Collections.Generic;
 using Photon.Pun;
+using System.Linq;
 
 [RequireComponent(typeof(PhotonView))]
 public class GhostAI : MonoBehaviour

@@ -10,12 +10,16 @@ namespace InteractionScripts
     [RequireComponent(typeof(PhotonView))]
     public class Magnetophone : MonoBehaviourPun, IPunObservable
     {
+        [Header("References")]
         private AudioSource audioSource;
         public AudioClip beepSound;
         public AudioClip pickupSound;
         private SpeechRecognitionEngine recognizer;
         private float confidenceThreshold = 0.65f;
 
+        [Header("Ghost link")] 
+        public GhostAI ghostScript;
+        
         private Transform ownerTransform;
         private Vector3 networkPosition;
         private Quaternion networkRotation;
@@ -36,6 +40,8 @@ namespace InteractionScripts
                 view.TransferOwnership(PhotonNetwork.LocalPlayer);
             }
 
+            ghostScript.AskForActivation();
+            ghostScript.RefreshPlayerList();
             inventory.AddItem("Magnetophone");
             photonView.RPC("PlayPickupSound", RpcTarget.All);
         }

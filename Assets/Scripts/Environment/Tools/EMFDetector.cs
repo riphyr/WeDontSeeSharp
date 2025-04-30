@@ -8,15 +8,20 @@ namespace InteractionScripts
     [RequireComponent(typeof(PhotonView))]
     public class EMFDetector : MonoBehaviourPun, IPunObservable
     {
+        [Header("References")]
         public Transform[] ledLights;
         public AudioClip pickupSound;
         public AudioClip beepSound;
         public float detectionRange = 15f;
 
+        [Header("Layers")]
         public LayerMask blockLayers;
         public LayerMask wallLayers;
         public LayerMask doorLayers;
         public LayerMask thinObjectLayers;
+        
+        [Header("Behavior Settings")]
+        public bool disableDetection = false;
 
         private AudioSource audioSource;
         private PhotonView view;
@@ -113,6 +118,8 @@ namespace InteractionScripts
                 transform.position = Vector3.Lerp(transform.position, networkPosition, Time.deltaTime * 10f);
                 transform.rotation = Quaternion.Lerp(transform.rotation, networkRotation, Time.deltaTime * 10f);
             }
+            
+            if (disableDetection) return;
 	
             int newLevel = DetectEntities();
             if (newLevel != currentLevel)
@@ -133,12 +140,14 @@ namespace InteractionScripts
         {
             Collider[] colliders = Physics.OverlapSphere(transform.position, detectionRange);
             int detectedLevel = 0;
+
             foreach (Collider col in colliders)
             {
                 if (col.CompareTag("Ghost"))
                 {
                     float dist = Vector3.Distance(transform.position, col.transform.position);
-                    float signal = GetSignalStrength(col.transform, dist);
+                    (float signal, bool hitWall, bool hitDoor) = GetSignalStrength(col.transform, dist);
+
                     if (signal > 0)
                     {
                         float rawLevel = dist switch
@@ -150,40 +159,67 @@ namespace InteractionScripts
                             < 15f => 1,
                             _ => 0
                         };
-                        detectedLevel = Mathf.Clamp(Mathf.RoundToInt(rawLevel * Mathf.Sqrt(signal)), 1, 5);
+
+                        int level = Mathf.RoundToInt(rawLevel * Mathf.Sqrt(signal));
+                        if (hitWall)
+                            level = Mathf.Min(level, 3);
+                        else if (hitDoor)
+                            level = Mathf.Min(level, 4);
+
+                        detectedLevel = Mathf.Clamp(level, 1, 5);
                     }
                 }
             }
             return detectedLevel;
         }
 
-        private float GetSignalStrength(Transform ghost, float distance)
+        private (float signal, bool hitWall, bool hitDoor) GetSignalStrength(Transform ghost, float distance)
         {
             Vector3 dir = (ghost.position - transform.position).normalized;
             Vector3 current = transform.position;
             float signal = 1.0f;
             float remaining = distance;
+
+            bool wallHit = false;
+            bool doorHit = false;
+
             while (remaining > 0)
             {
                 if (Physics.Raycast(current, dir, out RaycastHit hit, remaining))
                 {
                     if (hit.transform == ghost)
-                        return signal;
+                        return (signal, wallHit, doorHit);
+
                     int layer = hit.collider.gameObject.layer;
+
                     if (((1 << layer) & blockLayers) != 0)
-                        return 0f;
+                        return (0f, wallHit, doorHit);
+
                     if (((1 << layer) & wallLayers) != 0)
+                    {
                         signal *= 0.6f;
+                        wallHit = true;
+                    }
                     else if (((1 << layer) & doorLayers) != 0)
+                    {
                         signal *= 0.9f;
+                        doorHit = true;
+                    }
                     else if (((1 << layer) & thinObjectLayers) != 0)
+                    {
                         signal *= 0.99f;
+                    }
+
                     current = hit.point + dir * 0.1f;
                     remaining -= hit.distance;
                 }
-                else break;
+                else
+                {
+                    break;
+                }
             }
-            return signal;
+
+            return (signal, wallHit, doorHit);
         }
 
         [PunRPC]
