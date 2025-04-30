@@ -17,6 +17,7 @@ namespace InteractionScripts
         }
 
         [SerializeField] private List<LightElement> lightElements;
+        private ElectricLever electricLever;
 
         private bool isOn = false;
         public AudioSource audioSource;
@@ -29,14 +30,23 @@ namespace InteractionScripts
             view = GetComponent<PhotonView>();
             view.OwnershipTransfer = OwnershipOption.Takeover;
 
+            electricLever = FindObjectOfType<ElectricLever>();
+
             UpdateLightTargets();
         }
-
+        
         public void ToggleSwitch()
         {
             if (!view.IsMine)
             {
                 view.TransferOwnership(PhotonNetwork.LocalPlayer);
+            }
+
+            // ✅ Vérification si le levier est activé
+            if (electricLever == null || !electricLever.IsActive)
+            {
+                Debug.Log("❌ Impossible d'activer l'interrupteur : Boîtier électrique inactif !");
+                return;
             }
 
             ActivateSwitch();
@@ -46,6 +56,13 @@ namespace InteractionScripts
         {
             isOn = !isOn;
             audioSource.PlayOneShot(switchSound);
+            UpdateLightTargets();
+        }
+        
+        [PunRPC]
+        public void ForceSwitchOff()
+        {
+            isOn = false;
             UpdateLightTargets();
         }
 

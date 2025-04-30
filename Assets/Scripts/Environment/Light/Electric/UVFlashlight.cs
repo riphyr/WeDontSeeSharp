@@ -7,7 +7,7 @@ namespace InteractionScripts
 {
     [RequireComponent(typeof(AudioSource))]
     [RequireComponent(typeof(PhotonView))]
-    public class UVFlashlight : MonoBehaviourPun, IPunObservable
+    public class UVFlashlight : MonoBehaviourPun, IPunObservable, IFlashlightFlicker
     {
         private Light flashlightLight;
         public float maxBattery = 100f;
@@ -364,6 +364,22 @@ namespace InteractionScripts
 
                 flashlightLight.enabled = isOn;
             }
+        }
+        
+        public void TriggerFlicker()
+        {
+            if (isOn && !isOutOfBattery())
+                StartCoroutine(FlickerRoutine());
+        }
+
+        private IEnumerator FlickerRoutine()
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                flashlightLight.enabled = !flashlightLight.enabled;
+                yield return new WaitForSeconds(Random.Range(0.05f, 0.2f));
+            }
+            flashlightLight.enabled = isOn;
         }
     }
 }

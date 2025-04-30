@@ -38,7 +38,6 @@ public class PlayerInventory : MonoBehaviourPun
     {
         playerUsing = GetComponent<PlayerUsing>();
         photonView = GetComponent<PhotonView>();
-        Debug.Log($"[DEBUG] {PhotonNetwork.NickName} - PhotonView Owner: {photonView.Owner}, IsMine: {photonView.IsMine}");
         
         LoadItemSprites();
         UpdateSelectedItemDisplay();
@@ -46,13 +45,11 @@ public class PlayerInventory : MonoBehaviourPun
     
     private void LoadItemSprites()
     {
-        Debug.Log("Chargement des sprites d'inventaire...");
         Sprite[] sprites = Resources.LoadAll<Sprite>("InventorySprites");
 
         foreach (Sprite sprite in sprites)
         {
             itemSprites[sprite.name] = sprite;
-            Debug.Log($"Sprite chargé : {sprite.name}");
         }
     }
 
@@ -136,15 +133,6 @@ public class PlayerInventory : MonoBehaviourPun
             inventory.Remove(itemName);
             inventoryKeys.Remove(itemName);
             Debug.Log($"{itemName} supprimé de l'inventaire.");
-        }
-    }
-
-    public void PrintInventory()
-    {
-        Debug.Log("Inventaire du joueur :");
-        foreach (var item in inventory)
-        {
-            Debug.Log($"{item.Key} : {item.Value}");
         }
     }
 

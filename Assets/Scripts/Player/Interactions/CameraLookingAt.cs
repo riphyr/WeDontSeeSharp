@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using Photon.Pun;
 
 public class CameraLookingAt : MonoBehaviour
 {
@@ -65,6 +66,7 @@ public class CameraLookingAt : MonoBehaviour
             { typeof(InteractionScripts.Drawer), hit => HandleDrawer(hit) },
             { typeof(InteractionScripts.DissolvableNote), hit => HandleDissolvableNote(hit) },
             { typeof(InteractionScripts.FridgeDoor), hit => HandleFridge(hit) },
+			{ typeof(InteractionScripts.RemovablePlank), hit => HandleRemovablePlank(hit) },
         };
     }
 
@@ -147,12 +149,47 @@ public class CameraLookingAt : MonoBehaviour
         }
     }
 
-    private void HandleDoor(RaycastHit hit)
-    {
-        ShowInteractionText(true, hit.transform.GetComponent<InteractionScripts.Door>().IsOpen() ? "Close the door" : "Open the door");
-        if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.Door>().ToggleDoor();
-    }
-    
+	private void HandleDoor(RaycastHit hit)
+	{
+    	var door = hit.transform.GetComponent<InteractionScripts.Door>();
+
+    	bool hasCrowbarEquipped = playerUsing != null && playerUsing.crowbarScript != null;
+
+    	string interactionMessage = "";
+
+    	if (door.doorType == InteractionScripts.Door.DoorType.Crowbar)
+    	{
+			if (!door.IsOpen() && hasCrowbarEquipped)
+			{
+      			interactionMessage = "Break the door";
+				ShowInteractionText(true, interactionMessage);
+			}
+    	}
+    	else
+    	{
+        	interactionMessage = door.IsOpen() ? "Close the door" : "Open the door";
+			ShowInteractionText(true, interactionMessage);
+    	}
+
+    	if (Input.GetKeyDown(primaryInteractionKey))
+    	{
+        	door.ToggleDoor(hasCrowbarEquipped);
+
+			if (door.doorType == InteractionScripts.Door.DoorType.Crowbar && hasCrowbarEquipped)
+        	{
+            	Debug.Log("[Crowbar] La crowbar s'est cassée !");
+            
+            	inventory.RemoveItem("Crowbar", 1);
+
+            	if (playerUsing.crowbarScript != null)
+            	{
+                	playerUsing.crowbarScript.ShowCrowbar(false);
+                	playerUsing.crowbarScript = null;
+            	}
+        	}
+    	}
+	}
+
     private void HandleLockKey(RaycastHit hit)
     {
         var lockKey = hit.transform.GetComponent<InteractionScripts.LockKey>();
@@ -497,4 +534,18 @@ public class CameraLookingAt : MonoBehaviour
         }
     }
 
+	private void HandleRemovablePlank(RaycastHit hit)
+	{
+    	var plank = hit.transform.GetComponent<InteractionScripts.RemovablePlank>();
+
+    	if (plank.IsUnlocked && !plank.IsRemoved)
+    	{
+        	ShowInteractionText(true, "Remove the plank");
+
+        	if (Input.GetKeyDown(primaryInteractionKey))
+        	{
+            	plank.TryRemovePlank();
+        	}
+    	}
+	}
 }

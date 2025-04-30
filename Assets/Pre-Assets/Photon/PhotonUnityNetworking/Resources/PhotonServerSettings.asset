@@ -114,6 +114,10 @@ MonoBehaviour:
   - PaintAtWorldPosition_RPC
   - SetUVHit
   - RPC_RevealMaterial
+  - RPC_ResetLever
+  - RemovePlank
+  - RPC_RequestAIActivation
+  - RPC_RequestAIDeactivation
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

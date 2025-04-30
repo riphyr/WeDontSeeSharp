@@ -239,3 +239,7 @@ MonoBehaviour:
     color: Blue
   - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-1006149627353393321-0
     color: Blue
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-4287185658615562509-1968869101
+    color: Purple
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-1468702943-0
+    color: Red

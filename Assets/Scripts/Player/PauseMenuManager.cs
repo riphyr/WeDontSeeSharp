@@ -224,7 +224,6 @@ namespace PauseMenu{
 		
 		private void PauseGame()
 		{
-			Debug.Log("[PAUSE MENU MANAGER] PAUSE METHOD");
 			isPaused = true;
 			pauseObject.SetActive(true);
 

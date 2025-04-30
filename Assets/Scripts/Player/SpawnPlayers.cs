@@ -19,7 +19,6 @@ public class SpawnPlayers : MonoBehaviourPunCallbacks
         {
             if (SceneManager.GetActiveScene().name == requiredSceneName)
             {
-                Debug.Log("🔌 Joueur non connecté à Photon, tentative de connexion...");
                 PhotonNetwork.ConnectUsingSettings();
             }
         }
@@ -33,25 +32,21 @@ public class SpawnPlayers : MonoBehaviourPunCallbacks
     
     public override void OnConnectedToMaster()
     {
-        Debug.Log("✅ Connecté au serveur Photon !");
         PhotonNetwork.JoinLobby();
     }
     
     public override void OnJoinedLobby()
     {
-        Debug.Log("📢 Joueur a rejoint le lobby. Cherche une Room...");
         JoinOrCreateRoom();
     }
     
     private void JoinOrCreateRoom()
     {
-        Debug.Log("🛠️ Tentative de rejoindre/créer une Room...");
-
         RoomOptions roomOptions = new RoomOptions
         {
-            MaxPlayers = 10,  // Définir un max de joueurs
-            IsVisible = true, // La Room est visible par les autres joueurs
-            IsOpen = true     // La Room peut être rejointe
+            MaxPlayers = 10,
+            IsVisible = true,
+            IsOpen = true
         };
 
         PhotonNetwork.JoinOrCreateRoom("a", roomOptions, TypedLobby.Default);
@@ -59,7 +54,6 @@ public class SpawnPlayers : MonoBehaviourPunCallbacks
 
     public override void OnJoinedRoom()
     {
-        Debug.Log("🏠 Joueur a rejoint une Room. Spawn en cours...");
         if (!playerSpawned)
         {
             SpawnPlayer();
@@ -80,7 +74,6 @@ public class SpawnPlayers : MonoBehaviourPunCallbacks
         //Check pour la version de test
         if (!myPlayer.activeSelf)
         {
-            Debug.LogWarning("⚠️ Le joueur était désactivé, activation en cours...");
             myPlayer.SetActive(true);
         }
         
