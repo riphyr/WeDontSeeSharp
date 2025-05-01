@@ -15,7 +15,18 @@ public class CreateAndJoinRooms : MonoBehaviourPunCallbacks
     public void CreateRoom()
     {
         PhotonNetwork.CreateRoom(createInput.text);
+
+        var save = new GameSaveData
+        {
+            isMultiplayer = true,
+            roomName = createInput.text,
+            currentScene = "HouseLvl",
+            playTime = 0f
+        };
+    
+        GameSaveManager.Save(save);
     }
+
 
     public void JoinRoom()
     {

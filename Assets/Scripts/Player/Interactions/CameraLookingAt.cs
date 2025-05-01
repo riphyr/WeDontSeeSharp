@@ -67,6 +67,8 @@ public class CameraLookingAt : MonoBehaviour
             { typeof(InteractionScripts.DissolvableNote), hit => HandleDissolvableNote(hit) },
             { typeof(InteractionScripts.FridgeDoor), hit => HandleFridge(hit) },
 			{ typeof(InteractionScripts.RemovablePlank), hit => HandleRemovablePlank(hit) },
+            { typeof(InteractionScripts.CaptureLock), hit => HandleCaptureLock(hit) },
+            { typeof(InteractionScripts.CaptureKey), hit => HandleCaptureKey(hit) },
         };
     }
 
@@ -548,4 +550,17 @@ public class CameraLookingAt : MonoBehaviour
         	}
     	}
 	}
+    
+    private void HandleCaptureLock(RaycastHit hit)
+    {
+        ShowInteractionText(true, "Unlock the chains");
+        if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.CaptureLock>().TryUnlock(inventory);
+    }
+
+    private void HandleCaptureKey(RaycastHit hit)
+    {
+        ShowInteractionText(true, "Pick up the key");
+        if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.CaptureKey>().PickupKey(inventory);
+    }
+
 }

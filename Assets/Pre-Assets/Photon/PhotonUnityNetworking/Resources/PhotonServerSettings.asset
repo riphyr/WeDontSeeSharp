@@ -120,6 +120,8 @@ MonoBehaviour:
   - RPC_RequestAIDeactivation
   - ForceSwitchOff
   - RPC_FlashlightsFlicker
+  - RPC_Unlock
+  - RPC_UnlockPlank
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

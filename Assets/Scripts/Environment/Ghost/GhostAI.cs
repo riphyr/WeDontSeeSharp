@@ -9,7 +9,7 @@ using System.Linq;
 public class GhostAI : MonoBehaviour
 {
     public enum GhostState { Idle, Roaming, Chasing, Investigating }
-    private PhotonView photonView;
+    [HideInInspector] public PhotonView photonView;
 
     [Header("Core References")]
     private NavMeshAgent agent;
@@ -206,6 +206,14 @@ public class GhostAI : MonoBehaviour
             lastKnownPosition = currentTarget.transform.position;
             agent.speed = chaseSpeed;
             agent.SetDestination(lastKnownPosition);
+
+			if (Vector3.Distance(transform.position, currentTarget.transform.position) < 1.2f)
+			{
+    			if (photonView.IsMine)
+    			{
+        			GhostCatchManager.Instance?.OnPlayerCaught(currentTarget);
+    			}
+			}
 
             if (photonView.IsMine)
                 photonView.RPC("RPC_FlashlightsFlicker", RpcTarget.All);

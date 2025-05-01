@@ -59,6 +59,12 @@ namespace InteractionScripts
 
         public void UnlockPlank()
         {
+            photonView.RPC("RPC_UnlockPlank", RpcTarget.AllBuffered);
+        }
+
+        [PunRPC]
+        private void RPC_UnlockPlank()
+        {
             isUnlocked = true;
             Debug.Log("[RemovablePlank] La planche est désormais retirable !");
         }
