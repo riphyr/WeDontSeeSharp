@@ -30,6 +30,9 @@ public static class HierarchyColorFilter
 
     [MenuItem("Tools/Show All Colored/Yellow")]
     public static void ShowYellow() => ShowColor("Yellow");
+    
+    [MenuItem("Tools/Show All Colored/Magenta")]
+    public static void ShowMagenta() => ShowColor("Magenta");
 
     public static void ShowColor(string colorTag)
     {

@@ -200,6 +200,7 @@ public static class HierarchyColorizerLayered
             "Blue" => new Color(0.5f, 0.7f, 1f),
             "Purple" => new Color(0.8f, 0.6f, 1f),
             "Yellow" => new Color(1f, 1f, 0.5f),
+            "Magenta" => new Color(1f, 0.5f, 1f),
             _ => Color.white
         };
     }

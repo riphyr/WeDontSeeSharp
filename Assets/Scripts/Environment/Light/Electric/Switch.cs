@@ -17,7 +17,7 @@ namespace InteractionScripts
         }
 
         [SerializeField] private List<LightElement> lightElements;
-        private ElectricLever electricLever;
+        public ElectricLever electricLever;
 
         private bool isOn = false;
         public AudioSource audioSource;
@@ -30,9 +30,14 @@ namespace InteractionScripts
             view = GetComponent<PhotonView>();
             view.OwnershipTransfer = OwnershipOption.Takeover;
 
-            electricLever = FindObjectOfType<ElectricLever>();
-
             UpdateLightTargets();
+            
+            if (PhotonNetwork.IsMasterClient && isOn)
+            {
+                // Force l’état à off si jamais il est à true (ex. mal sauvé dans prefab)
+                isOn = false;
+                UpdateLightTargets();
+            }
         }
         
         public void ToggleSwitch()

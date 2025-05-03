@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using Photon.Pun;
 using System.Collections.Generic;
+using System.Collections;
 
 public class GhostCatchManager : MonoBehaviour
 {
@@ -17,7 +18,7 @@ public class GhostCatchManager : MonoBehaviour
     public Transform[] chainPoints;
     public InteractionScripts.CaptureLock[] locks;
     public GameObject keyPrefab;
-    public Transform keySpawnPoint;
+    public Transform[] keySpawnPoints;
 
     [Header("IA Scaling After 0 Lives (Multiplayer)")]
     public GhostAI ghostAI;
@@ -82,7 +83,11 @@ public class GhostCatchManager : MonoBehaviour
 
         // Immobiliser & TP
         CharacterController ctrl = player.GetComponent<CharacterController>();
-        if (ctrl != null) ctrl.enabled = false;
+        if (ctrl != null) 
+		{		
+			ctrl.enabled = false;
+			ctrl.radius = 0.01f;
+		}
 
         int idx = Mathf.Min(chainedPlayers.Count - 1, chainPoints.Length - 1);
         player.transform.position = chainPoints[idx].position;
@@ -96,7 +101,19 @@ public class GhostCatchManager : MonoBehaviour
         // Spawn key
         if (!keySpawned)
         {
-            PhotonNetwork.Instantiate(keyPrefab.name, keySpawnPoint.position, Quaternion.identity);
+            if (keySpawnPoints.Length > 0)
+			{
+    			Transform spawnPoint = keySpawnPoints[Random.Range(0, keySpawnPoints.Length)];
+    			GameObject keyInstance = PhotonNetwork.Instantiate(keyPrefab.name, spawnPoint.position, Quaternion.identity);
+
+    			// On attend un petit peu pour que l'objet soit bien instancié localement avant de le reparenter
+    			StartCoroutine(ReparentKeyLater(keyInstance.transform, spawnPoint));
+			}
+			else
+			{
+    			Debug.LogWarning("Aucun point de spawn défini pour la clé !");
+			}
+
             keySpawned = true;
         }
 
@@ -107,6 +124,18 @@ public class GhostCatchManager : MonoBehaviour
 
         CheckIfAllPlayersChained();
     }
+
+	private IEnumerator ReparentKeyLater(Transform keyTransform, Transform newParent)
+	{
+    	yield return null; // attendre 1 frame pour que l’objet existe vraiment
+
+    	if (keyTransform != null && newParent != null)
+    	{
+        	keyTransform.SetParent(newParent, false);
+			keyTransform.localPosition = Vector3.zero;
+			keyTransform.localRotation = Quaternion.identity;
+    	}
+	}
 
     private void ApplyGhostDifficultyBoost()
     {
@@ -158,7 +187,11 @@ public class GhostCatchManager : MonoBehaviour
         {
             chainedPlayers.Remove(player);
             CharacterController ctrl = player.GetComponent<CharacterController>();
-            if (ctrl != null) ctrl.enabled = true;
+            if (ctrl != null) 
+			{		
+				ctrl.enabled = false;
+				ctrl.radius = 0.3f;
+			}
 
             // TODO: re-activer UI / gameplay
         }

@@ -32,8 +32,14 @@ public static class HierarchyColorContextMenu
     {
         SetColor("Yellow");
     }
+    
+    [MenuItem("GameObject/Set Color/Magenta", false, -94)]
+    static void SetColorMagenta()
+    {
+        SetColor("Magenta");
+    }
 
-    [MenuItem("GameObject/Set Color/None", false, -94)]
+    [MenuItem("GameObject/Set Color/None", false, -93)]
     static void SetColorNone()
     {
         SetColor("None");

@@ -9,7 +9,7 @@ public class HierarchyColorManager : EditorWindow
     private string searchQuery = "";
     private string sortMode = "Name";
     private static readonly string[] sortOptions = { "Name", "Color" };
-    private static readonly string[] colorOptions = { "None", "Red", "Green", "Blue", "Purple", "Yellow" };
+    private static readonly string[] colorOptions = { "None", "Red", "Green", "Blue", "Purple", "Yellow", "Magenta" };
 
     private static string hiddenColorFilter = null;
     public static string HiddenFilter => hiddenColorFilter;
@@ -201,6 +201,7 @@ public class HierarchyColorManager : EditorWindow
             "Blue" => new Color(0.5f, 0.7f, 1f),
             "Purple" => new Color(0.8f, 0.6f, 1f),
             "Yellow" => new Color(1f, 1f, 0.5f),
+            "Magenta" => new Color(1f, 0.5f, 1f),
             _ => Color.white
         };
     }

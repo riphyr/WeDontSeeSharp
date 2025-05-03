@@ -122,6 +122,11 @@ MonoBehaviour:
   - RPC_FlashlightsFlicker
   - RPC_Unlock
   - RPC_UnlockPlank
+  - RPC_MoveTrunk
+  - RPC_OpenTrunk
+  - RPC_PlayAnimationAndSound
+  - RPC_PlayRadio
+  - RPC_FlickerFlashlights
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

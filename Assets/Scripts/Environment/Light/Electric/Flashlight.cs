@@ -91,7 +91,7 @@ namespace InteractionScripts
             if (isEquipped && ownerTransform != null)
             {
                 transform.position = ownerTransform.position + ownerTransform.forward * 0.3f + ownerTransform.right * 0.1f + Vector3.up * 0.5f;
-                transform.rotation = Quaternion.Euler(playerCamera.transform.eulerAngles.x, ownerTransform.eulerAngles.y, 0f);
+                transform.rotation = Quaternion.Euler(playerCamera.transform.eulerAngles.x -5f, ownerTransform.eulerAngles.y - 2.5f, -2.4f);
                 
                 if (view.IsMine)
                 {
