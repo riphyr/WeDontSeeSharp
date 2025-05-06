@@ -127,6 +127,14 @@ MonoBehaviour:
   - RPC_PlayAnimationAndSound
   - RPC_PlayRadio
   - RPC_FlickerFlashlights
+  - RPC_SendAnswerToHost
+  - RPC_SetClothesSearched
+  - RPC_SetPhotoTakeable
+  - RPC_SetTrunk1Unlocked
+  - RPC_SetTrunk2Unlocked
+  - RPC_ForceSetQuestionHandler
+  - RPC_SetClothesUnlocked
+  - RPC_PlayGhostVoice
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

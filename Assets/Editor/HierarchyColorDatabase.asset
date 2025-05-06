@@ -291,3 +291,5 @@ MonoBehaviour:
     color: Red
   - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-3752081891940274028-0
     color: Red
+  - globalID: GlobalObjectId_V1-2-f2f808dcb5c63a2469afff3c21343f7b-5522981423159332201-2058660247
+    color: Green

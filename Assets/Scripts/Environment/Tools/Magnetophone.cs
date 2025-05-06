@@ -20,6 +20,18 @@ namespace InteractionScripts
         [Header("Ghost link")] 
         public GhostAI ghostScript;
         
+        [Header("AI Story Manager")] 
+        private Action<string> questionHandler;
+
+		[Header("Ghost Effects Controller")]
+		public GhostInteractionController ghostController;
+
+		[Header("Ghost Voice Lines")]
+		public AudioClip voiceImHere;
+		public AudioClip voiceMyName;
+		public AudioClip voiceKill;
+		public AudioClip voiceNever;
+        
         private Transform ownerTransform;
         private Vector3 networkPosition;
         private Quaternion networkRotation;
@@ -27,10 +39,17 @@ namespace InteractionScripts
         private PhotonView view;
         private bool isTaken = false;
 
+        #region Basic Functions
         private void Start()
         {
             view = GetComponent<PhotonView>();
             audioSource = GetComponent<AudioSource>();
+
+			var storyManager = FindObjectOfType<AIStoryManager>();
+    		if (storyManager != null)
+    		{	
+        		storyManager.TryAssignHandlerToCurrentMagnetophone();
+    		}
         }
 
         public void PickupMagnetophone(PlayerInventory inventory)
@@ -97,12 +116,14 @@ namespace InteractionScripts
         {
             audioSource.PlayOneShot(beepSound, 0.5f);
         }
+        
 
         private IEnumerator StartRecognitionWithDelay(float delay)
         {
             yield return new WaitForSeconds(delay);
             StartRecognition();
         }
+        #endregion
 
         private void StartRecognition()
         {
@@ -111,17 +132,34 @@ namespace InteractionScripts
                 recognizer = new SpeechRecognitionEngine();
                 recognizer.SetInputToDefaultAudioDevice();
 
-                Choices commands = new Choices();
-                commands.Add(new string[]
-                {
-                    "are you here",
-                    "what is your name",
-                    "i am here to defeat you",
-                    "leave me alone"
-                });
+                // YES synonyms
+                Choices yesChoices = new Choices();
+                yesChoices.Add(new SemanticResultValue("yes", "yes"));
+                yesChoices.Add(new SemanticResultValue("yeah", "yes"));
+                yesChoices.Add(new SemanticResultValue("of course", "yes"));
+                yesChoices.Add(new SemanticResultValue("obviously", "yes"));
 
+                // NO synonyms
+                Choices noChoices = new Choices();
+                noChoices.Add(new SemanticResultValue("no", "no"));
+                noChoices.Add(new SemanticResultValue("nope", "no"));
+                noChoices.Add(new SemanticResultValue("never", "no"));
+                noChoices.Add(new SemanticResultValue("not at all", "no"));
+
+                // Other fixed ghost interaction phrases
+                Choices ghostCommands = new Choices();
+                ghostCommands.Add("are you here");
+                ghostCommands.Add("what is your name");
+                ghostCommands.Add("i am here to defeat you");
+                ghostCommands.Add("leave me alone");
+				ghostCommands.Add("kill me");
+				ghostCommands.Add("toggle doors");
+				ghostCommands.Add("toggle lights");
+
+                // Combine all
                 GrammarBuilder gb = new GrammarBuilder();
-                gb.Append(commands);
+                gb.Append(new Choices(yesChoices, noChoices, ghostCommands));
+
                 Grammar g = new Grammar(gb);
                 recognizer.LoadGrammar(g);
 
@@ -133,47 +171,128 @@ namespace InteractionScripts
             }
             catch (Exception e)
             {
-                Debug.LogError($"🚨 Erreur reconnaissance vocale : {e.Message}");
+                Debug.LogError($"Erreur reconnaissance vocale : {e.Message}");
             }
         }
-
+        
         private void Recognizer_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
             if (e.Result.Confidence < confidenceThreshold)
             {
-                Debug.Log($"❌ Faux positif ignoré : {e.Result.Text} (Confiance : {e.Result.Confidence * 100:F1}%)");
+                Debug.Log($"Faux positif ignoré : {e.Result.Text} (Confiance : {e.Result.Confidence * 100:F1}%)");
                 return;
             }
 
-            Debug.Log($"✅ Détection confirmée : {e.Result.Text} ({e.Result.Confidence * 100:F1}%)");
+            string semantic = e.Result.Semantics?.Value?.ToString().ToLowerInvariant() ?? e.Result.Text.ToLowerInvariant();
+            Debug.Log($"Détection confirmée : {e.Result.Text} → {semantic} ({e.Result.Confidence * 100:F1}%)");
 
-            view.RPC("RPC_HandleRecognition", RpcTarget.All, e.Result.Text);
+            view.RPC("RPC_SendAnswerToHost", RpcTarget.MasterClient, semantic);
+
+            // Sinon : fallback RPC pour les ghost phrases
+            view.RPC("RPC_HandleRecognition", RpcTarget.All, e.Result.Text.ToLowerInvariant());
         }
+
 
         [PunRPC]
-        private void RPC_HandleRecognition(string recognizedText)
+		private void RPC_HandleRecognition(string recognizedText)
+		{
+			switch (recognizedText)
+ 			{
+        		case "are you here":
+            		view.RPC("RPC_PlayGhostVoice", RpcTarget.All, "im_here");
+            		ghostController.FlickerSwitchLights();
+            		break;
+
+        		case "what is your name":
+            		view.RPC("RPC_PlayGhostVoice", RpcTarget.All, "my_name");
+            		break;
+
+        		case "i am here to defeat you":
+            		view.RPC("RPC_PlayGhostVoice", RpcTarget.All, "kill_you");
+            		ghostController.IncreaseAggressivity();
+            		break;
+
+        		case "leave me alone":
+            		view.RPC("RPC_PlayGhostVoice", RpcTarget.All, "never");
+            		ghostController.ToggleDoorsRandomly();
+            		break;
+
+        		case "kill me":
+            		ghostController.IncreaseAggressivity();
+            		ghostController.FlickerFlashlights();
+            		ghostController.ToggleDoorsRandomly();
+            		break;
+
+				case "toggle doors":
+            		ghostController.ToggleDoorsRandomly();
+            		break;
+
+				case "toggle lights":
+            		ghostController.FlickerFlashlights();
+            		ghostController.FlickerSwitchLights();
+            		break;
+    		}
+		}
+
+		[PunRPC]
+		private void RPC_PlayGhostVoice(string clipId)
+		{
+    		switch (clipId)
+    		{
+        		case "im_here":
+           			audioSource.PlayOneShot(voiceImHere);
+            		break;
+        		case "my_name":
+            		audioSource.PlayOneShot(voiceMyName);
+            		break;
+        		case "kill_you":
+            		audioSource.PlayOneShot(voiceKill);
+            		break;
+        		case "never":
+            		audioSource.PlayOneShot(voiceNever);
+            		break;
+    		}
+		}
+
+        [PunRPC]
+        private void RPC_SendAnswerToHost(string semanticKeyword)
         {
-            switch (recognizedText)
+            if (questionHandler != null)
             {
-                case "are you here":
-                    view.RPC("RPC_PlayBeep", RpcTarget.All);
-                    Debug.Log("👻 Esprit détecté : 'Yes...'");
-                    break;
-                case "what is your name":
-                    view.RPC("RPC_PlayBeep", RpcTarget.All);
-                    Debug.Log("👻 Esprit détecté : 'I'm Fabrice...'");
-                    break;
-                case "i am here to defeat you":
-                    view.RPC("RPC_PlayBeep", RpcTarget.All);
-                    Debug.Log("👻 Esprit détecté : 'I will do it first!'");
-                    break;
-                case "leave me alone":
-                    view.RPC("RPC_PlayBeep", RpcTarget.All);
-                    Debug.Log("👻 Esprit détecté : 'Never!'");
-                    break;
+                questionHandler.Invoke(semanticKeyword);
             }
+			else
+				Debug.Log("Nulle question HAndler");
         }
 
+		[PunRPC]
+		private void RPC_ForceSetQuestionHandler(int actorId)
+		{
+    		if (!photonView.IsMine) return;
+
+    		if (PhotonNetwork.LocalPlayer.ActorNumber == actorId)
+    		{
+        		Debug.Log("[Magnetophone] Réception RPC pour enregistrer questionHandler du joueur");
+        		questionHandler = (semantic) =>
+        		{
+            		photonView.RPC("RPC_SendAnswerToHost", RpcTarget.MasterClient, semantic);
+        		};
+   		 	}
+		}
+
+        public void SetQuestionHandler(Action<string> handler)
+        {
+			Debug.Log("[Magnetophone] Question handler enregistré.");
+            questionHandler = handler;
+        }
+
+        public void ClearQuestionHandler()
+        {
+			Debug.Log("[Magnetophone] Question handler clear.");
+            questionHandler = null;
+        }
+
+        #region Functions for Destroy/Update/Spawn
         private void OnDestroy()
         {
             if (recognizer != null)
@@ -228,5 +347,6 @@ namespace InteractionScripts
                 networkRotation = (Quaternion)stream.ReceiveNext();
             }
         }
+        #endregion
     }
 }

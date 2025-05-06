@@ -62,6 +62,8 @@ public class GhostAI : MonoBehaviour
     private GhostState currentState = GhostState.Idle;
     private int patrolIndex = 0;
 
+	public bool IsAiActive() => aiActive;
+
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();

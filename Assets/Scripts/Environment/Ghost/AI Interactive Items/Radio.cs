@@ -37,6 +37,7 @@ namespace InteractionScripts
                 return;
 
             inventory.RemoveItem("Cassette");
+            loreProgress.SetRadioPlayed();
             view.RPC("RPC_PlayRadio", RpcTarget.All);
         }
         

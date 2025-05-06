@@ -16,6 +16,7 @@ public class LoreProgressManager : MonoBehaviour
     [SerializeField] private bool photoTaken = false;
     [SerializeField] private bool letterTaken = false;
     [SerializeField] private bool cassetteTaken = false;
+    [SerializeField] private bool radioPlayed = false;
 
     public void SetClothesUnlocked(bool value) => clothesUnlocked = value;
     public void SetClothesSearched()
@@ -62,6 +63,11 @@ public class LoreProgressManager : MonoBehaviour
         cassetteTaken = true;
         Debug.Log("[Lore] Cassette taken.");
     }
+    public void SetRadioPlayed()
+    {
+        radioPlayed = true;
+        Debug.Log("[Lore] Radio played.");
+    }
 
     public bool IsClothesUnlocked() => clothesUnlocked;
     public bool IsClothesSearched() => clothesSearched;
@@ -76,4 +82,5 @@ public class LoreProgressManager : MonoBehaviour
     public bool IsPhotoTaken() => photoTaken;
     public bool IsLetterTaken() => letterTaken;
     public bool IsCassetteTaken() => cassetteTaken;
+    public bool IsRadioPlayed() => radioPlayed;
 }
