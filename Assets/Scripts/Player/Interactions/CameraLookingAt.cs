@@ -37,8 +37,6 @@ public class CameraLookingAt : MonoBehaviour
             { typeof(InteractionScripts.Door), hit => HandleDoor(hit) },
             { typeof(InteractionScripts.Window), hit => HandleWindow(hit) },
             { typeof(InteractionScripts.Switch), hit => HandleSwitch(hit) },
-            { typeof(InteractionScripts.Wardrobe), hit => HandleWardrobe(hit) },
-            { typeof(InteractionScripts.Closet), hit => HandleCloset(hit) },
             { typeof(InteractionScripts.Key), hit => HandleKey(hit) },
             { typeof(InteractionScripts.Candle), hit => HandleCandle(hit) },
             { typeof(InteractionScripts.Lighter), hit => HandleLighter(hit) },
@@ -63,7 +61,6 @@ public class CameraLookingAt : MonoBehaviour
             { typeof(InteractionScripts.ChemistryStation), hit => HandleChemistryStation(hit) },
             { typeof(InteractionScripts.Item), hit => HandleItem(hit) },
             { typeof(InteractionScripts.LoreItem), hit => HandleLoreItem(hit) },
-            { typeof(InteractionScripts.Drawer), hit => HandleDrawer(hit) },
             { typeof(InteractionScripts.DissolvableNote), hit => HandleDissolvableNote(hit) },
             { typeof(InteractionScripts.FridgeDoor), hit => HandleFridge(hit) },
 			{ typeof(InteractionScripts.RemovablePlank), hit => HandleRemovablePlank(hit) },
@@ -76,6 +73,10 @@ public class CameraLookingAt : MonoBehaviour
             { typeof(InteractionScripts.Radio), hit => HandleRadio(hit) },
             { typeof(InteractionScripts.Clothes), hit => HandleClothes(hit) },
             { typeof(InteractionScripts.Trunk), hit => HandleTrunk(hit) },
+            { typeof(InteractionScripts.Card), hit => HandleCard(hit) },
+            { typeof(InteractionScripts.Wardrobe), hit => HandleWardrobe(hit) },
+            { typeof(InteractionScripts.Closet), hit => HandleCloset(hit) },
+            { typeof(InteractionScripts.Drawer), hit => HandleDrawer(hit) },
         };
     }
 
@@ -664,5 +665,13 @@ public class CameraLookingAt : MonoBehaviour
 
         if (Input.GetKeyDown(primaryInteractionKey)) 
             trunk.TryInteract();
+    }
+    
+    private void HandleCard(RaycastHit hit)
+    {
+        ShowInteractionText(true, "Pick up the card");
+
+        if (Input.GetKeyDown(primaryInteractionKey))
+            hit.transform.GetComponent<InteractionScripts.Card>().Collect();
     }
 }

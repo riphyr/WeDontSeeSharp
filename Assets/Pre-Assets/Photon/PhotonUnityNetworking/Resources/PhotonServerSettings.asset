@@ -136,6 +136,12 @@ MonoBehaviour:
   - RPC_SetClothesUnlocked
   - RPC_PlayGhostVoice
   - RPC_TriggerSceneEnd
+  - DestroyCard
+  - GameOverRPC
+  - IncrementCardCount
+  - RequestDestroyCard
+  - ShowWinMessage
+  - UpdateTimer
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

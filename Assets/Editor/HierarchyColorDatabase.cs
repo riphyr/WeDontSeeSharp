@@ -92,7 +92,7 @@ public class HierarchyColorDatabase : ScriptableObject
         }
     }
 
-    private void RebuildCache()
+    public void RebuildCache()
     {
         cache = new Dictionary<string, string>();
         foreach (var entry in colorEntries)
@@ -107,6 +107,13 @@ public class HierarchyColorDatabase : ScriptableObject
     {
         if (instance != null)
             instance.RebuildCache();
+    }
+    
+    [MenuItem("Tools/Hierarchy Color/Force Reload Colors")]
+    public static void ForceReloadColors()
+    {
+        instance.RebuildCache();
+        EditorApplication.RepaintHierarchyWindow();
     }
 }
 
