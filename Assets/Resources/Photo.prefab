@@ -83,6 +83,37 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 393341540746876054}
   m_Mesh: {fileID: -2346428509227581198, guid: 7b87c5b2d23ff434f83e2b9f9fc5ea6c, type: 3}
+--- !u!1 &435625554786698330
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6294711797703167916}
+  m_Layer: 0
+  m_Name: InspectFace
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6294711797703167916
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 435625554786698330}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 67.19699, y: 67.19697, z: 67.19697}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3865509185256968429}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &503242198793515371
 GameObject:
   m_ObjectHideFlags: 0
@@ -278,6 +309,7 @@ Transform:
   m_LocalScale: {x: 0.6666666, y: 0.6666667, z: 0.6666666}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 6294711797703167916}
   - {fileID: 8477683589699977224}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

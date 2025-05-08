@@ -15,21 +15,114 @@ MonoBehaviour:
   loreEntries:
   - itemName: Newspaper
     prefab: {fileID: 434746681103268103, guid: 9f19c0fa2d19d164d9a332538e67280d, type: 3}
-    loreText: Lorem ipsum gottum pisum vallium...
+    loreText: "Excerpt from The Herald, November 14, 1998 \u2014 Page 6, Local News
+      Briefs:\n\n\"Unexplained Incident at Private Card Room Raises Questions\"\n\nAuthorities
+      remain tight-lipped following the abrupt shutdown of a private club operating
+      behind the Velvet Room Bar on Holsten Street earlier this week. Sources close
+      to the investigation have confirmed that the venue, known to select patrons
+      as \u201CThe Deck,\u201D functioned as an unregistered high-stakes poker lounge.\n\nOne
+      of the individuals linked to the club, a certain John R., has reportedly not
+      been seen since the night of a major game held last Friday. While no official
+      connection has been made, unverified reports mention a violent dispute during
+      the event and signs of forced entry into the service corridors.\n\nInvestigators
+      recovered several items from John P.\u2019s childhood home two days later,
+      including handwritten notes and tampered electronics. A sealed document found
+      on-site is currently under forensic examination.\n\nLaw enforcement has declined
+      to comment on whether foul play is suspected. No charges have been filed at
+      this time. The Velvet Room remains closed until further notice."
     isDiscovered: 1
   - itemName: File
     prefab: {fileID: 5557846178329533009, guid: b7216d561e34c5147ad27753426ce50d, type: 3}
-    loreText: Lorem ipsum gottum pisum vallium...
+    loreText: "BELLS SYSTEMS - FILE\n\n- - - - - - - - - -\n\nFound on the desk of
+      the locked home office room in John\u2019s childhood house, this sealed document
+      resists all digital decoding attempts \u2014 as if it was never meant to be
+      opened again. Most of its contents are crossed out, hastily scribbled over,
+      or rendered completely illegible. However, a few fragments remain intact, hinting
+      at a surveillance system discreetly installed throughout the house, with references
+      to specific camera feeds and timestamps. Some notes appear dated just days
+      before John's disappearance. The overall tone of the annotations suggests rising
+      paranoia \u2014 or perhaps preparation. Whether John wrote them all is unclear."
     isDiscovered: 1
   - itemName: Binder
     prefab: {fileID: 3474975943810485555, guid: 7f6b53364a4e9d349837b3889ac892a6, type: 3}
-    loreText: Lorem ipsum gottum pisum vallium...
+    loreText: 'MASTER (No. 2783)
+
+
+      - - - - - - - - - -
+
+
+      CHILDREN''S
+      ACADEMIC RECORD
+
+
+      - - - - - - - - - -
+
+
+      Primary School Report Card
+
+
+      Student''s
+      name : John Price
+
+      Grade level : 4th
+
+      Comment : John is a delight
+      to have in class ! He always works hard and demonstrates problem-solving skills.
+      Please encourage further reading at home.
+
+
+      - - - - - - - - - -
+
+
+      Standardized
+      test scores
+
+
+      Math : A
+
+      Science : B
+
+      Social studies : B
+
+      Reading
+      : A
+
+      Writing : A
+
+
+      Score : 498 (APPROVED)'
     isDiscovered: 1
   - itemName: Clipboard
     prefab: {fileID: 1098896411501528656, guid: 4dd2b826b9a75c949b313970b8cab1ab, type: 3}
-    loreText: Lorem ipsum gottum pisum vallium...
+    loreText: 'EDISON ELECTRICAL CO.
+
+
+      - - - - - - - - - -
+
+
+      CIRCUIT
+      BREAK CARDS - REFERENCE MATRIX
+
+
+      - - [CODE] - - [WIRES]
+
+      - - -
+      0.1 - - - ON OFF OFF
+
+      - - - 0.2 - - - OFF ON
+
+      - - - 0.3 - - - ON
+      OFF OFF ON
+
+      - - - 0.4 - - - ON ON
+
+      - - - 0.5 - - - OFF ON OFF
+
+      -
+      - - 0.6 - - - OFF'
     isDiscovered: 1
   - itemName: Photo
     prefab: {fileID: 3349781842752865641, guid: 40a02e75b1e1aef49a2dfcb8163bf7c0, type: 3}
-    loreText: Lorem ipsum gottum pisum vallium...
+    loreText: "Shot in the backroom of the underground poker club, sometime around
+      \u201998 \u2014 before the real heat started."
     isDiscovered: 1
