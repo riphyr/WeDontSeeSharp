@@ -190,7 +190,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   beepSound: {fileID: 8300000, guid: 61898a8b23f3e7e4abed2521b12c84f4, type: 3}
   pickupSound: {fileID: 8300000, guid: d109c89ab3448174aa5cb38a8f5a2b78, type: 3}
-  ghostScript: {fileID: 0}
+  voiceImHere: {fileID: 8300000, guid: e42b0b336d8344a468fa9649cb321216, type: 3}
+  voiceMyName: {fileID: 8300000, guid: e79cd23f98488dc4980ad09c825ab4b1, type: 3}
+  voiceKill: {fileID: 8300000, guid: fb65a0df779a7a4468996be331b4ab5c, type: 3}
+  voiceNever: {fileID: 8300000, guid: ca7f24a4bbff5a64793e3ea0c28e5479, type: 3}
 --- !u!1 &9105045488303268633
 GameObject:
   m_ObjectHideFlags: 0

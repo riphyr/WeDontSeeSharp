@@ -36,7 +36,6 @@ namespace InteractionScripts
             if (loreProgress.IsPhotoTaken() || !loreProgress.IsPhotoTakeable())
                 return;
 
-            inventory.AddItem(photoItemName);
             loreProgress.SetPhotoTaken();
 
             view.RPC("PlayPickupSound", RpcTarget.All);

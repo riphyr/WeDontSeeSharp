@@ -18,13 +18,11 @@ namespace InteractionScripts
         private float confidenceThreshold = 0.65f;
 
         [Header("Ghost link")] 
-        public GhostAI ghostScript;
+        private GhostAI ghostScript;
+        private GhostInteractionController ghostController;
         
         [Header("AI Story Manager")] 
         private Action<string> questionHandler;
-
-		[Header("Ghost Effects Controller")]
-		public GhostInteractionController ghostController;
 
 		[Header("Ghost Voice Lines")]
 		public AudioClip voiceImHere;
@@ -45,6 +43,9 @@ namespace InteractionScripts
             view = GetComponent<PhotonView>();
             audioSource = GetComponent<AudioSource>();
 
+            ghostScript = FindObjectOfType<GhostAI>();
+            ghostController = FindObjectOfType<GhostInteractionController>();
+            
 			var storyManager = FindObjectOfType<AIStoryManager>();
     		if (storyManager != null)
     		{	
@@ -240,16 +241,16 @@ namespace InteractionScripts
     		switch (clipId)
     		{
         		case "im_here":
-           			audioSource.PlayOneShot(voiceImHere);
+           			audioSource.PlayOneShot(voiceImHere, 0.3f);
             		break;
         		case "my_name":
-            		audioSource.PlayOneShot(voiceMyName);
+            		audioSource.PlayOneShot(voiceMyName, 0.3f);
             		break;
         		case "kill_you":
-            		audioSource.PlayOneShot(voiceKill);
+            		audioSource.PlayOneShot(voiceKill, 0.3f);
             		break;
         		case "never":
-            		audioSource.PlayOneShot(voiceNever);
+            		audioSource.PlayOneShot(voiceNever, 0.3f);
             		break;
     		}
 		}

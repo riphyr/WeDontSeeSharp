@@ -57,7 +57,6 @@ public class AIStoryManager : MonoBehaviourPun
     {
         if (!isScriptActive) 
 		{
-			Debug.Log($"[AIStoryManager] IA non-activée");
 			return;
 		}
 

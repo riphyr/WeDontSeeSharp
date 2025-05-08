@@ -16,4 +16,20 @@ MonoBehaviour:
   - itemName: Newspaper
     prefab: {fileID: 434746681103268103, guid: 9f19c0fa2d19d164d9a332538e67280d, type: 3}
     loreText: Lorem ipsum gottum pisum vallium...
-    isDiscovered: 0
+    isDiscovered: 1
+  - itemName: File
+    prefab: {fileID: 5557846178329533009, guid: b7216d561e34c5147ad27753426ce50d, type: 3}
+    loreText: Lorem ipsum gottum pisum vallium...
+    isDiscovered: 1
+  - itemName: Binder
+    prefab: {fileID: 3474975943810485555, guid: 7f6b53364a4e9d349837b3889ac892a6, type: 3}
+    loreText: Lorem ipsum gottum pisum vallium...
+    isDiscovered: 1
+  - itemName: Clipboard
+    prefab: {fileID: 1098896411501528656, guid: 4dd2b826b9a75c949b313970b8cab1ab, type: 3}
+    loreText: Lorem ipsum gottum pisum vallium...
+    isDiscovered: 1
+  - itemName: Photo
+    prefab: {fileID: 3349781842752865641, guid: 40a02e75b1e1aef49a2dfcb8163bf7c0, type: 3}
+    loreText: Lorem ipsum gottum pisum vallium...
+    isDiscovered: 1

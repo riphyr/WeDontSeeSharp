@@ -7,7 +7,6 @@ public class GameSaveData
     public bool isMultiplayer;
     public string roomName;
     public string currentScene;
-    public bool hasCrowbar;
     public float playTime;
 }
 
