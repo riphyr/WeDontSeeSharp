@@ -2,6 +2,7 @@
 using UnityEngine;
 using Photon.Pun;
 using TMPro;
+using UnityEditor;
 using UnityEngine.UI;
 
 public class PlayerInventory : MonoBehaviourPun
@@ -237,6 +238,16 @@ public class PlayerInventory : MonoBehaviourPun
 	{
     	return itemSprites.TryGetValue(itemName, out Sprite sprite) ? sprite : null;
 	}
+    
+    [ContextMenu("Debug/Print Inventory Keys")]
+    private void PrintInventoryKeys()
+    {
+        Debug.Log("Current Inventory Keys:");
+        foreach (var key in inventory.Keys)
+        {
+            Debug.Log($"- {key} (x{inventory[key]})");
+        }
+    }
 
 	public void ForceSelectItem(string itemName)
 	{

@@ -23,7 +23,7 @@ public static class GameSaveManager
 
     public static GameSaveData Load()
     {
-        if (File.Exists(savePath))
+        if (isSaveAvailable())
         {
             string json = File.ReadAllText(savePath);
             return JsonUtility.FromJson<GameSaveData>(json);
@@ -33,5 +33,10 @@ public static class GameSaveManager
             Debug.LogWarning("No save file found.");
             return null;
         }
+    }
+
+    public static bool isSaveAvailable()
+    {
+        return File.Exists(savePath);
     }
 }

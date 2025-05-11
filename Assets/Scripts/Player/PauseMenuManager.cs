@@ -15,7 +15,6 @@ namespace PauseMenu{
         public GameObject mainCanva;			// Panel MAIN
         public GameObject settingsCanva;		// Panel PLAY
         public GameObject exitMenu;				// Panel EXIT
-        public GameObject saveMenu;				// Panel SAVE
 
         [Header("PANELS")]
         public GameObject PanelGame;			// Panel GAME
@@ -99,7 +98,6 @@ namespace PauseMenu{
 			settingsCanva.SetActive(false);
 			exitMenu.SetActive(false);
 			mainCanva.SetActive(false);
-			saveMenu.SetActive(false);
 			
 			// Vérification des sliders
 			musicSlider.GetComponent<Slider>().value = PlayerPrefs.GetFloat("MusicVolume");
@@ -206,12 +204,6 @@ namespace PauseMenu{
 		{
             GetComponent<AudioSource>().volume = PlayerPrefs.GetFloat("MusicVolume");
         }
-
-		public void Save()
-		{
-			exitMenu.SetActive(false);
-			saveMenu.SetActive(true);
-		}
 		
 		public void ResumeButton()
 		{
@@ -230,7 +222,6 @@ namespace PauseMenu{
 			mainCanva.SetActive(true);
 			settingsCanva.SetActive(false);
 			exitMenu.SetActive(false);
-			saveMenu.SetActive(false);
 
 			Cursor.lockState = CursorLockMode.None;
 			Cursor.visible = true;
@@ -268,14 +259,12 @@ namespace PauseMenu{
 		public void ReturnButton(){
 			settingsCanva.SetActive(false);
 			exitMenu.SetActive(false);
-			saveMenu.SetActive(false);
 			mainCanva.SetActive(true);
 			pauseObject.SetActive(true);
 		}
 		
 		public void AreYouSure(){
 			exitMenu.SetActive(true);
-			DisableSave();
 		}
 
 		public void QuitGame(){
@@ -284,10 +273,6 @@ namespace PauseMenu{
 			#else
 				Application.Quit();
 			#endif
-		}
-
-		public void  DisableSave(){
-			saveMenu.SetActive(false);
 		}
 		void DisablePanels(){
 			PanelControls.SetActive(false);
@@ -394,7 +379,7 @@ namespace PauseMenu{
 
 		public void FullScreen (){
 			Screen.fullScreen = !Screen.fullScreen;
-			fullscreentext.GetComponent<TMP_Text>().text = Screen.fullScreen ? "off" : "on";
+			fullscreentext.GetComponent<TMP_Text>().text = fullscreentext.GetComponent<TMP_Text>().text == "on" ? "off" : "on";
 		}
 
 		public void MusicSlider (){
@@ -413,7 +398,7 @@ namespace PauseMenu{
 		public void ToolTips (){
 			int currentState = PlayerPrefs.GetInt("ToolTips");
 			PlayerPrefs.SetInt("ToolTips", 1 - currentState);
-			tooltipstext.GetComponent<TMP_Text>().text = currentState == 0 ? "off" : "on";
+			tooltipstext.GetComponent<TMP_Text>().text = PlayerPrefs.GetInt("ToolTips") == 0 ? "off" : "on";
 		}
 		
 		// Update Shadow Quality

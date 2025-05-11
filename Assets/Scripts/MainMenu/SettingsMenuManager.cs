@@ -117,7 +117,7 @@ namespace MainMenu{
 
 		public void FullScreen (){
 			Screen.fullScreen = !Screen.fullScreen;
-			fullscreentext.GetComponent<TMP_Text>().text = Screen.fullScreen ? "off" : "on";
+			fullscreentext.GetComponent<TMP_Text>().text = fullscreentext.GetComponent<TMP_Text>().text == "on" ? "off" : "on";
 		}
 
 		public void MusicSlider (){
@@ -136,7 +136,7 @@ namespace MainMenu{
 		public void ToolTips (){
 			int currentState = PlayerPrefs.GetInt("ToolTips");
 			PlayerPrefs.SetInt("ToolTips", 1 - currentState);
-			tooltipstext.GetComponent<TMP_Text>().text = currentState == 0 ? "off" : "on";
+			tooltipstext.GetComponent<TMP_Text>().text = PlayerPrefs.GetInt("ToolTips") == 0 ? "off" : "on";
 		}
 		
 		// Update Shadow Quality

@@ -8,10 +8,9 @@ public class SceneEndTrigger : MonoBehaviourPunCallbacks
 
     private bool hasTriggered = false;
 
-    private void OnTriggerEnter(Collider other)
+    public void Trigger()
     {
-        if (!other.CompareTag("Player") || hasTriggered)
-            return;
+        if (hasTriggered) return;
 
         hasTriggered = true;
         photonView.RPC(nameof(RPC_TriggerSceneEnd), RpcTarget.AllBuffered);
@@ -20,10 +19,8 @@ public class SceneEndTrigger : MonoBehaviourPunCallbacks
     [PunRPC]
     private void RPC_TriggerSceneEnd()
     {
-        Debug.Log("[SceneEndTrigger] Fin de scène — changement pour tous les joueurs.");
         GameSaveManager.Save(GameManager.Instance.CurrentGameData);
-
         PhotonNetwork.LoadLevel(nextSceneName);
     }
-
 }
+

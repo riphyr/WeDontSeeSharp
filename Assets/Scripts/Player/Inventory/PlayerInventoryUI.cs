@@ -21,6 +21,7 @@ public class PlayerInventoryUI : MonoBehaviour
 
     [Header("Slots d'inventaire (visibles)")]
     [SerializeField] private List<InventorySlotUI> slotUIs;
+    [SerializeField] private ItemDatabase itemDatabase;
 
 	[Header("Paramètres de double clique")]
 	[SerializeField] private float lastClickTime = 0f;
@@ -182,21 +183,28 @@ public class PlayerInventoryUI : MonoBehaviour
             }
         }
     }
-
+    
     public void OnSlotClicked(string itemName)
     {
-		float timeSinceLastClick = Time.time - lastClickTime;
-    	lastClickTime = Time.time;
+	    float timeSinceLastClick = Time.time - lastClickTime;
+	    lastClickTime = Time.time;
 
-		selectedItemName = itemName;
-        if (informationText)
-            informationText.text = $"Objet : {itemName}\nQuantité : {playerInventory.GetItemCount(itemName)}";
+	    selectedItemName = itemName;
+	    if (informationText)
+	    {
+		    ItemData data = itemDatabase.GetData(itemName);
+		    string display = $"Item : {data.displayName}\nAmount : {playerInventory.GetItemCount(itemName)}\n\nDescription : {data.description}";
 
-		if (timeSinceLastClick <= doubleClickThreshold)
-    	{
-        	playerInventory.SwitchToItemDirectly(itemName);
-    	}
+		    if (PlayerPrefs.GetInt("ToolTips", 1) == 1 && !string.IsNullOrWhiteSpace(data.extraTooltip))
+			    display += $"\n\nTooltips : {data.extraTooltip}";
+
+		    informationText.text = display;
+	    }
+
+	    if (timeSinceLastClick <= doubleClickThreshold)
+		    playerInventory.SwitchToItemDirectly(itemName);
     }
+
 
     public void OnSlotHoverEnter(int slotIndex)
     {

@@ -1,0 +1,139 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29143168969b4ce7aafc82a6ce3e4b88, type: 3}
+  m_Name: ItemDatabase
+  m_EditorClassIdentifier: 
+  items:
+  - itemName: Battery
+    displayName: Battery
+    description: "Standard power unit for portable devices.\t"
+    extraTooltip: Used to recharge flashlights or other battery-powered tools.
+  - itemName: Bedroom key
+    displayName: Bedroom key
+    description: Opens the bedroom door.
+    extraTooltip: Might give access to personal belongings or clues.
+  - itemName: Game room key
+    displayName: Game room key
+    description: Unlocks the game room.
+    extraTooltip: Explore for distractions, secrets, or past memories.
+  - itemName: Home office key
+    displayName: Home office key
+    description: Gives access to the home office.
+    extraTooltip: May contain documents or important items.
+  - itemName: Library key
+    displayName: Library key
+    description: Opens the library door.
+    extraTooltip: Expect knowledge, records, or secret compartments.
+  - itemName: Capture key
+    displayName: Chainlock key
+    description: Required to unlock a captured player.
+    extraTooltip: Only spawns after a teammate is captured.
+  - itemName: EMFDetector
+    displayName: E.M.F.
+    description: Detects electromagnetic disturbances.
+    extraTooltip: Helps track paranormal presence. Noisy, attracts attention.
+  - itemName: CDDisk
+    displayName: CD
+    description: A readable data disk.
+    extraTooltip: Insert into a computer to access video surveillance.
+  - itemName: Crowbar
+    displayName: Crowbar
+    description: A heavy tool for prying things open.
+    extraTooltip: Can remove nailed planks or force open stuck doors.
+  - itemName: Flashlight
+    displayName: Flashlight
+    description: A standard light source.
+    extraTooltip: Requires battery.
+  - itemName: UVFlashlight
+    displayName: UV Flashlight
+    description: Emits ultraviolet light.
+    extraTooltip: Reveals hidden traces like blood or writing.
+  - itemName: Wrench
+    displayName: Wrench
+    description: Used to manipulate valves or screws.
+    extraTooltip: Essential for mechanical puzzles or repairs.
+  - itemName: Magnetophone
+    displayName: Tape recorder
+    description: A voice recorder and communicator.
+    extraTooltip: Can provoke ghost responses via speech recognition.
+  - itemName: Match
+    displayName: Match
+    description: A simple matchstick.
+    extraTooltip: Used to light candles, or light yourself. Single use.
+  - itemName: Candle
+    displayName: Candle
+    description: Emits light when lit.
+    extraTooltip: Can be removed and replaced wherever you want to light up a small
+      area.
+  - itemName: Lighter
+    displayName: Lighter
+    description: Reusable ignition tool.
+    extraTooltip: Lights candles or other flammable items.
+  - itemName: Bleach
+    displayName: Bleach can
+    description: A bottle of cleaning chemical.
+    extraTooltip: Toxic. Might be used in chemistry-related puzzles.
+  - itemName: Lemon juice
+    displayName: Lemon juice
+    description: A bottle of lemon extract.
+    extraTooltip: Can be used in chemistry-related puzzles and also reveals hidden
+      messages when heated.
+  - itemName: Red wine
+    displayName: Red wine
+    description: An open bottle of vintage red wine.
+    extraTooltip: Seems to turn into vinegar, less tasty. Can be used in chemistry-related
+      puzzles.
+  - itemName: WD40
+    displayName: WD40
+    description: Lubricant spray.
+    extraTooltip: Can be used in chemistry-related puzzles.
+  - itemName: Inert solution
+    displayName: Inert solution
+    description: Chemically neutral liquid.
+    extraTooltip: Should at least be able to unclog the toilet if we really have
+      nothing left...
+  - itemName: Solvent
+    displayName: Solvent
+    description: Dissolves certain substances.
+    extraTooltip: Can clean surfaces or reveal hidden messages when heated.
+  - itemName: Cassette
+    displayName: Cassette tape
+    description: Audio tape for the radio.
+    extraTooltip: Contains ghost dialogue and past recordings.
+  - itemName: Binder
+    displayName: Binder
+    description: A collection of grouped documents.
+    extraTooltip: Read to piece together hidden puzzle key elements.
+  - itemName: Clipboard
+    displayName: Clipboard
+    description: A wooden board with a note attached.
+    extraTooltip: Often used by staff; may contain logs or schedules
+  - itemName: Diary
+    displayName: Diary
+    description: A personal journal.
+    extraTooltip: "Contains direct insight into a character\u2019s thoughts."
+  - itemName: File
+    displayName: File
+    description: A partially readable document.
+    extraTooltip: Usually redacted, but valuable for narrative progression.
+  - itemName: Letter
+    displayName: Letter
+    description: A handwritten letter.
+    extraTooltip: Emotionally charged; connects characters across timelines.
+  - itemName: Newspaper
+    displayName: Newspaper
+    description: A folded newspaper.
+    extraTooltip: Old headlines may hint at in-game events or foreshadowing.
+  - itemName: Photo
+    displayName: Silver halide photo
+    description: A well-preserved photograph.
+    extraTooltip: Can trigger visual lore or ghost reactions.
