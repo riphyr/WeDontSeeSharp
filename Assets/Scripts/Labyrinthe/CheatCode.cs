@@ -14,9 +14,9 @@ public class CheatCode : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.I))
+        if (Input.GetKeyDown(KeyCode.O))
         {
-            Debug.Log("Touche I pressée. Téléportation lancée.");
+            Debug.Log("Touche O' pressée. Téléportation lancée.");
             StartCoroutine(TeleportWithDelay());
         }
     }
