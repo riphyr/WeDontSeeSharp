@@ -2,13 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using Studio;
 
 public class GameManager : MonoBehaviourPunCallbacks
 {
     public static GameManager instance;
 
     public float timer = 600f;
-    public int totalCardsToCollect = 42;
+    public int totalCardsToCollect = 30;
     private int cardsCollected = 0;
     private bool isGameOver = false;
     public List<string> cards = new List<string>();
@@ -21,6 +22,28 @@ public class GameManager : MonoBehaviourPunCallbacks
     //public GameObject cardPrefab; // Prefab du modèle de carte
 
     //private Vector3 nextCardPosition; // Position de la prochaine carte déposée
+    
+    
+    
+    void Start()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            StartCoroutine(TimerTick());
+        }
+
+// Détection du joueur ici pour démarrer le timer de Consigne
+        GameObject joueur = GameObject.FindWithTag("Player");
+        if (joueur != null)
+        {
+// Appel à la méthode Text() de la classe Consigne
+            Consigne consigne = FindObjectOfType<Consigne>();
+            if (consigne != null)
+            {
+                consigne.Text();
+            }
+        }
+    }
 
     void Awake()
     {
@@ -30,7 +53,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             Destroy(gameObject);
     }
 
-    void Start()
+  /*  void Start()
     {
         if (PhotonNetwork.IsMasterClient)
         {
@@ -38,7 +61,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
 
         //nextCardPosition = cardDisplayArea.position;
-    }
+    }*/
 
     void Update()
     {

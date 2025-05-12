@@ -69,7 +69,7 @@ public class SpawnPlayers : MonoBehaviourPunCallbacks
     private void SpawnPlayer()
     {
         // Définition du spawnpoint
-        Vector3 Position = new Vector3(22, 5, 8);
+        Vector3 Position = new Vector3(21, 5, 6);
 
         // Instanciation du prefab du joueur avec position et rotation
         // Instanciation du prefab du joueur et tag

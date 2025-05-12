@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timer: 600
-  totalCardsToCollect: 42
+  totalCardsToCollect: 30
   cards: []
   allCardPrefabs:
   - {fileID: 8468234750229606951, guid: a2a65ebef1629b0499f40d7f4bf5d345, type: 3}
