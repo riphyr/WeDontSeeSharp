@@ -17,7 +17,7 @@ namespace Studio
         {
             instructionText.gameObject.SetActive(true);
             timerText.gameObject.SetActive(true);
-            instructionText.text = "You have 10 minutes! to find all the cards inside the apartment.";
+            instructionText.text = "You have 10 minutes! to find all the cards inside the apartment";
             // Lancer la minuterie
             StartCoroutine(HideInstructionTextAfterDelay(7f));
             StartCoroutine(StartTimer());
