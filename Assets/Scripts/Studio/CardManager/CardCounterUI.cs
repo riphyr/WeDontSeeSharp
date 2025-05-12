@@ -7,10 +7,10 @@ public class CardCounterUI : MonoBehaviour
     
     void Update()
     {
-        if (GameManager.instance != null)
+        if (CardManager.instance != null)
         {
-            int count = GameManager.instance.GetPlayerCardCount();
-            int total = GameManager.instance.totalCardsToCollect;
+            int count = CardManager.instance.GetPlayerCardCount();
+            int total = CardManager.instance.totalCardsToCollect;
             cardCounterText.text = $"Cards collected : {count} / {total}";
         }
     }

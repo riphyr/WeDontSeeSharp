@@ -19,7 +19,7 @@ public class DepositTable : MonoBehaviourPunCallbacks
     public void DepositCards()
     {
         int playerID = PhotonNetwork.LocalPlayer.ActorNumber;
-        var inventory = GameManager.instance.GetInventory(playerID);
+        var inventory = CardManager.instance.GetInventory(playerID);
 
         if (inventory == null || inventory.Count == 0)
         {
@@ -33,7 +33,7 @@ public class DepositTable : MonoBehaviourPunCallbacks
         foreach (string cardName in inventory)
         {
             Debug.Log($"Card {cardName} deposer.");
-            GameObject prefab = GameManager.instance.GetCardPrefabByName(cardName);
+            GameObject prefab = CardManager.instance.GetCardPrefabByName(cardName);
             if (prefab != null)
             {
                 Debug.Log($"Bah c'est bien deposer {prefab.name}");
@@ -47,6 +47,6 @@ public class DepositTable : MonoBehaviourPunCallbacks
         }
 
         // Vider l'inventaire du joueur après dépôt
-        GameManager.instance.ClearInventory(playerID);
+        CardManager.instance.ClearInventory(playerID);
     }
 }

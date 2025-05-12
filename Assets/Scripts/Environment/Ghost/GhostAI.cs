@@ -14,6 +14,7 @@ public class GhostAI : MonoBehaviour
     [Header("Core References")]
     private NavMeshAgent agent;
     public List<Renderer> ghostRenderers = new();
+    private Collider ghostCollider;
     public float viewDistance = 10f;
     public float viewAngle = 360f;
 
@@ -70,6 +71,14 @@ public class GhostAI : MonoBehaviour
         photonView = GetComponent<PhotonView>();
         initialPosition = transform.position;
         stuckCheckPosition = transform.position;
+        ghostCollider = GetComponent<Collider>();
+
+        foreach (var renderer in ghostRenderers)
+            if (renderer != null) renderer.enabled = false;
+
+        if (ghostCollider != null)
+            ghostCollider.enabled = false;
+        
         FindAllPlayers();
         InitPatrolPoints();
         Debug.Log($"[GhostAI] INIT floor point counts — UG: {undergroundPoints.Count}, GF: {groundFloorPoints.Count}, FF: {firstFloorPoints.Count}");
@@ -359,15 +368,22 @@ public class GhostAI : MonoBehaviour
         }
         return false;
     }
-
+    
     public void ActivateAI()
     {
-        if (!PhotonNetwork.IsMasterClient || aiActive is true) return;
+        if (!PhotonNetwork.IsMasterClient || aiActive) return;
 
         aiActive = true;
         currentState = GhostState.Roaming;
         GoToNextPatrolPoint();
+
+        foreach (var renderer in ghostRenderers)
+            if (renderer != null) renderer.enabled = true;
+
+        if (ghostCollider != null)
+            ghostCollider.enabled = true;
     }
+
     
     [ContextMenu("Force Activation (!NOT SAFE!)")]
     public void ForceActivation()
@@ -406,6 +422,12 @@ public class GhostAI : MonoBehaviour
         aiActive = false;
         currentTarget = null;
         agent.ResetPath();
+        
+        foreach (var renderer in ghostRenderers)
+            if (renderer != null) renderer.enabled = false;
+
+        if (ghostCollider != null)
+            ghostCollider.enabled = false;
     }
     
     [PunRPC]
