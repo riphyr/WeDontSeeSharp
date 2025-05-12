@@ -1346,6 +1346,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b10c8dae7fbffc34fa380585946db139, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  firstSceneName: HouseLvl
 --- !u!4 &1489249619
 Transform:
   m_ObjectHideFlags: 0

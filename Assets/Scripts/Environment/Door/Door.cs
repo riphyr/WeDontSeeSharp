@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using UnityEngine;
 using Photon.Pun;
+using UnityEngine.AI;
+using Unity.AI.Navigation;
 
 namespace InteractionScripts
 {
@@ -8,7 +10,7 @@ namespace InteractionScripts
     [RequireComponent(typeof(PhotonView))]
     public class Door : MonoBehaviour, IPunObservable
     {
-        public enum DoorType { Normal, LockKey, PadLock }
+        public enum DoorType { Normal, LockKey, PadLock, Crowbar }
 
         [Header("Type de porte")]
         public DoorType doorType = DoorType.Normal;
@@ -25,14 +27,25 @@ namespace InteractionScripts
         private AudioSource asource;
         public AudioClip openDoor, closeDoor;
         [SerializeField] private AudioClip blockedDoorSound;
+        [SerializeField] private AudioClip forcedDoorSound;
 
         private PhotonView view;
+        private NavMeshObstacle navObstacle;
+        private NavMeshLink navLink;
 
         void Start()
         {
             asource = GetComponent<AudioSource>();
             view = GetComponent<PhotonView>();
+            
+            if (transform.parent != null && transform.parent.parent != null)
+            {
+                navObstacle = transform.parent.parent.GetComponent<NavMeshObstacle>();
+                navLink = transform.parent.parent.GetComponent<NavMeshLink>();
+            }
+            
             UpdateLightBlocker();
+            UpdateObstacle();
         }
 
         void Update()
@@ -48,17 +61,47 @@ namespace InteractionScripts
                 transform.localRotation = Quaternion.Slerp(transform.localRotation, target1, Time.deltaTime * 5 * smooth);
             }
         }
-
-        public void ToggleDoor()
+        
+        public void ToggleDoor(bool hasCrowbarEquipped = false)
         {
             if (!view.IsMine)
             {
                 view.TransferOwnership(PhotonNetwork.LocalPlayer);
             }
 
-            if (doorType != DoorType.Normal && (HasActiveLock<LockKey>() || HasActiveLock<PadLock>()))
+            if (doorType == DoorType.LockKey && HasActiveLock<LockKey>())
             {
                 asource.PlayOneShot(blockedDoorSound, 1.0f);
+                return;
+            }
+
+            if (doorType == DoorType.PadLock && HasActiveLock<PadLock>())
+            {
+                asource.PlayOneShot(blockedDoorSound, 1.0f);
+                return;
+            }
+            
+            if (doorType == DoorType.Crowbar)
+            {
+                if (!open)
+                {
+                    if (hasCrowbarEquipped)
+                    {
+                        open = true;
+                        asource.PlayOneShot(forcedDoorSound, 0.6f);
+                        UpdateLightBlocker();
+                        UpdateObstacle();
+                    }
+                    else
+                    {
+                        asource.PlayOneShot(blockedDoorSound, 1.0f);
+                    }
+                }
+                else
+                {
+                    
+                }
+
                 return;
             }
 
@@ -67,6 +110,7 @@ namespace InteractionScripts
             asource.Play();
 
             UpdateLightBlocker();
+            UpdateObstacle();
         }
 
         private void UpdateLightBlocker()
@@ -76,8 +120,21 @@ namespace InteractionScripts
                 lightBlocker.SetActive(!open);
             }
         }
+        
+        private void UpdateObstacle()
+        {
+            if (navObstacle != null)
+            {
+                navObstacle.carving = !open;
+            }
+            if (navLink != null)
+            {
+                navLink.enabled = open;
+            }
 
-        private bool HasActiveLock<T>() where T : MonoBehaviour
+        }
+
+        public bool HasActiveLock<T>() where T : MonoBehaviour
         {
             T lockComponent = GetComponentInChildren<T>();
             return lockComponent != null && lockComponent.gameObject.activeSelf;

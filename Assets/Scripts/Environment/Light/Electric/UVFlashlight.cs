@@ -7,7 +7,7 @@ namespace InteractionScripts
 {
     [RequireComponent(typeof(AudioSource))]
     [RequireComponent(typeof(PhotonView))]
-    public class UVFlashlight : MonoBehaviourPun, IPunObservable
+    public class UVFlashlight : MonoBehaviourPun, IPunObservable, IFlashlightFlicker
     {
         private Light flashlightLight;
         public float maxBattery = 100f;
@@ -28,7 +28,6 @@ namespace InteractionScripts
         public float uvConeRadius = 0.45f;
         public LayerMask uvLayerMask;
         private Renderer lastHitRenderer = null;
-        private List<Renderer> uvObjectsInLight = new List<Renderer>();
 
         void Start()
         {
@@ -105,62 +104,7 @@ namespace InteractionScripts
                     }
                     else
                     {
-                        CheckForUVObjects();
-                    }
-                }
-            }
-        }
-        
-        private void CheckForUVObjects()
-        {
-            List<Renderer> currentlyLitObjects = new List<Renderer>();
-
-            int raysPerRow = 15;
-            int rows = 12;
-            float angleStep = uvConeRadius / raysPerRow;
-            Vector3 lightDirection = flashlightLight.transform.forward;
-
-            for (int i = -rows / 2; i <= rows / 2; i++)
-            {
-                for (int j = -raysPerRow / 2; j <= raysPerRow / 2; j++)
-                {
-                    Vector3 offset = (flashlightLight.transform.right * j * angleStep) + (flashlightLight.transform.up * i * angleStep);
-                    Vector3 rayDirection = (lightDirection + offset).normalized;
-                    Ray ray = new Ray(flashlightLight.transform.position, rayDirection);
-                    RaycastHit hit;
-
-                    Debug.DrawRay(ray.origin, ray.direction * uvRange, Color.magenta, 0.1f);
-
-                    if (Physics.Raycast(ray, out hit, uvRange, uvLayerMask))
-                    {
-                        Renderer objRenderer = hit.collider.GetComponent<Renderer>();
-                        PhotonView objPhotonView = hit.collider.GetComponent<PhotonView>();
-
-                        if (objRenderer != null && objPhotonView != null)
-                        {
-                            currentlyLitObjects.Add(objRenderer);
-
-                            if (!uvObjectsInLight.Contains(objRenderer))
-                            {
-                                uvObjectsInLight.Add(objRenderer);
-
-                                photonView.RPC("SetUVIntensity_RPC", RpcTarget.AllBuffered, objPhotonView.ViewID, 2f);
-                            }
-                        }
-                    }
-                }
-            }
-
-            foreach (Renderer obj in uvObjectsInLight.ToArray())
-            {
-                if (!currentlyLitObjects.Contains(obj))
-                {
-                    uvObjectsInLight.Remove(obj);
-                    PhotonView objPhotonView = obj.GetComponent<PhotonView>();
-
-                    if (objPhotonView != null)
-                    {
-                        photonView.RPC("SetUVIntensity_RPC", RpcTarget.AllBuffered, objPhotonView.ViewID, 0f);
+                        RevealUVObjects(); // << AJOUT ICI
                     }
                 }
             }
@@ -168,52 +112,80 @@ namespace InteractionScripts
         
         private void OnDrawGizmos()
         {
-            if (flashlightLight == null) return;
+            if (flashlightLight == null)
+                flashlightLight = transform.Find("light")?.GetComponent<Light>();
+
+            if (flashlightLight == null)
+                return;
 
             Gizmos.color = new Color(1f, 0f, 1f, 0.2f);
+
+            int baseRadialSteps = 60;
+            int rings = 7;
             Vector3 lightPos = flashlightLight.transform.position;
             Vector3 lightDir = flashlightLight.transform.forward;
 
-            for (int i = -5; i <= 5; i++)
+            for (int r = 0; r <= rings; r++)
             {
-                for (int j = -5; j <= 5; j++)
+                float t = (float)r / rings;
+                float radius = t * uvConeRadius;
+
+                int raysThisRing = Mathf.Max(4, Mathf.RoundToInt(baseRadialSteps * t));
+                float angleStep = 360f / raysThisRing;
+
+                for (int i = 0; i < raysThisRing; i++)
                 {
-                    Vector3 direction = (lightDir + (flashlightLight.transform.right * i * 0.08f) + (flashlightLight.transform.up * j * 0.08f)).normalized;
+                    float angle = i * angleStep;
+                    Vector3 offset = (Quaternion.AngleAxis(angle, lightDir) * flashlightLight.transform.right) * radius;
+                    Vector3 direction = (lightDir + offset).normalized;
+
                     Gizmos.DrawRay(lightPos, direction * uvRange);
                 }
             }
         }
-
-        private void ResetLastObject()
+        
+        private void RevealUVObjects()
         {
-            foreach (Renderer objRenderer in uvObjectsInLight)
+            if (!view.IsMine || !isOn) return;
+
+            Vector3 lightPos = flashlightLight.transform.position;
+            Vector3 lightDir = flashlightLight.transform.forward;
+
+            // --- RAYON CENTRAL pour "SetUVHit"
+            if (Physics.Raycast(lightPos, lightDir, out RaycastHit centerHit, uvRange, uvLayerMask))
             {
-                if (objRenderer != null)
+                PhotonView centerTargetView = centerHit.collider.GetComponent<PhotonView>();
+                if (centerTargetView != null)
                 {
-                    PhotonView objPhotonView = objRenderer.GetComponent<PhotonView>();
-                    if (objPhotonView != null)
-                    {
-                        photonView.RPC("SetUVIntensity_RPC", RpcTarget.AllBuffered, objPhotonView.ViewID, 0f);
-                    }
+                    Vector3 correctedCenterHit = centerHit.point - centerHit.normal * 0.01f;
+                    centerTargetView.RPC("SetUVHit", RpcTarget.AllBuffered, correctedCenterHit);
                 }
             }
 
-            uvObjectsInLight.Clear();
-        }
-        
-        [PunRPC]
-        private void SetUVIntensity_RPC(int objectID, float value)
-        {
-            PhotonView objView = PhotonView.Find(objectID);
-            if (objView == null) 
-            {
-                return;
-            }
+            // --- CERCLAGE de rayons secondaires pour être large (mais PAS SetUVHit ici !)
+            int baseRadialSteps = 60;
+            int rings = 7;
 
-            Renderer objRenderer = objView.GetComponent<Renderer>();
-            if (objRenderer != null)
+            for (int r = 0; r <= rings; r++)
             {
-                objRenderer.material.SetFloat("_UVIntensity", value);
+                float t = (float)r / rings;
+                float radius = t * uvConeRadius;
+
+                int raysThisRing = Mathf.Max(4, Mathf.RoundToInt(baseRadialSteps * t));
+                float angleStep = 360f / raysThisRing;
+
+                for (int i = 0; i < raysThisRing; i++)
+                {
+                    float angle = i * angleStep;
+                    Vector3 offset = (Quaternion.AngleAxis(angle, lightDir) * flashlightLight.transform.right) * radius;
+                    Vector3 direction = (lightDir + offset).normalized;
+
+                    Ray ray = new Ray(lightPos, direction);
+                    if (Physics.Raycast(ray, out RaycastHit hit, uvRange, uvLayerMask))
+                    {
+                        // Les rayons secondaires ne font rien (ou pourraient mettre un effet futur si besoin)
+                    }
+                }
             }
         }
 
@@ -247,7 +219,6 @@ namespace InteractionScripts
         {
             isOn = false;
             flashlightLight.enabled = false;
-            ResetLastObject();
             photonView.RPC("SyncFlashlightState", RpcTarget.All, isOn);
         }
 
@@ -329,7 +300,6 @@ namespace InteractionScripts
 
         private IEnumerator DisableUVObjectsBeforeDestroy()
         {
-            ResetLastObject();
             yield return new WaitForSeconds(0.1f);
             photonView.RPC("DestroyForAll", RpcTarget.AllBuffered);
         }
@@ -340,11 +310,6 @@ namespace InteractionScripts
             isOn = state;
             flashlightLight.enabled = state;
             photonView.RPC("SyncFlashlightState", RpcTarget.AllBuffered, isOn);
-
-            if (!isOn) 
-            {
-                ResetLastObject();
-            }
         }
 
         private IEnumerator PlaySwitchSound()
@@ -399,6 +364,22 @@ namespace InteractionScripts
 
                 flashlightLight.enabled = isOn;
             }
+        }
+        
+        public void TriggerFlicker()
+        {
+            if (isOn && !isOutOfBattery())
+                StartCoroutine(FlickerRoutine());
+        }
+
+        private IEnumerator FlickerRoutine()
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                flashlightLight.enabled = !flashlightLight.enabled;
+                yield return new WaitForSeconds(Random.Range(0.05f, 0.2f));
+            }
+            flashlightLight.enabled = isOn;
         }
     }
 }

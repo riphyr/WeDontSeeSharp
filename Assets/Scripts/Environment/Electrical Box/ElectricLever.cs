@@ -22,6 +22,7 @@ namespace InteractionScripts
         public bool[] correctCombination;
 
         private bool isActive = false;
+        public bool IsActive => isActive;
         private bool isMoving = false;
         private PhotonView view;
 
@@ -136,6 +137,67 @@ namespace InteractionScripts
                 btn.GetComponent<Collider>().enabled = true;
 
             isMoving = false;
+        }
+        
+        [PunRPC]
+        private void RPC_ResetLever()
+        {
+            StartCoroutine(ResetLeverRoutine());
+        }
+
+        public void ResetLeverManually()
+        {
+            if (isMoving)
+                return;
+
+            view.RPC("RPC_ResetLever", RpcTarget.All);
+        }
+
+        private IEnumerator ResetLeverRoutine()
+        {
+            isMoving = true;
+
+            Collider leverCollider = GetComponent<Collider>();
+            leverCollider.enabled = false;
+
+            yield return new WaitForSeconds(0.5f);
+            audioSource.PlayOneShot(errorSound);
+            yield return new WaitForSeconds(1f);
+            
+            float startNeedleAngle = voltArrow.localRotation.eulerAngles.z;
+            float startLeverAngle = transform.localRotation.eulerAngles.x;
+
+            Quaternion startRotation = transform.localRotation;
+            Quaternion targetRotation = Quaternion.Euler(deactivationAngle, 0, 0);
+            float needleStart = startNeedleAngle;
+            float needleEnd = gaugeMinAngle;
+
+            float t = 0;
+            while (t < 1)
+            {
+                t += Time.deltaTime * 3f;
+                transform.localRotation = Quaternion.Slerp(startRotation, targetRotation, t);
+
+                float newNeedleAngle = Mathf.Lerp(needleStart, needleEnd, t);
+                voltArrow.localRotation = Quaternion.Euler(-90, 0, newNeedleAngle);
+
+                yield return null;
+            }
+
+            isActive = false;
+            runningLoop.Stop();
+
+            leverCollider.enabled = true;
+            isMoving = false;
+            
+            // Appel à tous les switches pour les forcer à OFF
+            var allSwitches = FindObjectsOfType<InteractionScripts.Switch>();
+            foreach (var sw in allSwitches)
+            {
+                sw.photonView.RPC("ForceSwitchOff", RpcTarget.All);
+            }
+
+            Debug.Log("🔄 Levier réinitialisé manuellement.");
         }
     }
 }

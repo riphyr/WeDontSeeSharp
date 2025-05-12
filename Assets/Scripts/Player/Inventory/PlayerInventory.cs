@@ -2,6 +2,7 @@
 using UnityEngine;
 using Photon.Pun;
 using TMPro;
+using UnityEditor;
 using UnityEngine.UI;
 
 public class PlayerInventory : MonoBehaviourPun
@@ -38,7 +39,6 @@ public class PlayerInventory : MonoBehaviourPun
     {
         playerUsing = GetComponent<PlayerUsing>();
         photonView = GetComponent<PhotonView>();
-        Debug.Log($"[DEBUG] {PhotonNetwork.NickName} - PhotonView Owner: {photonView.Owner}, IsMine: {photonView.IsMine}");
         
         LoadItemSprites();
         UpdateSelectedItemDisplay();
@@ -46,13 +46,11 @@ public class PlayerInventory : MonoBehaviourPun
     
     private void LoadItemSprites()
     {
-        Debug.Log("Chargement des sprites d'inventaire...");
         Sprite[] sprites = Resources.LoadAll<Sprite>("InventorySprites");
 
         foreach (Sprite sprite in sprites)
         {
             itemSprites[sprite.name] = sprite;
-            Debug.Log($"Sprite chargé : {sprite.name}");
         }
     }
 
@@ -136,15 +134,6 @@ public class PlayerInventory : MonoBehaviourPun
             inventory.Remove(itemName);
             inventoryKeys.Remove(itemName);
             Debug.Log($"{itemName} supprimé de l'inventaire.");
-        }
-    }
-
-    public void PrintInventory()
-    {
-        Debug.Log("Inventaire du joueur :");
-        foreach (var item in inventory)
-        {
-            Debug.Log($"{item.Key} : {item.Value}");
         }
     }
 
@@ -249,6 +238,16 @@ public class PlayerInventory : MonoBehaviourPun
 	{
     	return itemSprites.TryGetValue(itemName, out Sprite sprite) ? sprite : null;
 	}
+    
+    [ContextMenu("Debug/Print Inventory Keys")]
+    private void PrintInventoryKeys()
+    {
+        Debug.Log("Current Inventory Keys:");
+        foreach (var key in inventory.Keys)
+        {
+            Debug.Log($"- {key} (x{inventory[key]})");
+        }
+    }
 
 	public void ForceSelectItem(string itemName)
 	{

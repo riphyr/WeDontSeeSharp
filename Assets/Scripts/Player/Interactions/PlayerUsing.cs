@@ -594,7 +594,7 @@ public class PlayerUsing : MonoBehaviourPun
     
     private IEnumerator SpawnFlashlight()
     {
-        Quaternion flashlightRotation = Quaternion.Euler(0f, playerBody.eulerAngles.y, 0f);
+        Quaternion flashlightRotation = Quaternion.Euler(-15f, playerBody.eulerAngles.y, -2.4f);
 
         float batteryLevel = inventory.GetItemCount("Flashlight");
 		object[] instantiationData = new object[] { batteryLevel };

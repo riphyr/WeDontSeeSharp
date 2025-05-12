@@ -12,6 +12,7 @@ namespace MainMenu{
         public GameObject mainMenu;				// Canva global
         public GameObject firstMenu;			// Panel MAIN
         public GameObject playMenu;				// Panel PLAY
+        public GameObject soloMenu;				// Panel SOLO
         public GameObject exitMenu;				// Panel EXIT
 
         [Header("PANELS")]
@@ -42,6 +43,7 @@ namespace MainMenu{
 			CameraObject = transform.GetComponent<Animator>();
 
 			playMenu.SetActive(false);
+			soloMenu.SetActive(false);
 			exitMenu.SetActive(false);
 			firstMenu.SetActive(true);
 			mainMenu.SetActive(true);
@@ -51,23 +53,40 @@ namespace MainMenu{
 		{
 			exitMenu.SetActive(false);
 			playMenu.SetActive(true);
+			soloMenu.SetActive(false);
+		}
+		
+		public void Solo()
+		{
+			exitMenu.SetActive(false);
+			playMenu.SetActive(true);
+			soloMenu.SetActive(true);
 		}
 
 		public void ReturnMenu(){
 			playMenu.SetActive(false);
+			soloMenu.SetActive(false);
 			exitMenu.SetActive(false);
 			mainMenu.SetActive(true);
 		}
 
-		public void LoadScene(string scene){
-			if(scene != "")
-			{
-				SceneManager.LoadSceneAsync(scene);
-			}
+		public static void LoadScene(){
+			GameModeManager.IsMultiplayer = true;
+			SceneManager.LoadSceneAsync("Loading");
+		}
+
+		public static void CreateScene(bool isLoading)
+		{
+			if (isLoading && !GameSaveManager.isSaveAvailable()) return;
+			
+			GameModeManager.IsMultiplayer = false;
+			GameModeManager.IsLoading = isLoading;
+			SceneManager.LoadSceneAsync("Loading");
 		}
 
 		public void  DisablePlay(){
 			playMenu.SetActive(false);
+			soloMenu.SetActive(false);
 		}
 		
 		public void Position1(){ 

@@ -218,7 +218,7 @@ namespace InteractionScripts
         private string DetermineOutputSolution()
         {
             if (currentFlatBottomSolution == "Bleach" && currentBoilingSolution == "WD40") return "Explosion";
-            if (currentFlatBottomSolution == "Lemon juice" && currentBoilingSolution == "Red wine") return "Inert Solution";
+            if (currentFlatBottomSolution == "Lemon juice" && currentBoilingSolution == "Red wine") return "Inert solution";
             if (currentFlatBottomSolution == "Bleach" && currentBoilingSolution == "Red wine") return "Explosion";
             if (currentFlatBottomSolution == "Lemon juice" && currentBoilingSolution == "WD40") return "Solvent";
             return "";
@@ -272,7 +272,8 @@ namespace InteractionScripts
             if (!isOutputFilled) return;
 
             mainSource.PlayOneShot(pickupSound, 0.6f);
-            inventory.AddItem(currentOutputSolution);
+            if (currentOutputSolution != "Explosion")
+                inventory.AddItem(currentOutputSolution);
             photonView.RPC("RPC_ResetStation", RpcTarget.AllBuffered);
         }
 

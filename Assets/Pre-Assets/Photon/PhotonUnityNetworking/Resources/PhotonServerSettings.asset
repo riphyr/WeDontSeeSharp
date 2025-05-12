@@ -110,6 +110,38 @@ MonoBehaviour:
   - RPC_SetUnlocked
   - RPC_TryUnlock
   - MarkAsDiscoveredForAll
+  - SetUVReveal_RPC
+  - PaintAtWorldPosition_RPC
+  - SetUVHit
+  - RPC_RevealMaterial
+  - RPC_ResetLever
+  - RemovePlank
+  - RPC_RequestAIActivation
+  - RPC_RequestAIDeactivation
+  - ForceSwitchOff
+  - RPC_FlashlightsFlicker
+  - RPC_Unlock
+  - RPC_UnlockPlank
+  - RPC_MoveTrunk
+  - RPC_OpenTrunk
+  - RPC_PlayAnimationAndSound
+  - RPC_PlayRadio
+  - RPC_FlickerFlashlights
+  - RPC_SendAnswerToHost
+  - RPC_SetClothesSearched
+  - RPC_SetPhotoTakeable
+  - RPC_SetTrunk1Unlocked
+  - RPC_SetTrunk2Unlocked
+  - RPC_ForceSetQuestionHandler
+  - RPC_SetClothesUnlocked
+  - RPC_PlayGhostVoice
+  - RPC_TriggerSceneEnd
+  - DestroyCard
+  - GameOverRPC
+  - IncrementCardCount
+  - RequestDestroyCard
+  - ShowWinMessage
+  - UpdateTimer
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

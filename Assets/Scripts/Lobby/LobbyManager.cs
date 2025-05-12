@@ -11,13 +11,16 @@ namespace Lobby{
         [Header("MENUS")] 
         public GameObject createMenu; 
         public GameObject joinMenu;
+        public GameObject loadMenu;
         
         [Header("WARNING")] 
         public GameObject errorMessage;
+        public GameObject errorMessageLoad;
         
         [Header("HIGHLIGHT")] 
         public GameObject lineCreate;
         public GameObject lineJoin;
+        public GameObject lineLoad;
         public GameObject evolvingDetails;
         
 		[Header("SFX")]
@@ -32,8 +35,10 @@ namespace Lobby{
 		void Start(){
 			createMenu.SetActive(false);
 			joinMenu.SetActive(false);
+			loadMenu.SetActive(false);
 			evolvingDetails.SetActive(false);
 			errorMessage.SetActive(false);
+			errorMessageLoad.SetActive(false);
 			
 			if(PlayerPrefs.GetInt("NormalDifficultyMulti") == 1){
 				difficultynormaltextLINE.gameObject.SetActive(true);
@@ -65,8 +70,11 @@ namespace Lobby{
 			lineCreate.SetActive(true);
 			joinMenu.SetActive(false);
 			lineJoin.SetActive(false);
+			loadMenu.SetActive(false);
+			lineLoad.SetActive(false);
 			evolvingDetails.SetActive(true);
 			errorMessage.SetActive(false);
+			errorMessageLoad.SetActive(false);
 		}
 		
 		public void JoinMenuSelected()
@@ -75,10 +83,26 @@ namespace Lobby{
 			lineCreate.SetActive(false);
 			joinMenu.SetActive(true);
 			lineJoin.SetActive(true);
+			loadMenu.SetActive(false);
+			lineLoad.SetActive(false);
 			evolvingDetails.SetActive(true);
 			
-			if (!joinMenu.activeSelf)
-				errorMessage.SetActive(false);
+			if (!joinMenu.activeSelf) errorMessage.SetActive(false);
+			errorMessageLoad.SetActive(false);
+		}
+		
+		public void LoadMenuSelected()
+		{
+			createMenu.SetActive(false);
+			lineCreate.SetActive(false);
+			joinMenu.SetActive(false);
+			lineJoin.SetActive(false);
+			loadMenu.SetActive(true);
+			lineLoad.SetActive(true);
+			evolvingDetails.SetActive(true);
+			
+			errorMessage.SetActive(false);
+			if (!joinMenu.activeSelf) errorMessageLoad.SetActive(false);
 		}
 
 		public void LoadScene(string scene){

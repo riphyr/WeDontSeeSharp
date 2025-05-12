@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using Photon.Pun;
 
 public class CameraLookingAt : MonoBehaviour
 {
@@ -36,8 +37,6 @@ public class CameraLookingAt : MonoBehaviour
             { typeof(InteractionScripts.Door), hit => HandleDoor(hit) },
             { typeof(InteractionScripts.Window), hit => HandleWindow(hit) },
             { typeof(InteractionScripts.Switch), hit => HandleSwitch(hit) },
-            { typeof(InteractionScripts.Wardrobe), hit => HandleWardrobe(hit) },
-            { typeof(InteractionScripts.Closet), hit => HandleCloset(hit) },
             { typeof(InteractionScripts.Key), hit => HandleKey(hit) },
             { typeof(InteractionScripts.Candle), hit => HandleCandle(hit) },
             { typeof(InteractionScripts.Lighter), hit => HandleLighter(hit) },
@@ -62,6 +61,21 @@ public class CameraLookingAt : MonoBehaviour
             { typeof(InteractionScripts.ChemistryStation), hit => HandleChemistryStation(hit) },
             { typeof(InteractionScripts.Item), hit => HandleItem(hit) },
             { typeof(InteractionScripts.LoreItem), hit => HandleLoreItem(hit) },
+            { typeof(InteractionScripts.DissolvableNote), hit => HandleDissolvableNote(hit) },
+            { typeof(InteractionScripts.FridgeDoor), hit => HandleFridge(hit) },
+			{ typeof(InteractionScripts.RemovablePlank), hit => HandleRemovablePlank(hit) },
+            { typeof(InteractionScripts.CaptureLock), hit => HandleCaptureLock(hit) },
+            { typeof(InteractionScripts.CaptureKey), hit => HandleCaptureKey(hit) },
+            { typeof(InteractionScripts.Photo), hit => HandlePhoto(hit) },
+            { typeof(InteractionScripts.CassetteTape), hit => HandleCassetteTape(hit) },
+            { typeof(InteractionScripts.Letter), hit => HandleLetter(hit) },
+            { typeof(InteractionScripts.Diary), hit => HandleDiary(hit) },
+            { typeof(InteractionScripts.Radio), hit => HandleRadio(hit) },
+            { typeof(InteractionScripts.Clothes), hit => HandleClothes(hit) },
+            { typeof(InteractionScripts.Trunk), hit => HandleTrunk(hit) },
+            { typeof(InteractionScripts.Card), hit => HandleCard(hit) },
+            { typeof(InteractionScripts.Wardrobe), hit => HandleWardrobe(hit) },
+            { typeof(InteractionScripts.Closet), hit => HandleCloset(hit) },
             { typeof(InteractionScripts.Drawer), hit => HandleDrawer(hit) },
         };
     }
@@ -145,16 +159,57 @@ public class CameraLookingAt : MonoBehaviour
         }
     }
 
-    private void HandleDoor(RaycastHit hit)
-    {
-        ShowInteractionText(true, hit.transform.GetComponent<InteractionScripts.Door>().IsOpen() ? "Close the door" : "Open the door");
-        if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.Door>().ToggleDoor();
-    }
+	private void HandleDoor(RaycastHit hit)
+	{
+    	var door = hit.transform.GetComponent<InteractionScripts.Door>();
+
+    	bool hasCrowbarEquipped = playerUsing != null && playerUsing.crowbarScript != null;
+
+    	string interactionMessage = "";
+
+    	if (door.doorType == InteractionScripts.Door.DoorType.Crowbar)
+    	{
+			if (!door.IsOpen() && hasCrowbarEquipped)
+			{
+      			interactionMessage = "Break the door";
+				ShowInteractionText(true, interactionMessage);
+			}
+    	}
+    	else
+    	{
+        	interactionMessage = door.IsOpen() ? "Close the door" : "Open the door";
+			ShowInteractionText(true, interactionMessage);
+    	}
+
+    	if (Input.GetKeyDown(primaryInteractionKey))
+    	{
+        	door.ToggleDoor(hasCrowbarEquipped);
+
+			if (door.doorType == InteractionScripts.Door.DoorType.Crowbar && hasCrowbarEquipped)
+        	{
+            	Debug.Log("[Crowbar] La crowbar s'est cassée !");
+            
+            	inventory.RemoveItem("Crowbar", 1);
+
+            	if (playerUsing.crowbarScript != null)
+            	{
+                	playerUsing.crowbarScript.ShowCrowbar(false);
+                	playerUsing.crowbarScript = null;
+            	}
+        	}
+    	}
+	}
 
     private void HandleLockKey(RaycastHit hit)
     {
-        ShowInteractionText(true, "Unlock the door");
-        if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.LockKey>().AttemptUnlock();
+        var lockKey = hit.transform.GetComponent<InteractionScripts.LockKey>();
+
+        string rawName = lockKey.requiredKeyName;
+        string roomName = rawName.Replace(" key", "", System.StringComparison.OrdinalIgnoreCase).ToLowerInvariant();
+
+        ShowInteractionText(true, $"Unlock the {roomName}");
+
+        if (Input.GetKeyDown(primaryInteractionKey)) lockKey.AttemptUnlock();
     }
 
     private void HandlePadLock(RaycastHit hit)
@@ -195,8 +250,12 @@ public class CameraLookingAt : MonoBehaviour
 
     private void HandleKey(RaycastHit hit)
     {
-        ShowInteractionText(true, "Pick up the key");
-        if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.Key>().PickupKey(inventory);
+        var key = hit.transform.GetComponent<InteractionScripts.Key>();
+
+        string keyDisplayName = key.keyName.Replace(" key", "", System.StringComparison.OrdinalIgnoreCase).ToLowerInvariant();
+        ShowInteractionText(true, $"Pick up the {keyDisplayName} key");
+
+        if (Input.GetKeyDown(primaryInteractionKey)) key.PickupKey(inventory);
     }
 
     private void HandleCandle(RaycastHit hit)
@@ -453,5 +512,166 @@ public class CameraLookingAt : MonoBehaviour
         
         ShowInteractionText(true, $"Pick up the {loreItem.GetItemName()}");
         if (Input.GetKeyDown(primaryInteractionKey)) loreItem.Pickup(inventory);
+    }
+    
+    private void HandleDissolvableNote(RaycastHit hit)
+    {
+        var note = hit.transform.GetComponent<InteractionScripts.DissolvableNote>();
+
+        if (!note.IsRevealed)
+        {
+            ShowInteractionText(true, "Apply solvent");
+            if (Input.GetKeyDown(primaryInteractionKey))
+            {
+                note.TryReveal(inventory);
+            }
+        }
+        else
+        {
+            ShowInteractionText(false);
+        }
+    }
+    
+    private void HandleFridge(RaycastHit hit)
+    {
+        var fridge = hit.transform.GetComponent<InteractionScripts.FridgeDoor>();
+
+        ShowInteractionText(true, fridge.IsOpen() ? "Close the fridge door" : "Open the fridge door");
+    
+        if (Input.GetKeyDown(primaryInteractionKey))
+        {
+            fridge.ToggleFridge();
+        }
+    }
+
+	private void HandleRemovablePlank(RaycastHit hit)
+	{
+    	var plank = hit.transform.GetComponent<InteractionScripts.RemovablePlank>();
+
+    	if (plank.IsUnlocked && !plank.IsRemoved)
+    	{
+        	ShowInteractionText(true, "Remove the plank");
+
+        	if (Input.GetKeyDown(primaryInteractionKey))
+        	{
+            	plank.TryRemovePlank();
+        	}
+    	}
+	}
+    
+    private void HandleCaptureLock(RaycastHit hit)
+    {
+        ShowInteractionText(true, "Unlock the chains");
+        if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.CaptureLock>().TryUnlock(inventory);
+    }
+
+    private void HandleCaptureKey(RaycastHit hit)
+    {
+        ShowInteractionText(true, "Pick up the capture key");
+        if (Input.GetKeyDown(primaryInteractionKey)) hit.transform.GetComponent<InteractionScripts.CaptureKey>().PickupKey(inventory);
+    }
+
+    private void HandlePhoto(RaycastHit hit)
+    {
+        var photo = hit.transform.GetComponent<InteractionScripts.Photo>();
+        if (!photo.CanShowInteractionText()) return;
+
+        ShowInteractionText(true, "Pick up the photo");
+
+        if (Input.GetKeyDown(primaryInteractionKey))
+            photo.TryPickup(inventory);
+    }
+    
+    private void HandleCassetteTape(RaycastHit hit)
+    {
+        var cassette = hit.transform.GetComponent<InteractionScripts.CassetteTape>();
+        if (!cassette.CanShowInteractionText()) return;
+
+        ShowInteractionText(true, "Pick up the cassette");
+    
+        if (Input.GetKeyDown(primaryInteractionKey))
+            cassette.TryPickup(inventory);
+    }
+
+    private void HandleLetter(RaycastHit hit)
+    {
+        var letter = hit.transform.GetComponent<InteractionScripts.Letter>();
+        if (!letter.CanShowInteractionText()) return;
+
+        ShowInteractionText(true, "Pick up the letter");
+
+        if (Input.GetKeyDown(primaryInteractionKey))
+            letter.TryPickup(inventory);
+    }
+
+    private void HandleDiary(RaycastHit hit)
+    {
+        var diary = hit.transform.GetComponent<InteractionScripts.Diary>();
+        if (!diary.CanShowInteractionText()) return;
+
+        ShowInteractionText(true, "Pick up the diary");
+
+        if (Input.GetKeyDown(primaryInteractionKey))
+            diary.TryPickup(inventory);
+    }
+    
+    private void HandleRadio(RaycastHit hit)
+    {
+        var radio = hit.transform.GetComponent<InteractionScripts.Radio>();
+        if (!radio.CanShowInteractionText(inventory)) return;
+
+        ShowInteractionText(true, "Insert the cassette");
+
+        if (Input.GetKeyDown(primaryInteractionKey))
+            radio.TryPlayRadio(inventory);
+    }
+
+    private void HandleClothes(RaycastHit hit)
+    {
+        var clothes = hit.transform.GetComponent<InteractionScripts.Clothes>();
+        if (!clothes.CanShowInteractionText()) return;
+
+        ShowInteractionText(true, "Search around the clothes");
+
+        if (Input.GetKeyDown(primaryInteractionKey))
+            clothes.TrySearchClothes();
+    }
+
+    private void HandleTrunk(RaycastHit hit)
+    {
+        var trunk = hit.transform.GetComponent<InteractionScripts.Trunk>();
+
+        if (!trunk.CanShowInteractionText())
+        {
+            ShowInteractionText(false);
+            return;
+        }
+
+        string interactionMessage = "";
+
+        if (trunk.Type == InteractionScripts.Trunk.TrunkType.DropsDownThenOpens)
+        {
+            if (!trunk.HasMoved)
+                interactionMessage = "Pull down the trunk";
+            else if (!trunk.HasOpened)
+                interactionMessage = "Open the trunk";
+        }
+        else if (trunk.Type == InteractionScripts.Trunk.TrunkType.OpensDirectly && !trunk.HasOpened)
+        {
+            interactionMessage = "Open the trunk";
+        }
+
+        ShowInteractionText(true, interactionMessage);
+
+        if (Input.GetKeyDown(primaryInteractionKey)) 
+            trunk.TryInteract();
+    }
+    
+    private void HandleCard(RaycastHit hit)
+    {
+        ShowInteractionText(true, "Pick up the card");
+
+        if (Input.GetKeyDown(primaryInteractionKey))
+            hit.transform.GetComponent<InteractionScripts.Card>().Collect();
     }
 }
