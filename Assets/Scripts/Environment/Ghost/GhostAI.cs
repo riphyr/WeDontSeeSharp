@@ -13,7 +13,7 @@ public class GhostAI : MonoBehaviour
 
     [Header("Core References")]
     private NavMeshAgent agent;
-    public Renderer ghostRenderer;
+    public List<Renderer> ghostRenderers = new();
     public float viewDistance = 10f;
     public float viewAngle = 360f;
 
@@ -427,22 +427,30 @@ public class GhostAI : MonoBehaviour
         if (ghostEffectRoutine == null)
             ghostEffectRoutine = StartCoroutine(GhostEffect());
     }
-
+    
     public void DisableGhostEffect()
     {
         if (ghostEffectRoutine != null)
         {
             StopCoroutine(ghostEffectRoutine);
-            ghostRenderer.enabled = true;
+            foreach (var renderer in ghostRenderers)
+            {
+                if (renderer != null)
+                    renderer.enabled = true;
+            }
             ghostEffectRoutine = null;
         }
     }
-
+    
     IEnumerator GhostEffect()
     {
         while (true)
         {
-            ghostRenderer.enabled = !ghostRenderer.enabled;
+            foreach (var renderer in ghostRenderers)
+            {
+                if (renderer != null)
+                    renderer.enabled = !renderer.enabled;
+            }
             yield return new WaitForSeconds(Random.Range(0.1f, 0.5f));
         }
     }
