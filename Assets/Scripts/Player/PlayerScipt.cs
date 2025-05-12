@@ -17,8 +17,9 @@ public class PlayerScript : MonoBehaviour, IPunObservable
 
 	[Header("STAMINA VALORS")]
     public float playerStamina = 100.0f;
-
-    public Slider staminaSlider;
+	private float _maxStamina = 100.0f;
+	public Slider staminaSlider;
+    
 
 
     [Header("STAMINA MODIFIERS")]
