@@ -21,7 +21,7 @@ public class MusicManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         audioSource = GetComponent<AudioSource>() ?? gameObject.AddComponent<AudioSource>();
-        //audioSource.clip = musicClip;
+        audioSource.clip = musicClip;
         audioSource.loop = true;
         audioSource.playOnAwake = false;
         audioSource.volume = 0.5f;
@@ -41,7 +41,7 @@ public class MusicManager : MonoBehaviour
     private void CheckSceneAndPlay(Scene scene)
     {
         bool shouldPlay = false;
-
+        
         foreach (string sceneName in scenesToPlayMusic)
         {
             if (scene.name == sceneName)
@@ -81,6 +81,7 @@ public class MusicManager : MonoBehaviour
 
         while (audioSource.volume > 0)
         {
+            Debug.Log("il y a bien le volume");
             audioSource.volume -= startVolume * Time.deltaTime / duration;
             yield return null;
         }

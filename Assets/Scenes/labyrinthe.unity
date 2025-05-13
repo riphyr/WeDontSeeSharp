@@ -3353,7 +3353,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   musicClip: {fileID: 8300000, guid: 3171f46d7e222ed89993075ee7fe7bac, type: 3}
-  scenesToPlayMusic: []
+  scenesToPlayMusic:
+  - labyrinthe
 --- !u!82 &198045103
 AudioSource:
   m_ObjectHideFlags: 0
