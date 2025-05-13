@@ -50,6 +50,7 @@ public class AIStoryManager : MonoBehaviourPun
 
     void Start()
     {
+	    if (!photonView.IsMine) return;
         StartCoroutine(WaitForGhostActivation());
     }
 

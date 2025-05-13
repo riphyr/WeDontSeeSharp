@@ -1,6 +1,7 @@
 using UnityEngine;
 using Photon.Pun;
 
+[RequireComponent(typeof(PhotonView))]
 public class TeleportBehindEnemy : MonoBehaviourPun
 {
     public string enemyTag = "Enemy";

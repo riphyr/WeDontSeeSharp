@@ -25,9 +25,18 @@ public class CommandHandler : MonoBehaviour
     public PlayerScript playerScript;
     public PlayerInventory playerInventory;
     public LoreDatabase loreDatabase;
+    private PhotonView view;
 
     void Awake()
     {
+        view = GetComponent<PhotonView>();
+        
+        if (!view.IsMine)
+        {
+            Destroy(this);
+            return;
+        }
+        
         Instance = this;
     }
 

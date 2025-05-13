@@ -82,7 +82,6 @@ public class GhostAI : MonoBehaviour
         FindAllPlayers();
         InitPatrolPoints();
         Debug.Log($"[GhostAI] INIT floor point counts — UG: {undergroundPoints.Count}, GF: {groundFloorPoints.Count}, FF: {firstFloorPoints.Count}");
-        StartCoroutine(DelayedActivation());
     }
 
     void Update()
