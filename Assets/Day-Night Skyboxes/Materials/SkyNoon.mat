@@ -12,7 +12,12 @@ Material:
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
+<<<<<<< Updated upstream:Assets/Day-Night Skyboxes/Materials/SkyNoon.mat
   m_InvalidKeywords: []
+=======
+  m_InvalidKeywords:
+  - _METALLICGLOSSMAP
+>>>>>>> Stashed changes:Assets/Textures/HouseLvl/Used/Rooms/Game room/Materials/office_desk_lamp.mat
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -55,5 +60,9 @@ Material:
     m_Floats: []
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
+<<<<<<< Updated upstream:Assets/Day-Night Skyboxes/Materials/SkyNoon.mat
     - _Tint: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
+=======
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
+>>>>>>> Stashed changes:Assets/Textures/HouseLvl/Used/Rooms/Game room/Materials/office_desk_lamp.mat
   m_BuildTextureStacks: []
