@@ -24,7 +24,7 @@ public class CheatCode : MonoBehaviour
     IEnumerator TeleportWithDelay()
     {
         Debug.Log("Désactivation du CharacterController...");
-        cc.enabled = false;
+       // cc.enabled = false;
         yield return new WaitForSeconds(0.05f); // petit délai pour que Unity respire
 
         Debug.Log("Changement de position...");
@@ -35,7 +35,7 @@ public class CheatCode : MonoBehaviour
         yield return null; // attendre une frame de plus
 
         Debug.Log("Réactivation du CharacterController...");
-        cc.enabled = true;
+        //cc.enabled = true;
 
         Debug.Log("Position actuelle : " + transform.position);
     }

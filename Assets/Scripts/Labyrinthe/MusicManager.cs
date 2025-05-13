@@ -21,7 +21,7 @@ public class MusicManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         audioSource = GetComponent<AudioSource>() ?? gameObject.AddComponent<AudioSource>();
-        audioSource.clip = musicClip;
+        //audioSource.clip = musicClip;
         audioSource.loop = true;
         audioSource.playOnAwake = false;
         audioSource.volume = 0.5f;
