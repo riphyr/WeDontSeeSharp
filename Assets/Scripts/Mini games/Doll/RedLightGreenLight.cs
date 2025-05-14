@@ -8,7 +8,8 @@ using TMPro;
 public class RedLightGreenLightGame : MonoBehaviourPunCallbacks
 {
     [Header("Game Settings")]
-    public GameObject gameMasterPrefab; // Préfab du meneur de jeu
+    //public GameObject gameMasterPrefab; // Préfab du meneur de jeu
+    public GameObject GameMaster;
     public List<Transform> possibleSpawnPoints; // Positions possibles du meneur
     public float maxDistanceToWin = 3f; // Distance maximale pour gagner
     public float gameDuration = 60f; // Durée totale du jeu en secondes
@@ -29,11 +30,14 @@ public class RedLightGreenLightGame : MonoBehaviourPunCallbacks
     public bool isGreenLight = false;
     public bool gameIsActive = false;
     public bool gameStarting = false;
+    //private GameObject GameMaster = null;
     private Transform currentGameMaster;
 
     private float gameTimer;
     private float startTimer;
     private List<Photon.Realtime.Player> playersInGame = new List<Photon.Realtime.Player>();
+
+    public NearDoll Doll;
 
     private void Start()
     {
@@ -90,7 +94,7 @@ public class RedLightGreenLightGame : MonoBehaviourPunCallbacks
         if (instructionsText != null) instructionsText.text = "";
 
         // Spawn of the game master (Doll)
-        SpawnGameMaster();
+        TeleportGameMaster();
         if (Lights != null) Lights.enabled = true;
 
         // Start coroutines
@@ -98,9 +102,14 @@ public class RedLightGreenLightGame : MonoBehaviourPunCallbacks
         StartCoroutine(LightSwitchCoroutine());
     }
 
-    private void SpawnGameMaster()
+    private void TeleportGameMaster()
     {
-        try
+        Transform spawnPoint = possibleSpawnPoints[Random.Range(0, possibleSpawnPoints.Count)];
+        GameMaster.transform.position = spawnPoint.position;
+        GameMaster.transform.rotation = spawnPoint.rotation;
+        currentGameMaster = GameMaster.transform;
+        photonView.RPC("SetGameMaster", RpcTarget.Others, GameMaster.GetComponent<PhotonView>().ViewID);
+        /*try
         {
             if (!PhotonNetwork.IsMasterClient)
             {
@@ -121,15 +130,15 @@ public class RedLightGreenLightGame : MonoBehaviourPunCallbacks
             }
 
             Transform spawnPoint = possibleSpawnPoints[Random.Range(0, possibleSpawnPoints.Count)];
-            GameObject master = PhotonNetwork.Instantiate(gameMasterPrefab.name, spawnPoint.position, spawnPoint.rotation);
             
-            currentGameMaster = master.transform;
-            photonView.RPC("SetGameMaster", RpcTarget.Others, master.GetComponent<PhotonView>().ViewID);
+            GameMaster = PhotonNetwork.Instantiate(gameMasterPrefab.name, spawnPoint.position, spawnPoint.rotation);
+            currentGameMaster = GameMaster.transform;
+            photonView.RPC("SetGameMaster", RpcTarget.Others, GameMaster.GetComponent<PhotonView>().ViewID);
         }
         catch (System.Exception e)
         {
             Debug.LogError($"Error spawning Game Master: {e.Message}");
-        }
+        }*/
     }
 
     [PunRPC]
@@ -200,40 +209,75 @@ public class RedLightGreenLightGame : MonoBehaviourPunCallbacks
         Debug.Log(isGreenLight ? "GREEN LIGHT!" : "RED LIGHT!");
     }
 
-    private void CheckPlayersDistance() // Corriger
+    private void CheckPlayersDistance()
     {
         if (!PhotonNetwork.IsMasterClient || currentGameMaster == null) return;
 
         foreach (var player in PhotonNetwork.PlayerList)
         {
-            GameObject playerObj = (GameObject)player.TagObject;
-            if (playerObj == null) continue;
+            // Better way to find player object
+            GameObject playerObj = GetPlayerGameObject(player);
+            if (playerObj == null || playerObj == GameMaster) continue;
 
-            float distance = Vector3.Distance(playerObj.transform.position, currentGameMaster.position);
-
-            if (distance <= maxDistanceToWin)
+            if (Doll.isTriggered)
             {
-                // One player won
-                photonView.RPC("PlayerWon", player);
+                // Player won - only notify the winning player
+                photonView.RPC("PlayerWon", RpcTarget.AllBuffered);
             }
             else if (!isGreenLight && IsPlayerMoving(playerObj))
             {
-                // One player move when the light is red
-                gameStateText.text = "T'es guez";
+                // Player lost - only notify the losing player
                 photonView.RPC("PlayerLost", player);
             }
         }
     }
 
-    private bool IsPlayerMoving(GameObject player)  // Corriger
+
+    
+
+private Dictionary<int, Vector3> lastPositions = new Dictionary<int, Vector3>();
+private Dictionary<int, float> lastCheckTimes = new Dictionary<int, float>();
+private const float MOVEMENT_THRESHOLD = 0.01f; // Minimum movement distance to consider
+private const float MIN_TIME_BETWEEN_CHECKS = 0.1f; // Prevent too frequent checks
+
+private bool IsPlayerMoving(GameObject player)
+{
+    int playerId = player.GetPhotonView().ViewID;
+    float currentTime = Time.time;
+    
+    if (!lastPositions.ContainsKey(playerId))
     {
-        Rigidbody rb = player.GetComponent<Rigidbody>();
-        if (rb != null && rb.velocity.magnitude > 0.1f)
-        {
-            return true;
-        }
+        lastPositions[playerId] = player.transform.position;
+        lastCheckTimes[playerId] = currentTime;
         return false;
     }
+
+    if (currentTime - lastCheckTimes[playerId] < MIN_TIME_BETWEEN_CHECKS)
+    {
+        return false;
+    }
+
+    Vector3 lastPos = lastPositions[playerId];
+    Vector3 currentPos = player.transform.position;
+    
+    lastPositions[playerId] = currentPos;
+    lastCheckTimes[playerId] = currentTime;
+
+    return Vector3.Distance(lastPos, currentPos) > MOVEMENT_THRESHOLD;
+}
+
+private GameObject GetPlayerGameObject(Photon.Realtime.Player player)
+{
+    PhotonView[] views = FindObjectsOfType<PhotonView>();
+    foreach (PhotonView view in views)
+    {
+        if (view.Owner == player && view.IsMine)
+        {
+            return view.gameObject;
+        }
+    }
+    return null;
+}
 
     [PunRPC]
     private void PlayerWon()
@@ -259,13 +303,12 @@ public class RedLightGreenLightGame : MonoBehaviourPunCallbacks
         Debug.Log("Game ended!");
 
         if (countdownText != null) countdownText.text = "";
-        // Update UI
+        
         if (gameStateText != null)
         {
             gameStateText.text = "GAME OVER";
         }
 
-        // Destroy the game master
         if (currentGameMaster != null && PhotonNetwork.IsMasterClient)
         {
             PhotonNetwork.Destroy(currentGameMaster.gameObject);
