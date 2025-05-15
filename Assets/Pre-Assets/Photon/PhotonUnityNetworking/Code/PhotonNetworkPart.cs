@@ -1194,6 +1194,7 @@ namespace Photon.Pun
 
         internal static void RPC(PhotonView view, string methodName, RpcTarget target, Player player, bool encrypt, params object[] parameters)
         {
+            Debug.Log("Valeur View ID est = "+view.ViewID+" La valeur de view Group est = "+view.Group);
             if (blockedSendingGroups.Contains(view.Group))
             {
                 return; // Block sending on this group

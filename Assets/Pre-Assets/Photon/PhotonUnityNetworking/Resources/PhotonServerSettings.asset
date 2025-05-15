@@ -42,22 +42,113 @@ MonoBehaviour:
   - MoveTrapdoor
   - Sit
   - BurntCandle
-  - DealCommunityCards
   - DestroyForAll
   - DestroyMatch_RPC
   - DisableForAll
   - DisableKeyForAll
   - DisableLockForAll
   - DisablePadLockForAll
-  - GiveCardToPlayer
-  - NotifyOtherPlayersOfBet
   - PlayPickupSound
   - PlayUnlockSoundAndDisable
   - SetCandleLit
-  - SitDownRPC
-  - StartGameSequence
-  - SyncShuffle
   - UseMatch
+  - SitDownRPC
+  - StandUpRPC
+  - SyncShuffle
+  - StartGameSequence
+  - GiveCardToPlayer
+  - AdvanceGamePhase
+  - SyncPlayerAction
+  - StartBettingForPlayer
+  - SyncTurn
+  - DealCommunityCards
+  - NotifyOtherPlayersOfBet
+  - PlayerPassedRPC
+  - GameOverRPC
+  - IncrementCardCount
+  - ShowWinMessage
+  - UpdateTimer
+  - DestroyDoorRPC
+  - DestroyDoor
+  - SpawnFinalDoor
+  - TeleportAllPlayers
+  - DisplayWaitingMessage
+  - ReturnToHub
+  - RPC_CollectCard
+  - ClearAllCollectedCardsOnOthers
+  - SyncCardCollection
+  - DestroyCard
+  - RequestDestroyCard
+  - AssignOwner_RPC
+  - DisableItemColliderRPC
+  - EnablePhysicsRPC
+  - ForceSwitchOff
+  - MarkAsDiscoveredForAll
+  - PlayUseSound
+  - RemovePlank
+  - RPC_ActivateLever
+  - RPC_CloseCDReader
+  - RPC_DestroyScrew
+  - RPC_EnablePhysics
+  - RPC_FlashlightsFlicker
+  - RPC_FlickerFlashlights
+  - RPC_ForceSetQuestionHandler
+  - RPC_HandleRecognition
+  - RPC_InsertCD
+  - RPC_InteractBoilingFlask
+  - RPC_InteractBunsenBurner
+  - RPC_InteractFlatBottomFlask
+  - RPC_MoveTrunk
+  - RPC_OpenDoor
+  - RPC_OpenTrunk
+  - RPC_PlayAnimationAndSound
+  - RPC_PlayBeep
+  - RPC_PlayEMFBeep
+  - RPC_PlayGhostVoice
+  - RPC_PlayRadio
+  - RPC_PlayStartupSound
+  - RPC_PowerOnScreen
+  - RPC_PowerOnSystem
+  - RPC_RequestAIActivation
+  - RPC_RequestAIDeactivation
+  - RPC_ResetCombination
+  - RPC_ResetLever
+  - RPC_ResetStation
+  - RPC_RevealMaterial
+  - RPC_RotateDial
+  - RPC_SendAnswerToHost
+  - RPC_SetClothesUnlocked
+  - RPC_SetLEDLevel
+  - RPC_SetOutput
+  - RPC_SetOwnerTransform
+  - RPC_SetPhotoTakeable
+  - RPC_SetTrunk1Unlocked
+  - RPC_SetTrunk2Unlocked
+  - RPC_SetUnlocked
+  - RPC_StartRemoving
+  - RPC_SwitchCamera
+  - RPC_SyncPosition
+  - RPC_ToggleBox
+  - RPC_ToggleButton
+  - RPC_TriggerSceneEnd
+  - RPC_TryUnlock
+  - RPC_Unlock
+  - RPC_UnlockPlank
+  - SetColliderState
+  - SetUVHit
+  - SyncBattery
+  - SyncFlashlightState
+  - SyncFlashlightTransform
+  - ToggleDrawer_RPC
+  - UnlockSafe
+  - UpdateCandlePosition_RPC
+  - UseCrowbar
+  - UseDisk
+  - UseEMFDetector
+  - UseFlashlight
+  - UseMagnetophone
+  - UseUVFlashlight
+  - UseWrench
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
