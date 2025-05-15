@@ -5,19 +5,27 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
+using System.Collections;
+using Photon.Pun;
+using DG.Tweening;
+using InteractionScripts;
+using Photon.Realtime;
+
+
 public class PlayerController : MonoBehaviour
 
 {
 
     public int playerID;
 
-    public GameObject pokerGameManager;
+    public PokerGameManager pokerGameManager;
 
     public List<Card> hand = new List<Card>();
 
     private bool isMyTurn = false;
 
     private bool hasBet = false;
+
 
 
     // UI Elements
@@ -54,7 +62,21 @@ public class PlayerController : MonoBehaviour
 
         }
 
+        
+         //StartCoroutine(RegisterToGameManager());
+          StartCoroutine(WaitForPokerManager());
+
     }
+
+    
+IEnumerator WaitForPokerManager()
+{
+    while (PokerGameManager.Instance == null)
+        yield return null;
+
+    pokerGameManager = PokerGameManager.Instance;
+}
+
 
 
     public void EnablePlayerTurn()
@@ -69,71 +91,60 @@ public class PlayerController : MonoBehaviour
         Debug.Log(betUI != null);
         PlayerScript pm = GetComponent<PlayerScript>();
         betUI.SetActive(true);
-        pm.showPanelOnCursor = false;
+        //pm.showPanelOnCursor = false;
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
 
     }
 
-
-    void OnSubmitBetClicked()
-
-    {
-
-        if (!isMyTurn) return;
-
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-        float betAmount;
-
-        if (float.TryParse(betInputField.text, out betAmount))
-
-        {
-
-            if (betAmount < 50)
-
-            {
-
-                errorBetText.text = $"Your bet is {betAmount}, but you need at least 50.";
-
-            }
-
-            else
-
-            {
-
-                betUI.SetActive(false);
-
-                isMyTurn = false;
-
-                hasBet = true;
-
-                Debug.Log($"{playerID}");
-
-                PokerGameManager pokerManager = pokerGameManager.GetComponent<PokerGameManager>();
-                if (pokerManager != null)
-                {
-                    pokerManager.PlayerHasBet(playerID, betAmount);
-                }
-else
+public void EnableBetButton()
 {
-    Debug.LogError("PokerGameManager reference is null!");
+    submitBetButton.interactable = true;
+}
+void OnSubmitBetClicked()
+{
+    if (!isMyTurn) return;
+
+    float betAmount;
+
+    // Vérifie si le texte peut être converti en float
+    if (!float.TryParse(betInputField.text, out betAmount))
+    {
+        errorBetText.text = "Incorrect value. Try again!";
+        return;
+    }
+
+    // Vérifie si la mise est suffisante
+    if (betAmount < 50)
+    {
+        errorBetText.text = $"Your bet is {betAmount}, but you need at least 50.";
+        return;
+    }
+
+    // Mise valide : on continue
+    errorBetText.text = "";
+    betUI.SetActive(false);
+    isMyTurn = false;
+    hasBet = true;
+
+    // 🔽 Verrouille le curseur **seulement ici**
+    Cursor.lockState = CursorLockMode.Locked;
+    Cursor.visible = false;
+    PlayerScript pm = GetComponent<PlayerScript>();
+    //pm.showPanelOnCursor = true;
+
+    Debug.Log($"{playerID}");
+    Debug.Log("Le Lilllllllllllllllllllllllllllllllllllllllllllllly player ID est : " + playerID);
+
+    if (pokerGameManager == null)
+    {
+        Debug.LogError("[PlayerController] pokerGameManager est NULL au moment de parier !");
+        return;
+    }
+
+    pokerGameManager.PlayerHasBet(playerID, betAmount);
 }
 
-
-            }
-
-        }
-
-        else
-
-        {
-
-            errorBetText.text = "Incorrect value. Try again!";
-
-        }
-
-    }
 
 
     public bool HasPlacedBet()

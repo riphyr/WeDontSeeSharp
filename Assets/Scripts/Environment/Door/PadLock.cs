@@ -24,6 +24,7 @@ namespace InteractionScripts
         public Camera padLockCamera;
         private PlayerScript playerScript;
         private CameraLookingAt cameraLookingAt;
+        private PlayerUsing playerUsing;
         private GameObject gui;
         private PhotonView view;
 
@@ -64,6 +65,7 @@ namespace InteractionScripts
                 playerCamera = playerTransform.Find("Main Camera")?.GetComponent<Camera>();
                 playerScript = playerTransform.GetComponent<PlayerScript>();
                 cameraLookingAt = playerTransform.GetComponent<CameraLookingAt>();
+                playerUsing = playerTransform.GetComponent<PlayerUsing>();
             }
             
             gui = localPlayer.transform.Find("GUI")?.gameObject;
@@ -90,7 +92,7 @@ namespace InteractionScripts
         {
             if (!view.IsMine)
             {
-                photonView.RequestOwnership();
+                view.TransferOwnership(PhotonNetwork.LocalPlayer);
             }
 
             playerCamera.gameObject.SetActive(false);
@@ -98,6 +100,7 @@ namespace InteractionScripts
 
             playerScript.enabled = false;
             cameraLookingAt.enabled = false;
+            playerUsing.enabled = false;
             gui.SetActive(false);
             
             Cursor.lockState = CursorLockMode.None;
@@ -114,6 +117,7 @@ namespace InteractionScripts
             
             playerScript.enabled = true;
             cameraLookingAt.enabled = true;
+            playerUsing.enabled = true;
             gui.SetActive(true);
         }
         
@@ -122,7 +126,7 @@ namespace InteractionScripts
             Ray ray = padLockCamera.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("PadLock")))
+            if (Physics.Raycast(ray, out hit, 3, LayerMask.GetMask("PadLock")))
             {
                 if (hit.transform == WheelOne) 
                 {
@@ -175,6 +179,11 @@ namespace InteractionScripts
 
             if (currentCombination == correctCode)
             {
+                if (!view.IsMine)
+                {
+                    view.TransferOwnership(PhotonNetwork.LocalPlayer);
+                }
+                
                 StartCoroutine(UnlockPadLock());
             }
         }

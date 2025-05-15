@@ -10,14 +10,15 @@ using TMPro;
 public class PlayerScript : MonoBehaviour, IPunObservable
 {
 	[Header("NUMERICAL PARAMETERS")]
-	public float walkSpeed = 6f;				// Vitesse de marche
-	public float runSpeed = 4f;				// Vitesse de course
+	public float walkSpeed = 1.2f;				// Vitesse de marche
+	public float runSpeed = 2.0f;				// Vitesse de course
 	public float jumpSpeed = 5.0f;				// Vitesse de saut
 	public float gravity = 20.0f;				// Vitesse de chute
 
 	[Header("STAMINA VALORS")]
     public float playerStamina = 100.0f;
     private float _maxStamina = 100.0f;
+    public Slider staminaSlider;
 
     [Header("STAMINA MODIFIERS")]
 	private bool canRun = true;
@@ -34,23 +35,22 @@ public class PlayerScript : MonoBehaviour, IPunObservable
 	public Camera playerCamera;					// GameObject relié à la caméra
 	public GameObject character;				// GameObject relié au prefab du joueur
 	public Animator animator;					// Controller pour les animations
-
-	[Header("MENUS")]
-	public GameObject pauseObject;				// Menu de pause
-	public bool showPanelOnCursor = true;
-
+	
 	// Synchronisation des animations
     private float animatorSides;
     private float animatorFrontBack;
 	private bool animatorIsRunning;
 	private bool animatorIsJumping;
+	private bool isSitting = false;
 	
 	private PhotonView view;					// Composante de Photon pour la différence entre local/server
 
 	private bool canMove = true;				// Booléen de blocage du joueur (à utiliser sous certains cas)
 
 	CharacterController characterController;
+	public static Transform LocalPlayerTransform;
     Vector3 moveDirection = Vector3.zero;
+    private Vector3 defaultCameraPosition;
 
     void Start()
     {
@@ -66,7 +66,14 @@ public class PlayerScript : MonoBehaviour, IPunObservable
 		Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         
-        pauseObject.SetActive(false);
+        //Setup de la barre de stamina
+        if (staminaSlider != null)
+        {
+	        staminaSlider.maxValue = _maxStamina;
+	        staminaSlider.value = playerStamina;
+        }
+        
+        defaultCameraPosition = playerCamera.transform.localPosition;
     }
 
     void Update()
@@ -84,8 +91,12 @@ public class PlayerScript : MonoBehaviour, IPunObservable
 	        {
 		        UdpateSensitivityCamera();
 	        }
-
-	        CheckPauseActivation(); // Activation ou désactivation du menu pause
+	        
+	        //Update de la barre visuelle de stamina
+	        if (staminaSlider != null)
+	        {
+		        staminaSlider.value = playerStamina;
+	        }
 
 	        animator.SetBool("isRunning", false);
 	        animator.SetBool("isJumping", false);
@@ -126,25 +137,6 @@ public class PlayerScript : MonoBehaviour, IPunObservable
 			animator.SetBool("isJumping", animatorIsJumping);
         }
     }
-
-	private void CheckPauseActivation()
-	{
-		if (Input.GetKey(GetKeyCodeFromString(PlayerPrefs.GetString("Pause", "None"))))
-	    {
-		    pauseObject.SetActive(true);
-		    Cursor.lockState = CursorLockMode.None;
-			Cursor.visible = true;
-	    }
-
-		if (Cursor.lockState == CursorLockMode.None && Cursor.visible && showPanelOnCursor)
-	    {
-			pauseObject.SetActive(true);
-	    }
-	    else
-	    {
-			pauseObject.SetActive(false);
-	    }
-	}
 	
 	// Update des sensibilités de rotation camera
 	private void UdpateSensitivityCamera()
@@ -282,5 +274,48 @@ public class PlayerScript : MonoBehaviour, IPunObservable
         animatorSides = moveX;
         animatorFrontBack = moveY;
         animatorIsRunning = isRunning;
+	}
+	
+	public void SitDown()
+	{
+		if (isSitting) return;
+
+		// Désactive le mouvement
+		canMove = false;
+		isSitting = true;
+		Vector3 sittingCameraOffset = new Vector3(0, -0.2f, 0);
+		playerCamera.transform.localPosition = defaultCameraPosition + sittingCameraOffset;
+		Vector3 euler = playerCamera.transform.localEulerAngles;
+		euler.x = 22f; 
+		playerCamera.transform.localEulerAngles = euler;
+		
+	}
+	
+	public void StandUp()
+	{
+		if (!isSitting) return;
+
+		// Active le mouvement
+		canMove = true;
+
+		// Joue l’animation de lever
+		animator.SetBool("StandUp", true);
+		animator.SetBool("SitDown", false);
+		playerCamera.transform.localPosition = defaultCameraPosition;
+
+		// Permet à nouveau la physique si nécessaire
+		Rigidbody rb = GetComponent<Rigidbody>();
+		if (rb != null)
+		{
+			rb.isKinematic = false;
+		}
+
+		isSitting = false;
+	}
+
+	
+	public bool IsSitting()
+	{
+		return isSitting;
 	}
 }

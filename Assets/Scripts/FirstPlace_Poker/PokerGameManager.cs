@@ -13,7 +13,10 @@ using Unity.VisualScripting;
 public class PokerGameManager : MonoBehaviourPun
 
 {
+    private static readonly int StandUp = Animator.StringToHash("StandUp");
 
+    public static PokerGameManager Instance { get; private set; }
+    //private PhotonView photonView1;
     public CardDealer cardDealer;
 
     public BotController bot;  // Référence au bot
@@ -24,40 +27,30 @@ public class PokerGameManager : MonoBehaviourPun
 
     private int currentPlayerIndex = 0; // Index du joueur courant
 
-    //private bool allPlayersHaveBet = false; // Indicateur pour vérifier si tous les joueurs ont misé
+    private bool allPlayersHaveBet = false; // Indicateur pour vérifier si tous les joueurs ont misé
+    
+    public TMP_Text gameStartText; // Texte pour afficher "Here the game can really start"
+    public Transform hubSpawnPoint; // Position dans le hub où les joueurs vont être téléportés
+
 
     // UI Elements
 
     public TMP_Text betMessageText; // Affichage du message de mise
 
     public TMP_Text winnerText; // Affichage du gagnant
+    
 
-
-    // Démarre la partie et distribue les cartes
-    /*
-   void Start()
+    private void Awake()
     {
-        // Auto-assignation si les références ne sont pas remplies
-        if (cardDealer == null)
-        cardDealer = FindObjectOfType<CardDealer>();
-
-    if (bot == null)
-        bot = FindObjectOfType<BotController>();
-
-        if (betMessageText == null)
+        if (Instance == null)
         {
-            GameObject betObj = GameObject.Find("Message");
-            if (betObj != null) betMessageText = betObj.GetComponent<TMP_Text>();
+            Instance = this;
         }
-
-        if (winnerText == null)
+        else if (Instance != this)
         {
-            GameObject winnerObj = GameObject.Find("Message");
-            if (winnerObj != null) winnerText = winnerObj.GetComponent<TMP_Text>();
+            Destroy(gameObject);
         }
-    }*/
-
-
+    }
     public void StartRound(List<PlayerController> playerControllers)
 
     {
@@ -66,7 +59,7 @@ public class PokerGameManager : MonoBehaviourPun
 
         currentPlayerIndex = 0;
 
-        //allPlayersHaveBet = false;
+        allPlayersHaveBet = false;
 
         NextTurn();
 
@@ -79,18 +72,17 @@ public class PokerGameManager : MonoBehaviourPun
 
     {
 
-        if (currentPlayerIndex >= players.Count) 
+        if (currentPlayerIndex >= players.Count && !allPlayersHaveBet) 
 
         {
-
+            Debug.Log("t'es appele en boucle c'est ca ???");
             // Tour du bot
             Debug.Log($"pour le bot {bot== null}" );
             bot.PlayTurn();
-
+            allPlayersHaveBet = true;
         }
 
-        else
-
+        else if(!allPlayersHaveBet)
         {
 
             // Tour du joueur humain
@@ -99,8 +91,14 @@ public class PokerGameManager : MonoBehaviourPun
             players[currentPlayerIndex].EnablePlayerTurn();
 
         }
+        else{
+            CheckIfAllPlayersHaveBet();
+        }
+        
 
     }
+
+
 
 
     // Mise d'un joueur
@@ -108,6 +106,8 @@ public class PokerGameManager : MonoBehaviourPun
     public void PlayerHasBet(int playerId, float betAmount)
 
     {
+
+
 
         if (!playerBets.ContainsKey(playerId))
 
@@ -126,22 +126,22 @@ public class PokerGameManager : MonoBehaviourPun
         }
 
         if (!gameObject.activeInHierarchy)
-{
-    gameObject.SetActive(true); // Active l'objet temporairement
-}
-
-
+        {
+            gameObject.SetActive(true); // Active l'objet temporairement
+        }
         currentPlayerIndex++;
         Debug.Log($"{playerBets[playerId]} les bets des gens");
-        if (photonView != null)
-{
-    // Ajout d'un petit délai pour garantir la synchronisation
-    photonView.RPC("NotifyOtherPlayersOfBet", RpcTarget.All, playerId, betAmount);
-}
-else
-{
-    Debug.LogError("PhotonView is null on PokerGameManager!");
-}
+        Debug.Log("PhontonView de l'objet LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLily = "+ photonView.ViewID);
+        //if (photonView != null)
+        if (photonView != null && photonView.ViewID != 0)
+        {
+            // Ajout d'un petit délai pour garantir la synchronisation
+            photonView.RPC("NotifyOtherPlayersOfBet", RpcTarget.All, playerId, betAmount);
+        }
+        else
+        {
+            Debug.LogError("PhotonView is null on PokerGameManager!");
+        }
         
         NextTurn();
 
@@ -170,11 +170,18 @@ else
         }
 
 
-        //allPlayersHaveBet = true;
+        allPlayersHaveBet = true;
 
         RevealDealerCards();
+        StartCoroutine(WaitBeforeWinning());
 
     }
+    private IEnumerator WaitBeforeWinning()
+{
+    yield return new WaitForSeconds(3f); // Attendre 1 seconde (ajuste si besoin)
+
+   DetermineWinner(players);
+}
 
 
     // Révéler les cartes du dealer
@@ -182,8 +189,8 @@ else
     void RevealDealerCards()
 
     {
-
-        photonView.RPC("DealCommunityCards", RpcTarget.AllBuffered);
+        
+        cardDealer.GetComponent<PhotonView>().RPC("DealCommunityCards", RpcTarget.AllBuffered);
 
         Debug.Log("Les cartes du dealer sont révélées !");
 
@@ -233,22 +240,83 @@ else
 
         }
 
+        StartCoroutine(DelayedEndGame());
 
+        //EndGame();
+
+    }
+    private IEnumerator DelayedEndGame()
+    {
+        yield return new WaitForSeconds(3f); // Attendre 3 secondes
         EndGame();
-
     }
 
 
     // Terminer la partie
 
-    void EndGame()
-
+    public void EndGame()
     {
-
         Debug.Log("Game over, no new round.");
 
-    }
+        // Affiche le message "Here the game can really start"
+        if (gameStartText != null)
+        {
+            gameStartText.text = "Here the game can really start!";
+        }
 
+        // Lance la coroutine de téléportation
+        StartCoroutine(TeleportPlayersAfterDelay(5f)); // 5 secondes de délai
+    }
+    
+    private IEnumerator TeleportPlayersAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        foreach (var player in PhotonNetwork.PlayerList)
+        {
+            if (player != null)
+            {
+                Debug.Log("HERE WE AREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+                // On récupère le PhotonView attaché au joueur
+                GameObject playerObject = player.TagObject as GameObject;
+                if (playerObject != null)
+                {
+                    GameObject enfantTrouve = playerObject.GetComponentsInChildren<Transform>(true)
+                        .FirstOrDefault(t => t.name == "Player")?.gameObject;
+                    
+                    if (enfantTrouve != null)
+                    {
+                        Debug.Log(enfantTrouve.name);
+                        PhotonView pv = enfantTrouve.GetComponent<PhotonView>();
+                        if (pv != null)
+                        {
+                            gameStartText.text = "";
+                            // Appel de la RPC pour tous les joueurs
+                            photonView.RPC("StandUpRPC", RpcTarget.AllBuffered, pv.ViewID, hubSpawnPoint.position);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    [PunRPC]
+    public void StandUpRPC(int playerViewID, Vector3 teleportPosition)
+    {
+        PhotonView playerPhotonView = PhotonView.Find(playerViewID);
+        if (playerPhotonView == null) return;
+
+        GameObject player = playerPhotonView.gameObject;
+
+        var controller = player.GetComponent<PlayerScript>(); // adapte au nom réel de ton script
+        if (controller != null)
+        {
+            controller.StandUp();
+        }
+        
+        player.transform.position = teleportPosition;
+        
+    }
 
     // Affichage de la mise des autres joueurs
 

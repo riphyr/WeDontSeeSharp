@@ -10,15 +10,20 @@ public class BotController : MonoBehaviourPun
 
 {
 
-    public int botID = -1;
+    public int botID = 555;
 
-    public PokerGameManager gameManager;
+    public PokerGameManager pokerGameManager;
 
     private bool hasPlacedBet = false;
 
     private const float botBetAmount = 50f;
      public List<Card> hand = new List<Card>();
 
+
+    void Start()
+    {
+         StartCoroutine(WaitForPokerManager());
+    }
 
     public void SetBotCards(List<Card> cards)
 
@@ -29,20 +34,20 @@ public class BotController : MonoBehaviourPun
     }
 
 
-    void Start()
 
-    {
 
-        if (!PhotonNetwork.IsMasterClient)
 
-        {
+IEnumerator WaitForPokerManager()
+{
+    while (PokerGameManager.Instance == null)
+        yield return null;
 
-            enabled = false;  // Seul le MasterClient contrôle le bot
+    pokerGameManager = PokerGameManager.Instance;
+}
 
-        }
     
 
-    }
+    
 
 
     public void PlayTurn()
@@ -63,10 +68,10 @@ public class BotController : MonoBehaviourPun
 
         PlaceBet();
 
-
+        Debug.Log($"{pokerGameManager == null} VRAIMENTTTTTTTTTTTTTTTTTTTTT?????????Q");
         // Passer le tour après avoir misé
 
-        gameManager.PlayerHasBet(botID, botBetAmount);
+        pokerGameManager.PlayerHasBet(botID, botBetAmount);
 
     }
 

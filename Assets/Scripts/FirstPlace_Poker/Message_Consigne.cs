@@ -37,7 +37,7 @@ public class DoorTrigger : MonoBehaviour
         for (int i = 0; i < fullMessage.Length; i++)
         {
             messageUI.text += fullMessage[i];  
-            yield return new WaitForSeconds(0.1f);  
+            yield return new WaitForSeconds(0.05f);  
         }
 
         yield return new WaitForSeconds(5f); 

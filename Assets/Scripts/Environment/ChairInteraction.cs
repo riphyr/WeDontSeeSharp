@@ -19,6 +19,8 @@ namespace InteractionScripts
         public GameObject PlayerSeated => playerSeated;
         private static int playersSeatedCount = 0; // Compteur de joueurs assis
         private static int totalPlayers = 0; // Nombre total de joueurs
+        public int SeatedPlayerID { get; private set; } = -1;
+
 
         public bool CanSit()
         {
@@ -40,17 +42,50 @@ namespace InteractionScripts
 
 
       [PunRPC]
+      /*void SitDownRPC(int playerViewID)
+      {
+          PhotonView playerPhotonView = PhotonView.Find(playerViewID);
+          if (playerPhotonView == null) return;
+
+          GameObject player = playerPhotonView.gameObject;
+          SeatedPlayerID = playerPhotonView.Owner.ActorNumber;
+
+          isOccupied = true;
+          playerSeated = player;
+          player.transform.position = sittingPosition.position;
+          player.transform.rotation = sittingPosition.rotation;
+
+          var playerController = player.GetComponent<PlayerScript>(); 
+          if (playerController != null)
+          {
+              playerController.SitDown(sittingPosition);
+          }
+
+          playersSeatedCount++;
+
+          if (playersSeatedCount >= totalPlayers)
+          {
+              photonView.RPC("StartGameSequence", RpcTarget.AllBuffered);
+          }
+      }*/
+
 void SitDownRPC(int playerViewID)
 {
     PhotonView playerPhotonView = PhotonView.Find(playerViewID);
     if (playerPhotonView == null) return;
+    SeatedPlayerID = playerPhotonView.Owner.ActorNumber;
 
     GameObject player = playerPhotonView.gameObject;
     isOccupied = true;
     playerSeated = player;
     player.transform.position = sittingPosition.position;
     player.transform.rotation = sittingPosition.rotation;
-    player.GetComponent<Rigidbody>().isKinematic = true;
+    //player.GetComponent<Rigidbody>().isKinematic = true;
+    var playerController = player.GetComponent<PlayerScript>(); 
+    if (playerController != null)
+    {
+        playerController.SitDown();
+    }
 
     Animator animator = player.GetComponentInChildren<Animator>();
     if (animator != null)

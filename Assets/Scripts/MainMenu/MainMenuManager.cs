@@ -39,6 +39,9 @@ namespace MainMenu{
         public AudioSource swooshSound;
 
 		void Start(){
+			
+			PlayerPrefs.DeleteAll(); 
+			PlayerPrefs.Save();
 			CameraObject = transform.GetComponent<Animator>();
 
 			playMenu.SetActive(false);

@@ -15,10 +15,8 @@ namespace PauseMenu{
         public GameObject mainCanva;			// Panel MAIN
         public GameObject settingsCanva;		// Panel PLAY
         public GameObject exitMenu;				// Panel EXIT
-        public GameObject saveMenu;				// Panel SAVE
 
         [Header("PANELS")]
-        public GameObject PanelMain;			// Canva MAIN
         public GameObject PanelGame;			// Panel GAME
         public GameObject PanelControls;		// Panel CONTROLS
         public GameObject PanelVideo;			// Panel VIDEO
@@ -60,6 +58,7 @@ namespace PauseMenu{
 		
 		[Header("PANEL KEYBINDINGS")]
 		public GameObject keyConfirmationPanel;
+		public GameObject keyConfirmationBackground;
         
 		[Header("KEY NAMES")]
 		public GameObject forwardtext;
@@ -72,9 +71,13 @@ namespace PauseMenu{
 		public GameObject previousinventorytext;
 		public GameObject maptext;
 		public GameObject usetext;
-		public GameObject interacttext;
+		public GameObject primaryInteractionText;
+		public GameObject secondaryInteractionText;
+		public GameObject reloadtext;
+		public GameObject droptext;
 		public GameObject pausetext;
-
+		public GameObject inventorytext;
+		public GameObject journaltext;
 		
 		//Sliders
 		private float sliderValue = 0.0f;
@@ -85,13 +88,16 @@ namespace PauseMenu{
 		private Dictionary<string, TMP_Text> keyBindingTexts = new Dictionary<string, TMP_Text>();
 
 		private string currentKeyBinding; 
+		private bool isPaused = false;
+		private static bool blockNextEscape = false;
 
 		void Start(){
+			pauseObject.SetActive(false);
+			isPaused = false;
+			
 			settingsCanva.SetActive(false);
 			exitMenu.SetActive(false);
-			mainCanva.SetActive(true);
-			pauseObject.SetActive(true);
-			saveMenu.SetActive(false);
+			mainCanva.SetActive(false);
 			
 			// Vérification des sliders
 			musicSlider.GetComponent<Slider>().value = PlayerPrefs.GetFloat("MusicVolume");
@@ -130,8 +136,13 @@ namespace PauseMenu{
 			keyBindingTexts["Previous"] = previousinventorytext.GetComponent<TMP_Text>();
 			keyBindingTexts["Map"] = maptext.GetComponent<TMP_Text>();
 			keyBindingTexts["Use"] = usetext.GetComponent<TMP_Text>();
-			keyBindingTexts["Interact"] = interacttext.GetComponent<TMP_Text>();
+			keyBindingTexts["PrimaryInteraction"] = primaryInteractionText.GetComponent<TMP_Text>();
+			keyBindingTexts["SecondaryInteraction"] = secondaryInteractionText.GetComponent<TMP_Text>();
+			keyBindingTexts["Reload"] = reloadtext.GetComponent<TMP_Text>();
+			keyBindingTexts["Drop"] = droptext.GetComponent<TMP_Text>();
 			keyBindingTexts["Pause"] = pausetext.GetComponent<TMP_Text>();
+			keyBindingTexts["Inventory"] = inventorytext.GetComponent<TMP_Text>();
+			keyBindingTexts["Journal"] = journaltext.GetComponent<TMP_Text>();
 
 			LoadKeyBindings();
 		}
@@ -153,28 +164,67 @@ namespace PauseMenu{
 						SaveKeyBindings();
 						UpdateKeyBindingText(currentKeyBinding, keyCode);
 						keyConfirmationPanel.SetActive(false);
+						keyConfirmationBackground.SetActive(false);
 						currentKeyBinding = null;
 						break;
 					}
 				}
+				if (currentKeyBinding == null)
+					return;
 			}
+
+			if (blockNextEscape)
+			{
+				blockNextEscape = false;
+				return;
+			}
+
+			if (Input.GetKeyDown(KeyCode.Escape))
+			{
+				if (isPaused)
+				{
+					if (settingsCanva.activeSelf && !keyConfirmationPanel.activeSelf)
+						ReturnButton();
+					else if (mainCanva.activeSelf)
+						ResumeButton();
+				}
+				else
+				{
+					PauseGame();
+				}
+			}
+		}
+
+		public static void BlockNextEscapePress()
+		{
+			blockNextEscape = true;
 		}
 
 		public void UpdateVolume()
 		{
             GetComponent<AudioSource>().volume = PlayerPrefs.GetFloat("MusicVolume");
         }
-
-		public void Save()
+		
+		public void ResumeButton()
 		{
-			exitMenu.SetActive(false);
-			saveMenu.SetActive(true);
+			isPaused = false;
+			pauseObject.SetActive(false);
+
+			Cursor.lockState = CursorLockMode.Locked;
+			Cursor.visible = false;
 		}
 		
-		public void ResumeButton(){
-			pauseObject.SetActive(false);
-			Cursor.lockState = CursorLockMode.Locked;
-        	Cursor.visible = false;
+		private void PauseGame()
+		{
+			isPaused = true;
+			pauseObject.SetActive(true);
+
+			mainCanva.SetActive(true);
+			settingsCanva.SetActive(false);
+			exitMenu.SetActive(false);
+
+			Cursor.lockState = CursorLockMode.None;
+			Cursor.visible = true;
 		}
 
 		public void LoadScene(string scene)
@@ -209,14 +259,12 @@ namespace PauseMenu{
 		public void ReturnButton(){
 			settingsCanva.SetActive(false);
 			exitMenu.SetActive(false);
-			saveMenu.SetActive(false);
 			mainCanva.SetActive(true);
 			pauseObject.SetActive(true);
 		}
 		
 		public void AreYouSure(){
 			exitMenu.SetActive(true);
-			DisableSave();
 		}
 
 		public void QuitGame(){
@@ -225,10 +273,6 @@ namespace PauseMenu{
 			#else
 				Application.Quit();
 			#endif
-		}
-
-		public void  DisableSave(){
-			saveMenu.SetActive(false);
 		}
 		void DisablePanels(){
 			PanelControls.SetActive(false);
@@ -335,7 +379,7 @@ namespace PauseMenu{
 
 		public void FullScreen (){
 			Screen.fullScreen = !Screen.fullScreen;
-			fullscreentext.GetComponent<TMP_Text>().text = Screen.fullScreen ? "off" : "on";
+			fullscreentext.GetComponent<TMP_Text>().text = fullscreentext.GetComponent<TMP_Text>().text == "on" ? "off" : "on";
 		}
 
 		public void MusicSlider (){
@@ -354,7 +398,7 @@ namespace PauseMenu{
 		public void ToolTips (){
 			int currentState = PlayerPrefs.GetInt("ToolTips");
 			PlayerPrefs.SetInt("ToolTips", 1 - currentState);
-			tooltipstext.GetComponent<TMP_Text>().text = currentState == 0 ? "off" : "on";
+			tooltipstext.GetComponent<TMP_Text>().text = PlayerPrefs.GetInt("ToolTips") == 0 ? "off" : "on";
 		}
 		
 		// Update Shadow Quality
@@ -476,11 +520,13 @@ namespace PauseMenu{
         {
             currentKeyBinding = keyBindingName;
             keyConfirmationPanel.SetActive(true);
+            keyConfirmationBackground.SetActive(true);
         }
         
         public void CancelButton()
         {
             keyConfirmationPanel.SetActive(false);
+            keyConfirmationBackground.SetActive(false);
             currentKeyBinding = null;
         }
 
@@ -498,18 +544,23 @@ namespace PauseMenu{
         {
             Dictionary<string, KeyCode> defaultBindings = new Dictionary<string, KeyCode>
             {
-                { "Forward", KeyCode.W },
-                { "Backward", KeyCode.S },
-                { "Left", KeyCode.A },
-                { "Right", KeyCode.D },
-                { "Jump", KeyCode.Space },
-                { "Sprint", KeyCode.LeftShift },
-                { "Next", KeyCode.RightArrow },
-                { "Previous", KeyCode.LeftArrow },
-                { "Map", KeyCode.M },
-                { "Use", KeyCode.Q },
-                { "Interact", KeyCode.E },
-                { "Pause", KeyCode.Escape }
+	            { "Forward", KeyCode.Z },
+	            { "Backward", KeyCode.S },
+	            { "Left", KeyCode.Q },
+	            { "Right", KeyCode.D },
+	            { "Jump", KeyCode.Space },
+	            { "Sprint", KeyCode.LeftShift },
+	            { "Next", KeyCode.RightArrow },
+	            { "Previous", KeyCode.LeftArrow },
+	            { "Map", KeyCode.M },
+	            { "Use", KeyCode.A },
+	            { "PrimaryInteraction", KeyCode.E },
+	            { "SecondaryInteraction", KeyCode.F },
+	            { "Reload", KeyCode.R },
+	            { "Drop", KeyCode.T },
+	            { "Pause", KeyCode.Escape },
+	            { "Inventory", KeyCode.I },
+	            { "Journal", KeyCode.J }
             };
 
             foreach (var action in defaultBindings.Keys)
@@ -530,6 +581,10 @@ namespace PauseMenu{
             PlayerPrefs.Save();
         }
 
+        public Dictionary<string, KeyCode> GetKeyBindings()
+        {
+	        return keyBindings;
+        }
 
         private void UpdateKeyBindingText(string action, KeyCode keyCode)
         {

@@ -30,18 +30,36 @@ public class CardDealer : MonoBehaviourPun
     //private List<Transform> deck = new List<Transform>();
     private PlayerController[] players;  // Liste des contrôleurs de joueurs
     // private int currentPlayerIndex = 0;
+    private List<ChairInteraction> allChairs = new List<ChairInteraction>();
 
-    void Start() // récupérer les enfants du deckParent et les mettre dans le deck
+   void Start()
+{
+    foreach (Transform card in deckParent.transform)
     {
-        foreach (Transform card in deckParent.transform)
-        {
-            Card cards = card.GetComponent<Card>();
-            deck.Add(cards);
-        }
-        StartCoroutine(WaitUntilPlayersAreReady());
+        Card cards = card.GetComponent<Card>();
+        deck.Add(cards);
+    }
+    allChairs.AddRange(FindObjectsOfType<ChairInteraction>());
+
+    StartCoroutine(WaitForGameManager());
+    StartCoroutine(WaitUntilPlayersAreReady());
+}
+    IEnumerator WaitForGameManager()
+{
+    while (PokerGameManager.Instance == null)
+    {
+        Debug.Log("⏳ En attente du PokerGameManager...");
+        yield return null;
     }
 
-    IEnumerator WaitUntilPlayersAreReady()
+    gameManager = PokerGameManager.Instance;
+
+    Debug.Log("✅ PokerGameManager assigné !");
+}
+
+
+
+    /*IEnumerator WaitUntilPlayersAreReady()
     {
         GameObject[] players = new GameObject[0];
 
@@ -59,7 +77,45 @@ public class CardDealer : MonoBehaviourPun
             playerPositions.Add(player.transform);
             Debug.Log($"👤 Ajout du joueur : {player.name}");
         }
+    }*/
+    IEnumerator WaitUntilPlayersAreReady()
+    {
+        Debug.Log("⏳ Attente que tous les joueurs soient assis...");
+
+        PlayerController[] playerControllers;
+
+        while (true)
+        {
+            playerControllers = FindObjectsOfType<PlayerController>();
+            bool allSeated = true;
+            int numPlayers = 1;
+            foreach (var player in playerControllers)
+            {
+                player.playerID = numPlayers;
+                numPlayers++;
+                PhotonView view = player.GetComponent<PhotonView>();
+                int ID = view.Owner.ActorNumber;
+                ChairInteraction chair = allChairs.Find(c => c.SeatedPlayerID == ID);
+                if (chair == null)
+                {
+                    allSeated = false;
+                    break;
+                }
+            }
+
+            if (allSeated)
+            {
+                Debug.Log("✅ Tous les joueurs sont assis !");
+                break;
+            }
+
+            yield return new WaitForSeconds(0.5f);
+        }
+
+        // Une fois tous les joueurs assis, lancer le shuffle
+        //StartShuffling();
     }
+
 
     public Card DrawCard() // Prendre une carte au hasard du deck
     {
@@ -228,12 +284,45 @@ public class CardDealer : MonoBehaviourPun
             yield break;
         }
 
+        
         GameObject card = cardPV.gameObject;
 
         if (PhotonNetwork.LocalPlayer.ActorNumber == playerID)
         {
+            ChairInteraction playerChair = allChairs.Find(c => c.SeatedPlayerID == playerID);
+            if (playerChair == null)
+            {
+                Debug.LogError($"❌ Aucune chaise trouvée pour le joueur {playerID}");
+                yield break;
+            }
+
+            Transform playerCardAnchor = playerChair.sittingPosition;
+            float forwardDistance = 0.5f;         // Distance devant la chaise
+            float spacing = 0.1f;                 // Espace entre les cartes
+            float heightOffset = 0.2f;
+
+            // Centre les cartes devant le joueur (cartIndex influence droite/gauche)
+            Vector3 forwardPos = playerCardAnchor.position + playerCardAnchor.forward * forwardDistance;
+            Vector3 rightOffset = playerCardAnchor.right * ((cardIndex - 0.5f) * spacing);
+            Vector3 targetPos = forwardPos + rightOffset + Vector3.up * heightOffset;
+
+            Debug.Log($"📦 Moving card to: {targetPos}");
+
+            card.transform.DOMove(targetPos, shuffleSpeed);
+            card.transform.DORotate(playerCardAnchor.rotation.eulerAngles, shuffleSpeed);
+        }
+
+        /*if (PhotonNetwork.LocalPlayer.ActorNumber == playerID)
+        {
             Debug.Log($"playerPosition.Lenght {playerPositions.Count}");
-            Transform playerCardPosition = playerPositions[playerID - 1];
+            ChairInteraction playerChair = allChairs.Find(c => c.SeatedPlayerID == playerID);
+            if (playerChair == null)
+            {
+                Debug.LogError($"❌ Aucune chaise trouvée pour le joueur {playerID}");
+                yield break;
+            }
+            Transform playerCardPosition = playerChair.sittingPosition;
+            //Transform playerCardPosition = playerPositions[playerID - 1];
             float distance = -3.3f;
             Vector3 frontPosition = playerCardPosition.position + playerCardPosition.forward * distance;
             float cardSpacing = 0.1f;
@@ -244,7 +333,7 @@ public class CardDealer : MonoBehaviourPun
             card.transform.DORotate(playerCardPosition.rotation.eulerAngles, shuffleSpeed); 
             
 
-        }
+        }*/
 
         if (!cardPV.IsMine)
         {
@@ -256,6 +345,7 @@ public class CardDealer : MonoBehaviourPun
     [PunRPC]
     public void DealCommunityCards()
     {
+        Debug.Log("ENCORE???????????????");
         if (!PhotonNetwork.IsMasterClient)
             return;
 
