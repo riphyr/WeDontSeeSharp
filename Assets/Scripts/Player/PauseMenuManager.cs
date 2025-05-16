@@ -51,6 +51,9 @@ namespace PauseMenu{
 		[Header("GAME SETTINGS")]
 		public GameObject tooltipstext;
 		public GameObject musicSlider;
+		public List<AudioClip> backgroundMusics;
+		private AudioSource musicSource;
+		private int currentMusicIndex = 0;
 		
 		[Header("CONTROLS SETTINGS")]
 		public GameObject sensitivityXSlider;
@@ -143,6 +146,24 @@ namespace PauseMenu{
 			keyBindingTexts["Pause"] = pausetext.GetComponent<TMP_Text>();
 			keyBindingTexts["Inventory"] = inventorytext.GetComponent<TMP_Text>();
 			keyBindingTexts["Journal"] = journaltext.GetComponent<TMP_Text>();
+
+			//Vérification de la musique de fond
+			if (SceneManager.GetActiveScene().name == "HouseLvl")
+			{
+				musicSource = GetComponent<AudioSource>();
+				if (musicSource == null) return;
+				
+				musicSource.loop = true;
+				musicSource.playOnAwake = false;
+				musicSource.spatialBlend = 0f;
+				musicSource.volume = PlayerPrefs.GetFloat("MusicVolume");
+
+				if (backgroundMusics != null && backgroundMusics.Count > 0)
+				{
+					musicSource.clip = backgroundMusics[currentMusicIndex];
+					musicSource.Play();
+				}
+			}
 
 			LoadKeyBindings();
 		}
@@ -383,7 +404,10 @@ namespace PauseMenu{
 		}
 
 		public void MusicSlider (){
-			PlayerPrefs.SetFloat("MusicVolume", musicSlider.GetComponent<Slider>().value);
+			float volume = musicSlider.GetComponent<Slider>().value;
+			PlayerPrefs.SetFloat("MusicVolume", volume);
+			if (musicSource != null) musicSource.volume = volume;
+
 		}
 
 		public void SensitivityXSlider (){

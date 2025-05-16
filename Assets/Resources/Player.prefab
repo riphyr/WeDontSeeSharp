@@ -18880,6 +18880,11 @@ MonoBehaviour:
   ResolutionDropdown: {fileID: 6734451868347165399}
   tooltipstext: {fileID: 3825756013844256412}
   musicSlider: {fileID: 5222153585252891355}
+  backgroundMusics:
+  - {fileID: 8300000, guid: 9ea9920cae34a6149b82992bfa8e9804, type: 3}
+  - {fileID: 8300000, guid: 33a562d3e00439447936de880f7e8f3e, type: 3}
+  - {fileID: 8300000, guid: eca2d1707ab827349a0f92692e3302e2, type: 3}
+  - {fileID: 8300000, guid: e89880dd7dc7fce48be818e7e6c37c86, type: 3}
   sensitivityXSlider: {fileID: 9084098347160666545}
   sensitivityYSlider: {fileID: 2934188670441818747}
   keyConfirmationPanel: {fileID: 5417842278392974655}
