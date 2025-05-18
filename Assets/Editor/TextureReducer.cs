@@ -17,7 +17,6 @@ public class TextureReducer
                 importer.maxTextureSize = 2048;
                 importer.textureCompression = TextureImporterCompression.Compressed;
                 importer.SaveAndReimport();
-                Debug.Log($"Compressed: {path}");
             }
         }
     }

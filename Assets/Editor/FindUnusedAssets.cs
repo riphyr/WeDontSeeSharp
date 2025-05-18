@@ -106,8 +106,6 @@ public class FindUnusedAssets : EditorWindow
                 }
             }
         }
-
-        Debug.Log($"Found {unusedAssets.Count} unused assets.");
     }
 
     private void DeleteUnusedAssets()
@@ -117,6 +115,5 @@ public class FindUnusedAssets : EditorWindow
             AssetDatabase.DeleteAsset(asset);
         }
         AssetDatabase.Refresh();
-        Debug.Log("Unused assets deleted!");
     }
 }

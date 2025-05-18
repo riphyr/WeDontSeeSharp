@@ -54,7 +54,6 @@ namespace InteractionScripts
             if (enteredCombination.Count < correctCombination.Length)
             {
                 enteredCombination.Add(currentNumber);
-                Debug.Log($"✅ Enregistrement de la dernière valeur: {currentNumber}");
             }
 
             if (enteredCombination.Count == correctCombination.Length && CheckCode())

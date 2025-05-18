@@ -23,50 +23,41 @@ public class LoreProgressManager : MonoBehaviour
     {
         clothesSearched = true;
         diaryUnlocked = true;
-        Debug.Log("[Lore] Clothes searched → Diary unlocked.");
     }
     public void SetDiaryTaken()
     {
         diaryTaken = true;
-        Debug.Log("[Lore] Diary taken.");
     }
     public void SetTrunk1Unlocked(bool value) => trunk1Unlocked = value;
     public void SetTrunk1Moved()
     {
         trunk1Moved = true;
-        Debug.Log("[Lore] Trunk 1 moved.");
     }
     public void SetTrunk1Opened()
     {
         trunk1Opened = true;
-        Debug.Log("[Lore] Trunk 1 opened.");
     }
     public void SetTrunk2Unlocked(bool value) => trunk2Unlocked = value;
     public void SetTrunk2Opened()
     {
         trunk2Opened = true;
-        Debug.Log("[Lore] Trunk 2 opened.");
     }
     public void SetPhotoTakeable(bool value) => photoTakeable = value;
     public void SetPhotoTaken()
     {
         photoTaken = true;
-        Debug.Log("[Lore] Photo taken.");
     }
     public void SetLetterTaken()
     {
         letterTaken = true;
-        Debug.Log("[Lore] Letter taken.");
     }
     public void SetCassetteTaken()
     {
         cassetteTaken = true;
-        Debug.Log("[Lore] Cassette taken.");
     }
     public void SetRadioPlayed()
     {
         radioPlayed = true;
-        Debug.Log("[Lore] Radio played.");
     }
 
     public bool IsClothesUnlocked() => clothesUnlocked;

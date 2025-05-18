@@ -42,12 +42,10 @@ namespace InteractionScripts
             if (view.InstantiationData != null && view.InstantiationData.Length > 0)
             {
                 currentBattery = (float)view.InstantiationData[0];
-                Debug.Log($"[DEBUG][UV] Batterie reçue via InstantiationData : {currentBattery}");
             }
             else
             {
                 currentBattery = maxBattery;
-                Debug.Log("[DEBUG][UV] Aucune InstantiationData, batterie full.");
             }
         }
 
@@ -104,7 +102,7 @@ namespace InteractionScripts
                     }
                     else
                     {
-                        RevealUVObjects(); // << AJOUT ICI
+                        RevealUVObjects();
                     }
                 }
             }
@@ -151,7 +149,6 @@ namespace InteractionScripts
             Vector3 lightPos = flashlightLight.transform.position;
             Vector3 lightDir = flashlightLight.transform.forward;
 
-            // --- RAYON CENTRAL pour "SetUVHit"
             if (Physics.Raycast(lightPos, lightDir, out RaycastHit centerHit, uvRange, uvLayerMask))
             {
                 PhotonView centerTargetView = centerHit.collider.GetComponent<PhotonView>();
@@ -162,7 +159,6 @@ namespace InteractionScripts
                 }
             }
 
-            // --- CERCLAGE de rayons secondaires pour être large (mais PAS SetUVHit ici !)
             int baseRadialSteps = 60;
             int rings = 7;
 
@@ -181,10 +177,6 @@ namespace InteractionScripts
                     Vector3 direction = (lightDir + offset).normalized;
 
                     Ray ray = new Ray(lightPos, direction);
-                    if (Physics.Raycast(ray, out RaycastHit hit, uvRange, uvLayerMask))
-                    {
-                        // Les rayons secondaires ne font rien (ou pourraient mettre un effet futur si besoin)
-                    }
                 }
             }
         }

@@ -187,8 +187,6 @@ public class CameraLookingAt : MonoBehaviour
 
 			if (door.doorType == InteractionScripts.Door.DoorType.Crowbar && hasCrowbarEquipped)
         	{
-            	Debug.Log("[Crowbar] La crowbar s'est cassée !");
-            
             	inventory.RemoveItem("Crowbar", 1);
 
             	if (playerUsing.crowbarScript != null)

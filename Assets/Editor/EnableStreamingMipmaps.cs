@@ -43,12 +43,9 @@ public class EnableStreamingMipmaps
                 if (EditorUtility.DisplayCancelableProgressBar("Enable Streaming Mipmaps",
                         $"Processing texture {i + 1}/{guids.Length}", i / (float)guids.Length))
                 {
-                    Debug.LogWarning("⚠️ Operation cancelled by user.");
                     break;
                 }
             }
-
-            Debug.Log($"✅ Fini ! Textures modifiées : {processed}");
         }
         finally
         {

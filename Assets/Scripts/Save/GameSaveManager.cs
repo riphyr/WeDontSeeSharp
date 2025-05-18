@@ -18,7 +18,6 @@ public static class GameSaveManager
     {
         string json = JsonUtility.ToJson(data, true);
         File.WriteAllText(savePath, json);
-        Debug.Log("Save written at: " + savePath);
     }
 
     public static GameSaveData Load()
@@ -30,7 +29,6 @@ public static class GameSaveManager
         }
         else
         {
-            Debug.LogWarning("No save file found.");
             return null;
         }
     }

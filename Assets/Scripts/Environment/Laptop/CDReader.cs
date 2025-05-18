@@ -118,7 +118,6 @@ namespace InteractionScripts
             yield return new WaitForSeconds(1f);
             isReading = true;
             audioSource.PlayOneShot(readSound);
-            Debug.Log("📀 Lecture du CD en cours...");
 
             KeyboardCameraSwitcher cameraSwitcher = FindObjectOfType<KeyboardCameraSwitcher>();
             if (cameraSwitcher != null)

@@ -13,7 +13,7 @@ public class LoreDatabase : ScriptableObject
             {
                 entry.isDiscovered = true;
 
-                // 🔄 Rafraîchir tous les boutons actifs dans la scène
+                // Rafraîchir tous les boutons actifs dans la scène
                 var allGenerators = GameObject.FindObjectsOfType<ListButtonGenerator>();
                 foreach (var gen in allGenerators)
                     gen.RefreshButtons();

@@ -53,8 +53,6 @@ namespace InteractionScripts
             {
                 audioSource.PlayOneShot(removalSound, 1f);
             }
-
-            Debug.Log("[RemovablePlank] Planche retirée avec animation et son !");
         }
 
         public void UnlockPlank()
@@ -66,7 +64,6 @@ namespace InteractionScripts
         private void RPC_UnlockPlank()
         {
             isUnlocked = true;
-            Debug.Log("[RemovablePlank] La planche est désormais retirable !");
         }
     }
 }

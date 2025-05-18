@@ -30,7 +30,6 @@ public class OcclusionCullingDisablerZone : MonoBehaviour
         if (cam != null)
         {
             cam.useOcclusionCulling = false;
-            Debug.Log("[🟢 OcclusionCullingDisablerZone] Occlusion désactivée !");
         }
     }
 
@@ -42,7 +41,6 @@ public class OcclusionCullingDisablerZone : MonoBehaviour
         if (cam != null)
         {
             cam.useOcclusionCulling = true;
-            Debug.Log("[🔴 OcclusionCullingDisablerZone] Occlusion réactivée !");
         }
     }
 
@@ -52,13 +50,11 @@ public class OcclusionCullingDisablerZone : MonoBehaviour
 
         if (go == null)
         {
-            Debug.Log("[OcclusionCullingDisablerZone] PhotonView manquant");
             return false;
         }
 
         if (go.layer != playerLayer)
         {
-            Debug.Log($"[OcclusionCullingDisablerZone] Mauvais layer : {go.layer}");
             return false;
         }
 

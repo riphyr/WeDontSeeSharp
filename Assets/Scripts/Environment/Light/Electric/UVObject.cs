@@ -14,7 +14,7 @@ public class UVObject : MonoBehaviourPun
 
         if (rend != null)
         {
-            rend.material = new Material(rend.material); // Copie le material pour ce GameObject
+            rend.material = new Material(rend.material);
             rend.GetPropertyBlock(propertyBlock);
             propertyBlock.SetFloat("_UVIntensity", 0f);
             rend.SetPropertyBlock(propertyBlock);
@@ -30,7 +30,7 @@ public class UVObject : MonoBehaviourPun
             propertyBlock = new MaterialPropertyBlock();
 
         rend.GetPropertyBlock(propertyBlock);
-        propertyBlock.SetFloat("_UVIntensity", 5f); // ou une valeur adaptée pour ton shader
+        propertyBlock.SetFloat("_UVIntensity", 5f);
         propertyBlock.SetVector("_HitPosition", hitPos);
         rend.SetPropertyBlock(propertyBlock);
     }

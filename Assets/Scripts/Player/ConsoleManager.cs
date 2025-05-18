@@ -57,8 +57,6 @@ public class ConsoleManager : MonoBehaviour
 
     void ToggleConsole(bool open)
     {
-        Debug.Log("Toggle console");
-        
         isOpen = open;
         consolePanel.SetActive(open);
 

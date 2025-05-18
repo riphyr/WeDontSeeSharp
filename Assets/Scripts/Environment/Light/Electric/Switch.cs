@@ -53,10 +53,9 @@ namespace InteractionScripts
                 view.TransferOwnership(PhotonNetwork.LocalPlayer);
             }
 
-            // ✅ Vérification si le levier est activé
+            // Vérification si le levier est activé
             if (electricLever == null || !electricLever.IsActive)
             {
-                Debug.Log("❌ Impossible d'activer l'interrupteur : Boîtier électrique inactif !");
                 return;
             }
 

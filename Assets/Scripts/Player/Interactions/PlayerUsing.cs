@@ -121,12 +121,10 @@ public class PlayerUsing : MonoBehaviourPun
 
         if (Input.GetKeyDown(nextKeyInteraction))
         {
-            Debug.Log("[DEBUG] Touche Next pressée !");
             inventory.SwitchToNextItem();
         }
         else if (Input.GetKeyDown(previousKeyInteraction))
         {
-            Debug.Log("[DEBUG] Touche Previous pressée !");
             inventory.SwitchToPreviousItem();
         }
         else if (Input.GetKeyDown(useKey))
@@ -149,11 +147,8 @@ public class PlayerUsing : MonoBehaviourPun
 
         if (string.IsNullOrEmpty(selectedItem))
         {
-            Debug.LogWarning("[DropSelectedItem] Aucun objet sélectionné ! Assure-toi que 'selectedItemIndex' est bien défini.");
             return;
         }
-
-        Debug.Log($"Utilisation de l'objet : {selectedItem}");
 
         if (equippedItems.ContainsKey(selectedItem))
         {
@@ -194,7 +189,6 @@ public class PlayerUsing : MonoBehaviourPun
                 photonView.RPC("UseDisk", RpcTarget.All);
                 break;
             default:
-                Debug.Log($"Aucune action définie pour l'objet {selectedItem}");
                 break;
         }
 
@@ -207,11 +201,8 @@ public class PlayerUsing : MonoBehaviourPun
 
         if (string.IsNullOrEmpty(selectedItem))
         {
-            Debug.Log("Aucun objet sélectionné !");
             return;
         }
-
-        Debug.Log($"Rechargement de l'objet : {selectedItem}");
 
         switch (selectedItem)
         {
@@ -222,7 +213,6 @@ public class PlayerUsing : MonoBehaviourPun
                 RechargeUVFlashlight();
                 break;
             default:
-                Debug.Log($"Aucune rechargement définie pour l'objet {selectedItem}");
                 break;
         }
     }
@@ -260,7 +250,6 @@ public class PlayerUsing : MonoBehaviourPun
 
         if (itemPrefab == null)
         {
-            Debug.Log($"Aucun prefab associé pour {selectedItem}");
             return;
         }
 
@@ -353,8 +342,6 @@ public class PlayerUsing : MonoBehaviourPun
         }
 
         droppedItem.transform.position += Vector3.up * 0.05f;
-
-        Debug.Log($"{selectedItem} a été jeté !");
     }
 
     private IEnumerator EnableColliderWithDelay(Collider col, float delay)

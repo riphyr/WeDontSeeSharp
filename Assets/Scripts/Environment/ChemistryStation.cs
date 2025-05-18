@@ -69,10 +69,6 @@ namespace InteractionScripts
                 steamSource = allSources[2];
                 mainSource = allSources[3];
             }
-            else
-            {
-                Debug.LogError("[ChemistryStation] Pas assez d'AudioSource sur l'objet !");
-            }
 
             if (burningSource != null) {
                 burningSource.clip = burningSound;
@@ -97,10 +93,6 @@ namespace InteractionScripts
             if (Output_Explosion_Particles == null)
             {
                 Output_Explosion_Particles = GameObject.Find("Output_Explosion_Particles");
-                if (Output_Explosion_Particles != null)
-                    Debug.LogWarning("[Alchemy] Output_Explosion_Particles assigné dynamiquement via Find.");
-                else
-                    Debug.LogError("[Alchemy] Output_Explosion_Particles introuvable dans la scène !");
             }
         }
 
@@ -230,16 +222,6 @@ namespace InteractionScripts
             isOutputFilled = true;
             currentOutputSolution = solution;
 
-            if (mainSource == null)
-            {
-                Debug.LogError("[Alchemy] mainSource est NULL sur ce client !");
-            }
-
-            if (outputSound == null)
-            {
-                Debug.LogError("[Alchemy] outputSound est NULL !");
-            }
-
             if (mainSource != null && outputSound != null)
                 mainSource.PlayOneShot(outputSound, 0.6f);
 
@@ -249,15 +231,11 @@ namespace InteractionScripts
 
                 if (Output_Explosion_Particles == null)
                 {
-                    Debug.LogError("[Alchemy] Output_Explosion_Particles est NULL !");
                     return;
                 }
 
-                Debug.Log("[Alchemy] Déclenchement des particules d’explosion...");
-
                 foreach (ParticleSystem ps in Output_Explosion_Particles.GetComponentsInChildren<ParticleSystem>(true))
                 {
-                    Debug.Log($"[Alchemy] Play() sur {ps.gameObject.name}");
                     ps.Play(true);
                 }
 
