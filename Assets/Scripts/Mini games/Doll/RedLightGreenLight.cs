@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using TMPro;
+using Unity.VisualScripting;
 
 public class RedLightGreenLightGame : MonoBehaviourPunCallbacks
 {
@@ -17,6 +18,8 @@ public class RedLightGreenLightGame : MonoBehaviourPunCallbacks
     public float maxTimeBetweenStates = 5f; // Temps maximum entre changements
     public float startDelay = 5f; // Délai avant le début du jeu
     public string loseSceneName = "Hub"; // Nom de la scène de défaite
+    public GameObject Cards;
+
 
     [Header("UI References")]
     public TMP_Text countdownText; // Texte pour le compte à rebours
@@ -36,8 +39,8 @@ public class RedLightGreenLightGame : MonoBehaviourPunCallbacks
     private float gameTimer;
     private float startTimer;
     private List<Photon.Realtime.Player> playersInGame = new List<Photon.Realtime.Player>();
-
     public NearDoll Doll;
+    private bool isWon = false;
 
     private void Start()
     {
@@ -84,7 +87,7 @@ public class RedLightGreenLightGame : MonoBehaviourPunCallbacks
 
     private void StartGame()
     {
-        
+
         gameStarting = false;
         gameIsActive = true;
         gameTimer = gameDuration;
@@ -198,7 +201,7 @@ public class RedLightGreenLightGame : MonoBehaviourPunCallbacks
     private void SyncLightState(bool state)
     {
         isGreenLight = state;
-        
+
         // Update UI
         if (gameStateText != null)
         {
@@ -233,65 +236,68 @@ public class RedLightGreenLightGame : MonoBehaviourPunCallbacks
     }
 
 
-    
 
-private Dictionary<int, Vector3> lastPositions = new Dictionary<int, Vector3>();
-private Dictionary<int, float> lastCheckTimes = new Dictionary<int, float>();
-private const float MOVEMENT_THRESHOLD = 0.01f; // Minimum movement distance to consider
-private const float MIN_TIME_BETWEEN_CHECKS = 0.1f; // Prevent too frequent checks
 
-private bool IsPlayerMoving(GameObject player)
-{
-    int playerId = player.GetPhotonView().ViewID;
-    float currentTime = Time.time;
-    
-    if (!lastPositions.ContainsKey(playerId))
+    private Dictionary<int, Vector3> lastPositions = new Dictionary<int, Vector3>();
+    private Dictionary<int, float> lastCheckTimes = new Dictionary<int, float>();
+    private const float MOVEMENT_THRESHOLD = 0.01f; // Minimum movement distance to consider
+    private const float MIN_TIME_BETWEEN_CHECKS = 0.1f; // Prevent too frequent checks
+
+    private bool IsPlayerMoving(GameObject player)
     {
-        lastPositions[playerId] = player.transform.position;
-        lastCheckTimes[playerId] = currentTime;
-        return false;
-    }
+        int playerId = player.GetPhotonView().ViewID;
+        float currentTime = Time.time;
 
-    if (currentTime - lastCheckTimes[playerId] < MIN_TIME_BETWEEN_CHECKS)
-    {
-        return false;
-    }
-
-    Vector3 lastPos = lastPositions[playerId];
-    Vector3 currentPos = player.transform.position;
-    
-    lastPositions[playerId] = currentPos;
-    lastCheckTimes[playerId] = currentTime;
-
-    return Vector3.Distance(lastPos, currentPos) > MOVEMENT_THRESHOLD;
-}
-
-private GameObject GetPlayerGameObject(Photon.Realtime.Player player)
-{
-    PhotonView[] views = FindObjectsOfType<PhotonView>();
-    foreach (PhotonView view in views)
-    {
-        if (view.Owner == player && view.IsMine)
+        if (!lastPositions.ContainsKey(playerId))
         {
-            return view.gameObject;
+            lastPositions[playerId] = player.transform.position;
+            lastCheckTimes[playerId] = currentTime;
+            return false;
         }
+
+        if (currentTime - lastCheckTimes[playerId] < MIN_TIME_BETWEEN_CHECKS)
+        {
+            return false;
+        }
+
+        Vector3 lastPos = lastPositions[playerId];
+        Vector3 currentPos = player.transform.position;
+
+        lastPositions[playerId] = currentPos;
+        lastCheckTimes[playerId] = currentTime;
+
+        return Vector3.Distance(lastPos, currentPos) > MOVEMENT_THRESHOLD;
     }
-    return null;
-}
+
+    private GameObject GetPlayerGameObject(Photon.Realtime.Player player)
+    {
+        PhotonView[] views = FindObjectsOfType<PhotonView>();
+        foreach (PhotonView view in views)
+        {
+            if (view.Owner == player && view.IsMine)
+            {
+                return view.gameObject;
+            }
+        }
+        return null;
+    }
 
     [PunRPC]
     private void PlayerWon()
     {
         Debug.Log("You won the game!");
-        // Load victory scene
+        isWon = true;
+        EndGame();
     }
 
     [PunRPC]
     private void PlayerLost()
     {
-        Debug.Log("You lost! Returning to " + loseSceneName);
-        // Just a debug message
-        // Later : PhotonNetwork.LoadLevel(loseSceneName);
+        if (photonView.IsMine)
+        {
+            Debug.Log("Only this player lost: " + PhotonNetwork.LocalPlayer.NickName);
+            PhotonNetwork.LoadLevel(loseSceneName);
+        }
     }
 
     private void EndGame()
@@ -303,15 +309,81 @@ private GameObject GetPlayerGameObject(Photon.Realtime.Player player)
         Debug.Log("Game ended!");
 
         if (countdownText != null) countdownText.text = "";
-        
-        if (gameStateText != null)
+
+        if (!isWon)
         {
-            gameStateText.text = "GAME OVER";
+            if (gameStateText != null)
+            {
+                gameStateText.text = "GAME OVER";
+            }
+
+            if (currentGameMaster != null && PhotonNetwork.IsMasterClient)
+            {
+                PhotonNetwork.Destroy(currentGameMaster.gameObject);
+            }
+            photonView.RPC(nameof(StartCountdownRPC), RpcTarget.All);
+        }
+        else
+        {
+            if (currentGameMaster != null && PhotonNetwork.IsMasterClient)
+            {
+                PhotonNetwork.Destroy(currentGameMaster.gameObject);
+            }
+
+            photonView.RPC(nameof(RPC_ActivateCards), RpcTarget.All, true);
+
+            instructionsText.text = "Go to the entrance to get the cards, you have 1 minute";
+            StartCountdownRPCV();
+
         }
 
-        if (currentGameMaster != null && PhotonNetwork.IsMasterClient)
+    }
+
+    [PunRPC]
+    private void RPC_ActivateCards(bool isActive)
+    {
+        Cards.SetActive(isActive);
+    }
+
+    [PunRPC]
+    private void StartCountdownRPC()
+    {
+        StartCoroutine(CountdownAndReload());
+    }
+
+    private IEnumerator CountdownAndReload()
+    {
+        float countdown = 5f; // 5 secondes de décompte
+
+        while (countdown > 0)
         {
-            PhotonNetwork.Destroy(currentGameMaster.gameObject);
+            if (countdownText != null)
+                countdownText.text = $"Returning in: {countdown:F1}s";
+
+            yield return new WaitForSeconds(0.1f);
+            countdown -= 0.1f;
         }
+        PhotonNetwork.LoadLevel(loseSceneName);
+    }
+    
+    [PunRPC]
+    private void StartCountdownRPCV()
+    {
+        StartCoroutine(CountdownAndReloadV());
+    }
+
+    private IEnumerator CountdownAndReloadV()
+    {
+        float countdown = 60f;
+
+        while (countdown > 0)
+        {
+            if (countdownText != null)
+                countdownText.text = $"Returning in: {countdown:F1}s";
+
+            yield return new WaitForSeconds(0.1f);
+            countdown -= 0.1f;
+        }
+        PhotonNetwork.LoadLevel(loseSceneName);
     }
 }

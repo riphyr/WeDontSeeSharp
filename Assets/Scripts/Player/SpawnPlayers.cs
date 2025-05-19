@@ -76,11 +76,11 @@ public class SpawnPlayers : MonoBehaviourPunCallbacks
         PhotonNetwork.LocalPlayer.TagObject = myPlayer;
 
         //Check pour la version de test
-        if (!myPlayer.activeSelf)
-        {
-            Debug.LogWarning("⚠️ Le joueur était désactivé, activation en cours...");
-            myPlayer.SetActive(true);
-        }
+        //if (!myPlayer.activeSelf)
+        //{
+            //Debug.LogWarning("⚠️ Le joueur était désactivé, activation en cours...");
+            //myPlayer.SetActive(true);
+        //}
         
         // Activation des scripts de mouvement et d'interactions
         GameObject player = myPlayer.transform.Find("Player").gameObject;

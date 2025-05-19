@@ -15,6 +15,6 @@ EditorBuildSettings:
     path: Assets/Scenes/Lobby.unity
     guid: cf9e994a65c18764b865bb6bd73aa8ba
   - enabled: 1
-    path: Assets/Scenes/HouseLvl.unity
-    guid: f2f808dcb5c63a2469afff3c21343f7b
+    path: Assets/Scenes/House.unity
+    guid: fefacc8e1d65d48c6923c769e9fab262
   m_configObjects: {}

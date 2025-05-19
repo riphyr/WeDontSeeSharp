@@ -119,6 +119,12 @@ MonoBehaviour:
   - PlayerWon
   - SetGameMaster
   - SyncLightState
+  - StartCountdownRPC
+  - StartCountdownRPCV
+  - DestroyCard
+  - RequestDestroyCard
+  - SyncCardDeposit
+  - RPC_ActivateCards
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

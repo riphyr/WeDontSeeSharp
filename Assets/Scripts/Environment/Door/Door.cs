@@ -15,8 +15,8 @@ namespace InteractionScripts
 
         private bool open;
         private float smooth = 1.0f;
-        private float DoorOpenAngle = -90.0f;
-        private float DoorCloseAngle = 0.0f;
+        [SerializeField] private float DoorOpenAngle = -90.0f;
+        [SerializeField] private float DoorCloseAngle = 0.0f;
 
         [Header("Audio")]
         private AudioSource asource;
@@ -36,12 +36,12 @@ namespace InteractionScripts
             if (open)
             {
                 var target = Quaternion.Euler (0, DoorOpenAngle, 0);
-                transform.localRotation = Quaternion.Slerp(transform.localRotation, target, Time.deltaTime * 5 * smooth);
+                transform.localRotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * 5 * smooth);
             }
             else
             {
                 var target1= Quaternion.Euler (0, DoorCloseAngle, 0);
-                transform.localRotation = Quaternion.Slerp(transform.localRotation, target1, Time.deltaTime * 5 * smooth);
+                transform.localRotation = Quaternion.Slerp(transform.rotation, target1, Time.deltaTime * 5 * smooth);
             }
         }
 
