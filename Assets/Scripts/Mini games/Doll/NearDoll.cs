@@ -2,16 +2,29 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Photon.Pun;
 
-public class NearDoll : MonoBehaviour
+public class NearDoll : MonoBehaviourPun
 {
-    public bool isTriggered = false;
+    [Header("Game Reference")]
+    [SerializeField] private RedLightGreenLightGame gameManager;
+
+    private void Start()
+    {
+        // Trouve automatiquement le game manager si non assigné
+        if (gameManager == null)
+        {
+            gameManager = FindObjectOfType<RedLightGreenLightGame>();
+        }
+    }
+
     private void OnTriggerEnter(Collider other)
     {
+        if (!PhotonNetwork.IsMasterClient) return;
+
         PhotonView playerView = other.GetComponent<PhotonView>();
-        if (playerView.IsMine)
+        if (playerView != null && playerView.IsMine)
         {
-            Debug.Log("UwU");
-            isTriggered = true;
+            // Déclenche la victoire uniquement pour le joueur concerné
+            gameManager?.photonView.RPC("PlayerWon", playerView.Owner);
         }
     }
 }
