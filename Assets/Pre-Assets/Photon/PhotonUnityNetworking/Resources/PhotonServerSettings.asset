@@ -144,6 +144,8 @@ MonoBehaviour:
   - UpdateTimer
   - SyncCardDeposit
   - ReturnToHub
+  - ClearAllCollectedCardsOnOthers
+  - SyncCardCollection
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

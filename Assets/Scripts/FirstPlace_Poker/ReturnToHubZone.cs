@@ -17,7 +17,6 @@ public class ReturnToHubZone : MonoBehaviourPun
         PlayerPrefs.SetString("SpawnPointID", "hub");
         PlayerPrefs.Save();
 
-        FindObjectOfType<HubManager>()?.PlayerReturned(PhotonNetwork.LocalPlayer.UserId);
         LoadingManager.Instance.StartLoading(hubSceneName);
     }
 
