@@ -14,6 +14,9 @@ namespace InteractionScripts
             public GameObject targetObject;
             public Material emissiveMaterial;
             public GameObject visualIndicator;
+            
+            [HideInInspector]
+            public Color originalEmissionColor;
         }
 
         [SerializeField] private List<LightElement> lightElements;
@@ -29,15 +32,18 @@ namespace InteractionScripts
             audioSource = GetComponent<AudioSource>();
             view = GetComponent<PhotonView>();
             view.OwnershipTransfer = OwnershipOption.Takeover;
-
-            UpdateLightTargets();
             
-            if (PhotonNetwork.IsMasterClient && isOn)
+            foreach (var element in lightElements)
             {
-                // Force l’état à off si jamais il est à true (ex. mal sauvé dans prefab)
-                isOn = false;
-                UpdateLightTargets();
+                if (element.emissiveMaterial != null)
+                {
+                    element.originalEmissionColor = element.emissiveMaterial.GetColor("_EmissionColor");
+                }
             }
+
+            isOn = false;
+            
+            UpdateLightTargets();
         }
         
         public void ToggleSwitch()
@@ -47,10 +53,9 @@ namespace InteractionScripts
                 view.TransferOwnership(PhotonNetwork.LocalPlayer);
             }
 
-            // ✅ Vérification si le levier est activé
+            // Vérification si le levier est activé
             if (electricLever == null || !electricLever.IsActive)
             {
-                Debug.Log("❌ Impossible d'activer l'interrupteur : Boîtier électrique inactif !");
                 return;
             }
 
@@ -87,12 +92,15 @@ namespace InteractionScripts
                 if (element.emissiveMaterial != null)
                 {
                     if (isOn)
+                    {
                         element.emissiveMaterial.EnableKeyword("_EMISSION");
+                        element.emissiveMaterial.SetColor("_EmissionColor", element.originalEmissionColor);
+                    }
                     else
+                    {
                         element.emissiveMaterial.DisableKeyword("_EMISSION");
-
-                    Color current = element.emissiveMaterial.GetColor("_EmissionColor");
-                    element.emissiveMaterial.SetColor("_EmissionColor", current);
+                        element.emissiveMaterial.SetColor("_EmissionColor", Color.black);
+                    }
                 }
 
                 if (element.visualIndicator != null)

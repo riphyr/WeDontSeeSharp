@@ -38,13 +38,11 @@ namespace InteractionScripts
         private IEnumerator DelayedReset()
         {
             float delay = Random.Range(resetTimeMin, resetTimeMax);
-            Debug.Log($"⏳ Démarrage du compte à rebours pour reset dans {delay} secondes.");
 
             yield return new WaitForSeconds(delay);
 
             if (electricLever.IsActive)
             {
-                Debug.Log("🔔 Temps écoulé, reset automatique du levier.");
                 electricLever.ResetLeverManually();
             }
 

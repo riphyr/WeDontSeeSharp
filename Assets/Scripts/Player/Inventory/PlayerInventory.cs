@@ -84,7 +84,6 @@ public class PlayerInventory : MonoBehaviourPun
             selectedItemIndex = 0;
         }
 
-        Debug.Log($"Ajout de {amount}x {itemName}. Nouveau total : {inventory[itemName]}");
         UpdateSelectedItemDisplay();
     }
     
@@ -92,7 +91,6 @@ public class PlayerInventory : MonoBehaviourPun
     {
         if (!inventory.ContainsKey(itemName) || inventory[itemName] < amount)
         {
-            Debug.LogWarning($"Impossible de retirer {amount}x {itemName}, quantité insuffisante.");
             return false;
         }
 
@@ -119,8 +117,6 @@ public class PlayerInventory : MonoBehaviourPun
                     selectedItemIndex--;
                 }
             }
-        
-            Debug.Log($"{amount} x {itemName} retiré de l'inventaire.");
         }
 
         UpdateSelectedItemDisplay();
@@ -133,7 +129,6 @@ public class PlayerInventory : MonoBehaviourPun
         {
             inventory.Remove(itemName);
             inventoryKeys.Remove(itemName);
-            Debug.Log($"{itemName} supprimé de l'inventaire.");
         }
     }
 
@@ -141,7 +136,6 @@ public class PlayerInventory : MonoBehaviourPun
     {
         inventory.Clear();
         inventoryKeys.Clear();
-        Debug.Log("Inventaire vidé.");
     }
     
     public void SwitchToNextItem()
@@ -149,7 +143,6 @@ public class PlayerInventory : MonoBehaviourPun
         if (!photonView.IsMine) return;
         if (inventoryKeys.Count == 0)
         {
-            Debug.LogWarning("Aucun objet dans l'inventaire !");
             return;
         }
     
@@ -160,7 +153,6 @@ public class PlayerInventory : MonoBehaviourPun
         }
 
         selectedItemIndex = (selectedItemIndex + 1) % inventoryKeys.Count;
-        Debug.Log($"Changement d'objet : {inventoryKeys[selectedItemIndex]}");
         UpdateSelectedItemDisplay();
     }
 
@@ -170,7 +162,6 @@ public class PlayerInventory : MonoBehaviourPun
 
         if (inventoryKeys.Count == 0)
         {
-            Debug.LogWarning("Aucun objet dans l'inventaire !");
             return;
         }
     
@@ -181,7 +172,6 @@ public class PlayerInventory : MonoBehaviourPun
         }
 
         selectedItemIndex = (selectedItemIndex - 1 + inventoryKeys.Count) % inventoryKeys.Count;
-        Debug.Log($"Changement d'objet : {inventoryKeys[selectedItemIndex]}");
         UpdateSelectedItemDisplay();
     }
 
@@ -238,16 +228,6 @@ public class PlayerInventory : MonoBehaviourPun
 	{
     	return itemSprites.TryGetValue(itemName, out Sprite sprite) ? sprite : null;
 	}
-    
-    [ContextMenu("Debug/Print Inventory Keys")]
-    private void PrintInventoryKeys()
-    {
-        Debug.Log("Current Inventory Keys:");
-        foreach (var key in inventory.Keys)
-        {
-            Debug.Log($"- {key} (x{inventory[key]})");
-        }
-    }
 
 	public void ForceSelectItem(string itemName)
 	{
@@ -266,7 +246,6 @@ public class PlayerInventory : MonoBehaviourPun
 
         if (inventoryKeys.Count == 0)
         {
-            Debug.LogWarning("[Inventory] Aucun objet dans l'inventaire !");
             return;
         }
 
@@ -274,7 +253,6 @@ public class PlayerInventory : MonoBehaviourPun
 
         if (targetIndex == -1)
         {
-            Debug.LogWarning($"[Inventory] L'item '{targetItem}' n'existe pas dans l'inventaire.");
             return;
         }
 
@@ -286,8 +264,6 @@ public class PlayerInventory : MonoBehaviourPun
         }
 
         selectedItemIndex = targetIndex;
-
-        Debug.Log($"[Inventory] Passage direct à l'item '{targetItem}' (index {targetIndex})");
 
         UpdateSelectedItemDisplay();
     }

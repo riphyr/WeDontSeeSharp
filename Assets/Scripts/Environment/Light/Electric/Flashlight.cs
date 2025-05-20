@@ -36,12 +36,10 @@ namespace InteractionScripts
             if (view.InstantiationData != null && view.InstantiationData.Length > 0)
             {
                 currentBattery = (float)view.InstantiationData[0];
-                Debug.Log($"[DEBUG] Batterie reçue via InstantiationData : {currentBattery}");
             }
             else
             {
                 currentBattery = maxBattery;
-                Debug.Log("[DEBUG] Aucune InstantiationData, batterie full.");
             }
         }
         

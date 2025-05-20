@@ -11,14 +11,14 @@ public class LoreDatabaseEditor : Editor
         LoreDatabase db = (LoreDatabase)target;
 
         EditorGUILayout.Space();
-        EditorGUILayout.LabelField("🧪 Outils de test", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("Outils de test", EditorStyles.boldLabel);
 
         foreach (var entry in db.loreEntries)
         {
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField(entry.itemName);
 
-            string buttonLabel = entry.isDiscovered ? "❌ Cacher" : "✅ Révéler";
+            string buttonLabel = entry.isDiscovered ? "Cacher" : "Révéler";
             if (GUILayout.Button(buttonLabel, GUILayout.Width(80)))
             {
                 entry.isDiscovered = !entry.isDiscovered;
@@ -42,7 +42,6 @@ public class LoreDatabaseEditor : Editor
         if (generator != null)
         {
             generator.RefreshButtons();
-            Debug.Log("[Editor] Liste des boutons rafraîchie !");
         }
     }
 }

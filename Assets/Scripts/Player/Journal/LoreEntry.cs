@@ -13,13 +13,11 @@ public class LoreEntry
     public void Reveal()
     {
         isDiscovered = true;
-        Debug.Log($"Révélé : {itemName}");
     }
 
     public void Hide()
     {
         isDiscovered = false;
-        Debug.Log($"Masqué : {itemName}");
     }
 #endif
 }

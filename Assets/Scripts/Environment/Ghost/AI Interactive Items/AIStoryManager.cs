@@ -85,7 +85,6 @@ public class AIStoryManager : MonoBehaviourPun
     {
         yield return new WaitUntil(() => ghostAI != null && ghostAI.IsAiActive());
         isScriptActive = true;
-		Debug.Log($"[AIStoryManager] IA activée");
         yield return StartCoroutine(StartStorySequence());
     }
 
@@ -93,7 +92,6 @@ public class AIStoryManager : MonoBehaviourPun
     {
         yield return new WaitForSeconds(delayBeforeFirstAction);
 
-		Debug.Log($"[AIStoryManager] 1");
         // Step 1 — activate trunk1, ask question
         photonView.RPC(nameof(RPC_SetTrunk1Unlocked), RpcTarget.AllBuffered);
         yield return new WaitForSeconds(timeBeforeFirstQuestion);
@@ -101,18 +99,18 @@ public class AIStoryManager : MonoBehaviourPun
         PlayDialogue(firstQuestion);
 
         yield return AskPlayerQuestion("yes", "no",
-            () => // ✅ yes
+            () => // yes
             {
                 PlayDialogue(responseYes_1);
                 photonView.RPC(nameof(RPC_SetPhotoTakeable), RpcTarget.AllBuffered);
             },
-            () => // ❌ no
+            () => // no
             {
                 ghostController.FlickerSwitchLights();
                 PlayDialogue(responseNo_1);
                 photonView.RPC(nameof(RPC_SetPhotoTakeable), RpcTarget.AllBuffered);
             },
-            () => // ⏱️ silence or other
+            () => // silence or other
             {
                 ghostController.FlickerSwitchLights();
                 ghostController.ToggleDoorsRandomly();
@@ -128,17 +126,17 @@ public class AIStoryManager : MonoBehaviourPun
         // Step 3 — ask about regret
         PlayDialogue(secondQuestion);
         yield return AskPlayerQuestion("yes", "no",
-            () => // ✅ yes → poser question 3
+            () => // yes → poser question 3
             {
                 PlayDialogue(thirdQuestion);
                 StartCoroutine(AskThirdQuestion());
             },
-            () => // ❌ no → réaction directe
+            () => // no → réaction directe
             {
                 PlayDialogue(responseNo_2);
                 photonView.RPC(nameof(RPC_SetClothesUnlocked), RpcTarget.AllBuffered);
             },
-            () => // ⏱️ silence/autre → même réaction que no
+            () => // silence/autre → même réaction que no
             {
                 PlayDialogue(responseNo_2);
                 photonView.RPC(nameof(RPC_SetClothesUnlocked), RpcTarget.AllBuffered);
@@ -152,17 +150,17 @@ public class AIStoryManager : MonoBehaviourPun
         // Step 5 — final question
         PlayDialogue(finalQuestion);
         yield return AskPlayerQuestion("yes", "no",
-            () => // ✅ yes
+            () => // yes
             {
                 PlayDialogue(finalResponseYes);
                 photonView.RPC(nameof(RPC_SetTrunk2Unlocked), RpcTarget.AllBuffered);
             },
-            () => // ❌ no
+            () => // no
             {
                 PlayDialogue(finalResponseNo);
                 photonView.RPC(nameof(RPC_SetTrunk2Unlocked), RpcTarget.AllBuffered);
             },
-            () => // ⏱️ silence or other
+            () => // silence or other
             {
                 PlayDialogue(finalResponseNo);
                 photonView.RPC(nameof(RPC_SetTrunk2Unlocked), RpcTarget.AllBuffered);
@@ -179,17 +177,17 @@ public class AIStoryManager : MonoBehaviourPun
     IEnumerator AskThirdQuestion()
     {
         yield return AskPlayerQuestion("yes", "no",
-            () => // ✅ yes
+            () => // yes
             {
                 PlayDialogue(responseYes_3);
                 photonView.RPC(nameof(RPC_SetClothesUnlocked), RpcTarget.AllBuffered);
             },
-            () => // ❌ no
+            () => // no
             {
                 PlayDialogue(responseNo_3);
                 photonView.RPC(nameof(RPC_SetClothesUnlocked), RpcTarget.AllBuffered);
             },
-            () => // ⏱️ silence/autre
+            () => // silence/autre
             {
                 PlayDialogue(responseNo_3);
                 photonView.RPC(nameof(RPC_SetClothesUnlocked), RpcTarget.AllBuffered);
@@ -209,8 +207,6 @@ public class AIStoryManager : MonoBehaviourPun
         	hasResponded = true;
 			isWaitingForAnswer = false;
         	pendingQuestionHandler = null;
-
-        	Debug.Log($"[AIStoryManager] Réponse reçue : {keyword}");
 
         	if (keyword == yesKeyword)
         	{	
@@ -241,7 +237,6 @@ public class AIStoryManager : MonoBehaviourPun
     	if (!hasResponded && awaitingResponse)
     	{
         	awaitingResponse = false;
-        	Debug.Log("[AIStoryManager] Aucun mot reconnu dans le délai imparti. Timeout.");
         	onTimeout?.Invoke();
     	}
 
@@ -252,8 +247,6 @@ public class AIStoryManager : MonoBehaviourPun
 	{
     	if (currentMagnetophone == null || !isWaitingForAnswer || pendingQuestionHandler == null)
         	return;
-
-    	Debug.Log("[AIStoryManager] Tentative d’assignation du handler à un nouveau magneto");
 
     	if (photonView.IsMine)
     	{
@@ -269,16 +262,11 @@ public class AIStoryManager : MonoBehaviourPun
 	{
     	if (clip != null)
     	{
-        	Debug.Log($"[AIStoryManager] Playing clip: {clip.name}");
         	ghostVoice.PlayOneShot(clip);
-    	}
-    	else
-    	{
-        	Debug.LogWarning("[AIStoryManager] Tried to play a null clip.");
     	}
 	}
 
-    // 🔁 RPCs pour synchroniser les effets côté clients
+    // RPCs pour synchroniser les effets côté clients
     [PunRPC] private void RPC_SetTrunk1Unlocked() => loreManager.SetTrunk1Unlocked(true);
     [PunRPC] private void RPC_SetTrunk2Unlocked() => loreManager.SetTrunk2Unlocked(true);
     [PunRPC] private void RPC_SetPhotoTakeable() => loreManager.SetPhotoTakeable(true);

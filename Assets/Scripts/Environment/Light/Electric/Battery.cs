@@ -77,7 +77,6 @@ namespace InteractionScripts
             Rigidbody rb = GetComponent<Rigidbody>();
             if (rb == null)
             {
-                Debug.LogWarning("Battery: Rigidbody manquant !");
                 return;
             }
 

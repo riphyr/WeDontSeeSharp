@@ -61,7 +61,7 @@ namespace InteractionScripts
             foreach (ElectricButton btn in buttons)
                 btn.GetComponent<Collider>().enabled = false;
 
-            // ✅ Vérification de la combinaison correcte
+            // Vérification de la combinaison correcte
             int correctCount = 0;
             for (int i = 0; i < buttons.Length; i++)
             {
@@ -69,14 +69,11 @@ namespace InteractionScripts
                     correctCount++;
             }
 
-            Debug.Log($"🟢 Nombre de boutons corrects : {correctCount}/{buttons.Length}");
-
             float startNeedleAngle = voltArrow.localRotation.eulerAngles.z;
             float targetNeedleAngle = Mathf.Lerp(gaugeMinAngle, gaugeMaxAngle, (float)correctCount / buttons.Length);
             bool success = correctCount == buttons.Length;
-            Debug.Log($"🎯 Aiguille doit aller à {targetNeedleAngle}° (Succès: {success})");
 
-            // ✅ Étape 1 : Lever le levier et l'aiguille en même temps
+            // Étape 1 : Lever le levier et l'aiguille en même temps
             Quaternion startRotation = transform.localRotation;
             Quaternion targetRotation = Quaternion.Euler(activationAngle, 0, 0);
             float t = 0;
@@ -94,7 +91,6 @@ namespace InteractionScripts
 
             if (success)
             {
-                Debug.Log("✅ Succès : Levier activé !");
                 isActive = true;
                 audioSource.PlayOneShot(activationSound);
 
@@ -105,12 +101,10 @@ namespace InteractionScripts
             }
             else
             {
-                Debug.Log("❌ Échec : Combinaison incorrecte !");
-                yield return new WaitForSeconds(0.5f); // Pause avant le son d'erreur
+                yield return new WaitForSeconds(0.5f);
                 audioSource.PlayOneShot(errorSound);
-                yield return new WaitForSeconds(1f); // Attendre que le son d'erreur joue
+                yield return new WaitForSeconds(1f);
 
-                // ✅ Étape 2 : Redescendre le levier et l'aiguille en même temps
                 startRotation = transform.localRotation;
                 targetRotation = Quaternion.Euler(deactivationAngle, 0, 0);
                 float needleStart = voltArrow.localRotation.eulerAngles.z;
@@ -128,7 +122,6 @@ namespace InteractionScripts
                     yield return null;
                 }
 
-                Debug.Log("🔄 Levier et aiguille réinitialisés.");
                 runningLoop.Stop();
             }
 
@@ -196,8 +189,6 @@ namespace InteractionScripts
             {
                 sw.photonView.RPC("ForceSwitchOff", RpcTarget.All);
             }
-
-            Debug.Log("🔄 Levier réinitialisé manuellement.");
         }
     }
 }

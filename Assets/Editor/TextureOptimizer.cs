@@ -55,12 +55,9 @@ public class TextureOptimizer
                 if (EditorUtility.DisplayCancelableProgressBar("Compressing & Resizing Textures",
                     $"Processing texture {i + 1}/{guids.Length}", i / (float)guids.Length))
                 {
-                    Debug.LogWarning("⚠️ Operation cancelled by user.");
                     break;
                 }
             }
-
-            Debug.Log($"✅ Textures optimisées : {processed}");
         }
         finally
         {

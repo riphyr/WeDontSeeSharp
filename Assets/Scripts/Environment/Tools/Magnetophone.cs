@@ -172,7 +172,7 @@ namespace InteractionScripts
             }
             catch (Exception e)
             {
-                Debug.LogError($"Erreur reconnaissance vocale : {e.Message}");
+                
             }
         }
         
@@ -180,12 +180,10 @@ namespace InteractionScripts
         {
             if (e.Result.Confidence < confidenceThreshold)
             {
-                Debug.Log($"Faux positif ignoré : {e.Result.Text} (Confiance : {e.Result.Confidence * 100:F1}%)");
                 return;
             }
 
             string semantic = e.Result.Semantics?.Value?.ToString().ToLowerInvariant() ?? e.Result.Text.ToLowerInvariant();
-            Debug.Log($"Détection confirmée : {e.Result.Text} → {semantic} ({e.Result.Confidence * 100:F1}%)");
 
             view.RPC("RPC_SendAnswerToHost", RpcTarget.MasterClient, semantic);
 
@@ -262,8 +260,6 @@ namespace InteractionScripts
             {
                 questionHandler.Invoke(semanticKeyword);
             }
-			else
-				Debug.Log("Nulle question HAndler");
         }
 
 		[PunRPC]
@@ -273,7 +269,6 @@ namespace InteractionScripts
 
     		if (PhotonNetwork.LocalPlayer.ActorNumber == actorId)
     		{
-        		Debug.Log("[Magnetophone] Réception RPC pour enregistrer questionHandler du joueur");
         		questionHandler = (semantic) =>
         		{
             		photonView.RPC("RPC_SendAnswerToHost", RpcTarget.MasterClient, semantic);
@@ -283,13 +278,11 @@ namespace InteractionScripts
 
         public void SetQuestionHandler(Action<string> handler)
         {
-			Debug.Log("[Magnetophone] Question handler enregistré.");
             questionHandler = handler;
         }
 
         public void ClearQuestionHandler()
         {
-			Debug.Log("[Magnetophone] Question handler clear.");
             questionHandler = null;
         }
 

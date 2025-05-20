@@ -223,10 +223,6 @@ public class PlayerInventoryUI : MonoBehaviour
         	playerUsing.DropItemByName(selectedItemName, false);
 			RefreshUI();
     	}
-    	else
-    	{
-        	Debug.LogWarning("Aucun item sélectionné ou référence à PlayerUsing manquante !");
-    	}
     }
 
     private void OnDropStack()
@@ -235,10 +231,6 @@ public class PlayerInventoryUI : MonoBehaviour
     	{
         	playerUsing.DropItemByName(selectedItemName, true);
 			RefreshUI();
-    	}
-    	else
-    	{
-        	Debug.LogWarning("Aucun item sélectionné ou référence à PlayerUsing manquante !");
     	}
     }
 

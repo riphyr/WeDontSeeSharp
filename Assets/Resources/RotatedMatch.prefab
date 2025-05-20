@@ -224,6 +224,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90
       objectReference: {fileID: 0}
+    - target: {fileID: 6089850039032024598, guid: d4b8980a468b1364fa8d559bda83157a, type: 3}
+      propertyPath: m_Shadows.m_Type
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 6129884398467305107, guid: d4b8980a468b1364fa8d559bda83157a, type: 3}
       propertyPath: ObservedComponents.Array.size
       value: 0

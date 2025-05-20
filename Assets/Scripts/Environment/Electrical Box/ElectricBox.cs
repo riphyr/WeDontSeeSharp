@@ -41,7 +41,6 @@ namespace InteractionScripts
 
             if (!AreScrewsRemoved()) 
             {
-                Debug.Log("🔒 Impossible d'ouvrir, les vis sont encore là !");
                 audioSource.PlayOneShot(lockedSound);
                 return;
             }
