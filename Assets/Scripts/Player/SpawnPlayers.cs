@@ -72,7 +72,6 @@ public class SpawnPlayers : MonoBehaviourPunCallbacks
 
         // Instanciation du prefab du joueur et tag
         GameObject myPlayer = PhotonNetwork.Instantiate(playerPrefab.name, Position, Quaternion.identity);
-        
         PhotonNetwork.LocalPlayer.TagObject = myPlayer;
 
         //Check pour la version de test
